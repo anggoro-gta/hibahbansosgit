@@ -101,7 +101,7 @@
                 <?php if (in_groups('admin')) : ?>
                     <li class="nav-item lisetting">
                         <a href="#" class="nav-link ahrefsetting">
-                            <i class="nav-icon fas fa-database"></i>
+                            <i class="nav-icon fas fa-cog"></i>
                             <p>
                                 Setting
                                 <i class="fas fa-angle-left right"></i>
@@ -117,11 +117,37 @@
                         </ul>
                     </li>
 
+                    <li class="nav-item lisetting">
+                        <a href="#" class="nav-link ahrefsetting">
+                            <i class="nav-icon fas fa-database"></i>
+                            <p>
+                                Master
+                                <i class="fas fa-angle-left right"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a href="/indexusers" class="nav-link ahrefsettingusers">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>hibah</p>
+                                </a>
+                            </li>
+                        </ul>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a href="/indexusers" class="nav-link ahrefsettingusers">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>bansos</p>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
                     <li class="nav-item liformbidangadmin">
                         <a href="#" class="nav-link ahrefformbidangdamin">
                             <i class="nav-icon fas fa-edit"></i>
                             <p>
-                                Data
+                                Input
                                 <i class="fas fa-angle-left right"></i>
                             </p>
                         </a>
@@ -129,7 +155,15 @@
                             <li class="nav-item">
                                 <a href="/entryusulan" class="nav-link ahrefbidangadmin">
                                     <i class="far fa-circle nav-icon"></i>
-                                    <p>Usulan</p>
+                                    <p>hibah</p>
+                                </a>
+                            </li>
+                        </ul>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a href="/entryusulan" class="nav-link ahrefbidangadmin">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>bansos</p>
                                 </a>
                             </li>
                         </ul>
