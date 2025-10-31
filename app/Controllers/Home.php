@@ -2,7 +2,6 @@
 
 namespace App\Controllers;
 
-use App\Models\tbusulanmusrenModel;
 use Myth\Auth\Password;
 use App\Models\usersModel;
 
@@ -14,38 +13,16 @@ class Home extends BaseController
     public function __construct()
     {
         $this->usersModel = new usersModel();
-        $this->tbusulanmusren = new tbusulanmusrenModel();
     }
 
     public function index()
     {
-        $counttotalusulan = '';
-        $countakomodir = '';
-        $counttdkakomodir = '';
-        $countblmproses = '';
-
         if (isset($_SESSION['years'])) {
             $tahun = $_SESSION['years'];
-
-            $totalusulan = $this->tbusulanmusren->gettotalusulanbytahun($tahun);
-            $counttotalusulan = count($totalusulan);
-
-            $akomodir = $this->tbusulanmusren->gettotalusulanakomodirbytahun($tahun);
-            $countakomodir = count($akomodir);
-
-            $tdkakomodir = $this->tbusulanmusren->gettotalusulantdkakomodirbytahun($tahun);
-            $counttdkakomodir = count($tdkakomodir);
-
-            $blmproses = $this->tbusulanmusren->gettotalusulanblmprosesbytahun($tahun);
-            $countblmproses = count($blmproses);
         }
 
         $data = [
             'tittle' => 'Home',
-            'counttotalusulan' => $counttotalusulan,
-            'countakomodir' => $countakomodir,
-            'counttdkakomodir' => $counttdkakomodir,
-            'countblmproses' => $countblmproses
         ];
 
         return view('pages/homenew', $data);
@@ -67,8 +44,8 @@ class Home extends BaseController
     {
         date_default_timezone_set('Asia/Jakarta');
 
-        $id = $this->request->getVar('iddata');        
-        $fullname = $this->request->getVar('fullname');        
+        $id = $this->request->getVar('iddata');
+        $fullname = $this->request->getVar('fullname');
 
         $data = [
             'tittle' => 'reset password users',

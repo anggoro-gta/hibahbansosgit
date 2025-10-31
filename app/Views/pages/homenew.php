@@ -32,7 +32,7 @@
                         <!-- small box -->
                         <div class="small-box bg-info">
                             <div class="inner">
-                                <h3><?= $counttotalusulan; ?></h3>
+                                <h3>100</h3>
 
                                 <p>Total Usulan</p>
                             </div>
@@ -47,7 +47,7 @@
                         <!-- small box -->
                         <div class="small-box bg-success">
                             <div class="inner">
-                                <h3><?= $countakomodir; ?></h3>
+                                <h3>90</h3>
 
                                 <p>Diakomodir</p>
                             </div>
@@ -78,7 +78,7 @@
                         <!-- small box -->
                         <div class="small-box bg-danger">
                             <div class="inner">
-                                <h3><?= $counttdkakomodir; ?></h3>
+                                <h3>98</h3>
 
                                 <p>Tdk Diakomodir</p>
                             </div>
@@ -93,7 +93,7 @@
                     <div class="col-lg-3 col-6">
                         <div class="small-box bg-warning">
                             <div class="inner">
-                                <h3><?= $countblmproses; ?></h3>
+                                <h3>90</h3>
 
                                 <p>Blm Proses</p>
                             </div>

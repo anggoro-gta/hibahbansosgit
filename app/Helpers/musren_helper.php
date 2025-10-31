@@ -12,7 +12,7 @@ if (! function_exists('musren_years')) {
         // cache 300 detik
         return cache()->remember('musren_years', 300, static function () {
             $db = Database::connect();
-            $rows = $db->table('tb_usulan_musren')
+            $rows = $db->table('ms_tahun')
                 ->select('tahun')
                 ->where('tahun IS NOT NULL', null, false)
                 ->where('tahun <> ""', null, false)

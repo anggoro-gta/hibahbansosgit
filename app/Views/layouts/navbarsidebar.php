@@ -6,11 +6,11 @@
             <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
         </li>
         <li class="nav-item d-sm-inline-block">
-            <?php 
-                $thn = null;
-                if (isset($_SESSION['years'])) {
-                    $thn = $_SESSION['years'];
-                } 
+            <?php
+            $thn = null;
+            if (isset($_SESSION['years'])) {
+                $thn = $_SESSION['years'];
+            }
             ?>
             <select class="form-control" id="years">
                 <option value="" selected disabled>Tahun Anggaran</option>
@@ -99,17 +99,17 @@
                 </li>
 
                 <?php if (in_groups('admin')) : ?>
-                    <li class="nav-item limaster">
-                        <a href="#" class="nav-link ahrefmaster">
+                    <li class="nav-item lisetting">
+                        <a href="#" class="nav-link ahrefsetting">
                             <i class="nav-icon fas fa-database"></i>
                             <p>
-                                Master
+                                Setting
                                 <i class="fas fa-angle-left right"></i>
                             </p>
                         </a>
                         <ul class="nav nav-treeview">
                             <li class="nav-item">
-                                <a href="/indexusers" class="nav-link ahrefmasterusers">
+                                <a href="/indexusers" class="nav-link ahrefsettingusers">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>users</p>
                                 </a>
@@ -124,7 +124,7 @@
                                 Data
                                 <i class="fas fa-angle-left right"></i>
                             </p>
-                        </a>                       
+                        </a>
                         <ul class="nav nav-treeview">
                             <li class="nav-item">
                                 <a href="/entryusulan" class="nav-link ahrefbidangadmin">
@@ -270,34 +270,39 @@
     <!-- /.sidebar -->
 </aside>
 <script>
-(function(){
-    const $years = document.getElementById('years');
-    if (!$years) return;
+    (function() {
+        const $years = document.getElementById('years');
+        if (!$years) return;
 
-    const url = "<?= site_url('home/saveyears'); ?>";
-    const csrfName = "<?= csrf_token() ?>";
-    let   csrfHash = "<?= csrf_hash() ?>";
+        const url = "<?= site_url('home/saveyears'); ?>";
+        const csrfName = "<?= csrf_token() ?>";
+        let csrfHash = "<?= csrf_hash() ?>";
 
-    $years.addEventListener('change', function(){
-        const year = this.value;
-        if (!year) return;
+        $years.addEventListener('change', function() {
+            const year = this.value;
+            if (!year) return;
 
-        const form = new FormData();
-        form.append('year', year);
-        form.append(csrfName, csrfHash);
+            const form = new FormData();
+            form.append('year', year);
+            form.append(csrfName, csrfHash);
 
-        fetch(url, {
-            method: 'POST',
-            headers: { 'X-Requested-With': 'XMLHttpRequest' },
-            body: form
-        })
-        .then(r => r.json())
-        .then(json => {
-            if (!json.ok) { alert(json.msg || 'Gagal menyimpan tahun'); return; }
-            if (json.csrf) csrfHash = json.csrf; // update token kalau rotate
-            location.reload(); // biar semua bagian baca session baru
-        })
-        .catch(() => alert('Koneksi gagal'));
-    });
-})();
+            fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: form
+                })
+                .then(r => r.json())
+                .then(json => {
+                    if (!json.ok) {
+                        alert(json.msg || 'Gagal menyimpan tahun');
+                        return;
+                    }
+                    if (json.csrf) csrfHash = json.csrf; // update token kalau rotate
+                    location.reload(); // biar semua bagian baca session baru
+                })
+                .catch(() => alert('Koneksi gagal'));
+        });
+    })();
 </script>

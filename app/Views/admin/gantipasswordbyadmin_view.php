@@ -50,7 +50,7 @@
                                 <div class="col-md-12">
                                     <div class="form-group">
                                         <label>fullname</label>
-                                        <input type="text" class="form-control" name="fullname" id="fullname" value="<?= (old('fullname')) ? old('fullname') : $fullname ?>" readonly>                                                                       
+                                        <input type="text" class="form-control" name="fullname" id="fullname" value="<?= (old('fullname')) ? old('fullname') : $fullname ?>" readonly>
                                     </div>
                                     <div class="form-group">
                                         <label>password</label>
@@ -104,12 +104,12 @@
 
 <?= $this->section('javascriptkhusus'); ?>
 <script>
-    const limaster = document.querySelector('.limaster');
-    const ahrefmaster = document.querySelector('.ahrefmaster');
-    const ahrefmasterusers = document.querySelector('.ahrefmasterusers');
+    const lisetting = document.querySelector('.lisetting');
+    const ahrefsetting = document.querySelector('.ahrefsetting');
+    const ahrefsettingusers = document.querySelector('.ahrefsettingusers');
 
-    limaster.classList.add("menu-open");
-    ahrefmaster.classList.add("active");
-    ahrefmasterusers.classList.add("active");
+    lisetting.classList.add("menu-open");
+    ahrefsetting.classList.add("active");
+    ahrefsettingusers.classList.add("active");
 </script>
 <?= $this->endSection(); ?>

@@ -153,13 +153,13 @@
         }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
     });
 
-    const limaster = document.querySelector('.limaster');
-    const ahrefmaster = document.querySelector('.ahrefmaster');
-    const ahrefmasterusers = document.querySelector('.ahrefmasterusers');
+    const lisetting = document.querySelector('.lisetting');
+    const ahrefsetting = document.querySelector('.ahrefsetting');
+    const ahrefsettingusers = document.querySelector('.ahrefsettingusers');
 
-    limaster.classList.add("menu-open");
-    ahrefmaster.classList.add("active");
-    ahrefmasterusers.classList.add("active");
+    lisetting.classList.add("menu-open");
+    ahrefsetting.classList.add("active");
+    ahrefsettingusers.classList.add("active");
 </script>
 
 <?php if (session()->getFlashdata('pesan') == 'updatepass') : ?>
