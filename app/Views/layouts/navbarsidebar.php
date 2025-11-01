@@ -43,7 +43,7 @@
     <!-- Brand Logo -->
     <a href="#" class="brand-link">
         <img src="<?= base_url(); ?>/assets/dist/img/logo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
-        <span class="brand-text font-weight-light">Monitoring</span>
+        <span class="brand-text font-weight-light">hibah bansos</span>
     </a>
 
     <!-- Sidebar -->
@@ -155,7 +155,7 @@
                             <li class="nav-item">
                                 <a href="/entryusulan" class="nav-link ahrefbidangadmin">
                                     <i class="far fa-circle nav-icon"></i>
-                                    <p>hibah</p>
+                                    <p>usulan hibah</p>
                                 </a>
                             </li>
                         </ul>
@@ -163,7 +163,7 @@
                             <li class="nav-item">
                                 <a href="/entryusulan" class="nav-link ahrefbidangadmin">
                                     <i class="far fa-circle nav-icon"></i>
-                                    <p>bansos</p>
+                                    <p>usulan bansos</p>
                                 </a>
                             </li>
                         </ul>

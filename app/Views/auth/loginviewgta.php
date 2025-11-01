@@ -11,7 +11,7 @@
 
         <img class="logo" src="<?= base_url(); ?>/imageslogingta/logo.png" alt="" />
 
-        <h2>Monitoring Musrenbang</h2>
+        <h2>Hibah dan Bansos</h2>
 
         <form action="<?= route_to('login') ?>" method="post">
             <?= csrf_field() ?>
