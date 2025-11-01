@@ -47,6 +47,7 @@ $routes->post('/home/saveyears', 'Home::saveyears');
 $routes->get('/indexusers', 'Home::indexusers', ['filter' => 'role:admin']);
 $routes->get('/gantipasswordbyadmin', 'Home::gantipasswordbyadmin', ['filter' => 'role:admin']);
 $routes->post('/home/updatepasswordbyadmin', 'Home::updatepasswordbyid', ['filter' => 'role:admin']);
+$routes->get('/indexhibah', 'Masterhibah::index', ['filter' => 'role:admin']);
 
 /*
  * --------------------------------------------------------------------

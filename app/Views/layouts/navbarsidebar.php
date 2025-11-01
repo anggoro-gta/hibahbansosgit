@@ -117,8 +117,8 @@
                         </ul>
                     </li>
 
-                    <li class="nav-item lisetting">
-                        <a href="#" class="nav-link ahrefsetting">
+                    <li class="nav-item limaster">
+                        <a href="#" class="nav-link ahrefmaster">
                             <i class="nav-icon fas fa-database"></i>
                             <p>
                                 Master
@@ -127,7 +127,7 @@
                         </a>
                         <ul class="nav nav-treeview">
                             <li class="nav-item">
-                                <a href="/indexusers" class="nav-link ahrefsettingusers">
+                                <a href="/indexhibah" class="nav-link ahrefmasterhibah">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>hibah</p>
                                 </a>
