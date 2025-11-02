@@ -143,8 +143,8 @@
                         </ul>
                     </li>
 
-                    <li class="nav-item liformbidangadmin">
-                        <a href="#" class="nav-link ahrefformbidangdamin">
+                    <li class="nav-item liinputadmin">
+                        <a href="#" class="nav-link ahrefinputadmin">
                             <i class="nav-icon fas fa-edit"></i>
                             <p>
                                 Input
@@ -153,7 +153,7 @@
                         </a>
                         <ul class="nav nav-treeview">
                             <li class="nav-item">
-                                <a href="/entryusulan" class="nav-link ahrefbidangadmin">
+                                <a href="/usulanhibahadmin" class="nav-link ahrefusulanhibahadmin">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>usulan hibah</p>
                                 </a>
