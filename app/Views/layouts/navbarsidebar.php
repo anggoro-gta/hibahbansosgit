@@ -71,7 +71,7 @@
 
         <!-- Sidebar Menu -->
         <nav class="mt-2">
-            <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+            <ul class="nav nav-pills nav-sidebar flex-column nav-child-indent" data-widget="treeview" role="menu" data-accordion="false">
                 <!-- Add icons to the links using the .nav-icon class
                with font-awesome or any other icon font library -->
                 <li class="nav-item li-dashboard">
@@ -98,7 +98,8 @@
                     </ul>
                 </li>
 
-                <?php if (in_groups('admin')) : ?>
+                <?php if (in_groups(['admin', 'useropd'])) : ?>
+                    <?php if (in_groups('admin')) : ?>
                     <li class="nav-item lisetting">
                         <a href="#" class="nav-link ahrefsetting">
                             <i class="nav-icon fas fa-cog"></i>
@@ -116,6 +117,7 @@
                             </li>
                         </ul>
                     </li>
+                    <?php endif; ?>
 
                     <li class="nav-item limaster">
                         <a href="#" class="nav-link ahrefmaster">
@@ -125,24 +127,26 @@
                                 <i class="fas fa-angle-left right"></i>
                             </p>
                         </a>
+                        
                         <ul class="nav nav-treeview">
                             <li class="nav-item">
-                                <a href="/indexhibah" class="nav-link ahrefmasterhibah">
+                                <a href="<?= base_url('master/hibah'); ?>" class="nav-link ahref-master-hibah">
                                     <i class="far fa-circle nav-icon"></i>
-                                    <p>hibah</p>
+                                    <p>Hibah</p>
                                 </a>
                             </li>
                         </ul>
+
                         <ul class="nav nav-treeview">
                             <li class="nav-item">
-                                <a href="/indexusers" class="nav-link ahrefsettingusers">
+                                <a href="<?= base_url('master/bansos'); ?>" class="nav-link ahref-master-bansos">
                                     <i class="far fa-circle nav-icon"></i>
-                                    <p>bansos</p>
+                                    <p>Bansos</p>
                                 </a>
                             </li>
                         </ul>
                     </li>
-
+                    
                     <li class="nav-item liinputadmin">
                         <a href="#" class="nav-link ahrefinputadmin">
                             <i class="nav-icon fas fa-edit"></i>

@@ -50,6 +50,34 @@ $routes->post('/home/updatepasswordbyadmin', 'Home::updatepasswordbyid', ['filte
 $routes->get('/indexhibah', 'Masterhibah::index', ['filter' => 'role:admin']);
 $routes->get('/usulanhibahadmin', 'Usulanhibahadmin::index', ['filter' => 'role:admin']);
 
+// Master-Bansos
+$routes->get('master/bansos', 'MasterBansos::index');
+$routes->match(['get', 'post'], 'master/bansos/datatable', 'MasterBansos::datatable');
+$routes->get('master/bansos/create', 'MasterBansos::create');
+$routes->post('master/bansos/store', 'MasterBansos::store');
+$routes->get('master/bansos/edit/(:num)', 'MasterBansos::edit/$1');
+$routes->post('master/bansos/update', 'MasterBansos::update');
+$routes->get('master/bansos/delete/(:num)', 'MasterBansos::delete/$1');
+$routes->post('master/bansos/detail-json', 'MasterBansos::detailJson');
+
+// Master-Hibah
+$routes->get('master/hibah', 'MasterHibah::index');
+$routes->match(['get', 'post'], 'master/hibah/datatable', 'MasterHibah::datatable');
+$routes->get('master/hibah/create', 'MasterHibah::create');
+$routes->post('master/hibah/store', 'MasterHibah::store');
+$routes->get('master/hibah/edit/(:num)', 'MasterHibah::edit/$1');
+$routes->post('master/hibah/update', 'MasterHibah::update');
+$routes->get('master/hibah/delete/(:num)', 'MasterHibah::delete/$1');
+$routes->post('master/hibah/detail-json', 'MasterHibah::detailJson');
+
+//ajax
+$routes->get('master/kecamatan/(:num)', 'MasterBansos::getKecamatan/$1');
+$routes->get('master/desa/(:num)', 'MasterBansos::getDesa/$1');
+$routes->get('master/kegiatan/(:num)', 'MasterBansos::getKegiatan/$1');
+$routes->get('master/sub-kegiatan/(:num)', 'MasterBansos::getSubKegiatan/$1');
+$routes->post('master/cek_nik', 'MasterBansos::cekNik');
+$routes->post('master/cek_no_akta', 'MasterHibah::cekNoAkta');
+
 /*
  * --------------------------------------------------------------------
  * Additional Routing
