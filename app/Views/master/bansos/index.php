@@ -33,6 +33,7 @@
                         <?php if (in_groups(['useropd'])) : ?>
                         <div class="card-header">
                             <a href="<?= base_url('master/bansos/create') ?>" class="btn btn-sm btn-success"><i class="fa fa-plus mr-2"></i>Tambah</a>
+                            <a href="<?= base_url('import-excel-bansos') ?>" class="btn btn-sm btn-outline-primary"><i class="fa fa-upload mr-2"></i>Import</a>
                         </div>
                         <?php endif; ?>
                         <div class="card-body">

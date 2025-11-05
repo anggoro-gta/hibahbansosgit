@@ -78,6 +78,13 @@ $routes->get('master/sub-kegiatan/(:num)', 'MasterBansos::getSubKegiatan/$1');
 $routes->post('master/cek_nik', 'MasterBansos::cekNik');
 $routes->post('master/cek_no_akta', 'MasterHibah::cekNoAkta');
 
+// import-excel
+$routes->get('import-excel-hibah', 'ImportExcel::index_hibah');
+$routes->post('import-excel-hibah/do', 'ImportExcel::doImportHibah');
+
+$routes->get('import-excel-bansos', 'ImportExcel::index_bansos');
+$routes->post('import-excel-bansos/do', 'ImportExcel::doImportBansos');
+
 /*
  * --------------------------------------------------------------------
  * Additional Routing
