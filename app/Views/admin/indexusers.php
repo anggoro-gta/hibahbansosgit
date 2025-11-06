@@ -34,35 +34,17 @@
                                 <thead>
                                     <tr>
                                         <th>no</th>
-                                        <th>id</th>
                                         <th>username</th>
                                         <th>nama</th>
                                         <th>aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php $hitungusers = count($data_users) ?>
-                                    <?php for ($i = 0; $i < $hitungusers; $i++) { ?>
-                                        <tr>
-                                            <td><?= $i + 1; ?></td>
-                                            <td><?= $data_users[$i]['id']; ?></td>
-                                            <td><?= $data_users[$i]['username']; ?></td>
-                                            <td><?= $data_users[$i]['fullname']; ?></td>
-                                            <td>
-                                                <form action="/gantipasswordbyadmin" method="get" enctype="multipart/form-data">
-                                                    <?= csrf_field(); ?>
-                                                    <input type="hidden" class="form-control" name="iddata" id="iddata" value="<?= $data_users[$i]['id']; ?>">
-                                                    <input type="hidden" class="form-control" name="fullname" id="fullname" value="<?= $data_users[$i]['fullname']; ?>">
-                                                    <button type="submit" class="btn btn-secondary"><i class="fas fa-undo"></i> reset password</button>
-                                                </form>
-                                            </td>
-                                        </tr>
-                                    <?php } ?>
+
                                 </tbody>
                                 <tfoot>
                                     <tr>
                                         <th>no</th>
-                                        <th>id</th>
                                         <th>username</th>
                                         <th>nama</th>
                                         <th>aksi</th>
@@ -123,20 +105,6 @@
 </script>
 
 <script>
-    $(function() {
-        $("#example1").DataTable({
-            // "lengthChange": true,
-            "responsive": true,
-            "autoWidth": false,
-            "ordering": false,
-            "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"],
-            "lengthMenu": [
-                [30, 40, 50, -1],
-                [30, 40, 50, "All"]
-            ]
-        }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
-    });
-
     const lisetting = document.querySelector('.lisetting');
     const ahrefsetting = document.querySelector('.ahrefsetting');
     const ahrefsettingusers = document.querySelector('.ahrefsettingusers');
@@ -144,6 +112,85 @@
     lisetting.classList.add("menu-open");
     ahrefsetting.classList.add("active");
     ahrefsettingusers.classList.add("active");
+</script>
+
+<script>
+    $(function() {
+        const BASE = "<?= site_url() ?>"; // utk link di kolom Action
+
+        // kolom wajib (tanpa Action)
+        const columns = [{
+                data: null,
+                render: (d, t, r, meta) => meta.row + 1
+            },
+            {
+                data: 'username',
+                defaultContent: '-'
+            },
+            {
+                data: 'nama',
+                defaultContent: '-'
+            }
+        ];
+
+
+        columns.push({
+            data: null,
+            orderable: false,
+            searchable: false,
+            className: 'text-center',
+            render: r => `                
+                <a href="${BASE}gantipasswordbyadmin/${r.id}" 
+                    class="btn btn-sm btn-secondary mb-1" title="reset password">
+                    <i class="fa fa-undo"></i>
+                </a>`
+        });
+
+        const table = $("#example1").DataTable({
+            'oLanguage': {
+                "sProcessing": "Sedang memproses...",
+                "sLengthMenu": "Tampilkan _MENU_ entri",
+                "sZeroRecords": "Data tidak ditemukan",
+                "sInfo": "Menampilkan _START_ sampai _END_ dari _TOTAL_ entri",
+                "sInfoEmpty": "Menampilkan 0 sampai 0 dari 0 entri",
+                "sInfoFiltered": "(disaring dari _MAX_ entri keseluruhan)",
+                "sInfoPostFix": "",
+                "sSearch": "Cari:",
+                "sUrl": "",
+                "oPaginate": {
+                    "sFirst": "Pertama",
+                    "sPrevious": "Sebelumnya",
+                    "sNext": "Selanjutnya",
+                    "sLast": "Terakhir"
+                }
+            },
+            responsive: true,
+            autoWidth: false,
+            ordering: true,
+            lengthMenu: [
+                [30, 40, 50, 100, -1],
+                [30, 40, 50, 100, "All"]
+            ],
+            processing: true,
+            serverSide: false,
+            ajax: {
+                url: "<?= site_url('setting/users/datatable'); ?>",
+                type: "POST",
+                data: d => {
+                    d["<?= csrf_token() ?>"] = "<?= csrf_hash() ?>";
+                },
+                dataSrc: json => {
+                    if (json.csrf) $('meta[name="<?= csrf_token() ?>"]').attr('content', json.csrf);
+                    return json.data || [];
+                }
+            },
+            columns
+        });
+
+        // contoh: reload saat ganti tahun
+        $('#years').on('change', () => table.ajax.reload(null, false));
+
+    });    
 </script>
 
 <?php if (session()->getFlashdata('pesan') == 'updatepass') : ?>

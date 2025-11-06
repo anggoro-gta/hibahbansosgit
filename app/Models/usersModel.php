@@ -10,6 +10,35 @@ class usersModel extends Model
     protected $useTimestamps = true;
     protected $allowedFields = ['email', 'username'];
 
+    public function getall()
+    {
+        $db = \Config\Database::connect();
+        $builder = $db->table('users');
+
+        $builder->select('*');
+
+        $query = $builder->get();
+        return $query->getResultArray();
+    }
+
+    public function getfullname($id)
+    {
+        $db = \Config\Database::connect();
+        $builder = $db->table('users');
+
+        $builder->select('fullname');
+
+        $array = ['id' => $id];
+        $builder->where($array);
+        $query = $builder->get();
+
+        $total = $query->getResultArray();
+
+        $hasil = $total[0]['fullname'];
+
+        return $hasil;
+    }
+
     public function getuser($id)
     {
         $db = \Config\Database::connect();

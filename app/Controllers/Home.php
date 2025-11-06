@@ -30,28 +30,52 @@ class Home extends BaseController
 
     public function indexusers()
     {
-        $datausers = $this->usersModel->findAll();
+        // $datausers = $this->usersModel->findAll();
 
         $data = [
-            'tittle' => 'Users',
-            'data_users' => $datausers
+            'tittle' => 'Users'
         ];
 
         return view('admin/indexusers', $data);
     }
 
-    public function gantipasswordbyadmin()
+    public function datatableusers()
+    {
+        if (!$this->request->isAJAX()) {
+            return $this->response->setStatusCode(400)->setJSON(['data' => []]);
+        }
+
+        $rows = $this->usersModel->getall();
+
+        // Bentuk array untuk DataTables (paling gampang: array of arrays)
+        $data = [];
+        $no = 1;
+        foreach ($rows as $r) {
+            $data[] = [
+                'id'            => (int)($r['id'] ?? 0),
+                'username'   => $r['username'] ?? '-',
+                'nama' => $r['fullname'] ?? '-',
+            ];
+        }
+
+        // Jika CSRF aktif & regenerate, kirim token baru (opsional)
+        $resp = ['data' => $data];
+        if (function_exists('csrf_hash')) $resp['csrf'] = csrf_hash();
+
+        return $this->response->setJSON($resp);
+    }
+
+    public function gantipasswordbyadmin($id)
     {
         date_default_timezone_set('Asia/Jakarta');
 
-        $id = $this->request->getVar('iddata');
-        $fullname = $this->request->getVar('fullname');
+        $getfullname = $this->usersModel->getfullname($id);        
 
         $data = [
             'tittle' => 'reset password users',
             'validation' => \Config\Services::validation(),
             'iddata' => $id,
-            'fullname' => $fullname
+            'fullname' => $getfullname
         ];
 
         return view('admin/gantipasswordbyadmin_view', $data);
