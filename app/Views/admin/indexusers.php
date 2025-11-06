@@ -23,79 +23,63 @@
     <!-- Main content -->
     <section class="content">
         <div class="container-fluid">
-
-            <?php
-            if (isset($_SESSION['years'])) {
-            ?>
-
-                <div class="row">
-                    <div class="col-12">
-                        <div class="card">
-                            <!-- <div class="card-header">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <!-- <div class="card-header">
                             <a href="/entrytujuanpd/tambahtujuanpd"><button type="submit" class="btn btn-primary"><i class="fa fa-plus-circle"></i> Tambah Data Tujuan Perangkat Daerah</button></a>
                         </div> -->
-                            <div class="card-body">
-                                <table id="example1" class="table table-bordered table-striped">
-                                    <thead>
+                        <div class="card-body">
+                            <table id="example1" class="table table-bordered table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>no</th>
+                                        <th>id</th>
+                                        <th>username</th>
+                                        <th>nama</th>
+                                        <th>aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php $hitungusers = count($data_users) ?>
+                                    <?php for ($i = 0; $i < $hitungusers; $i++) { ?>
                                         <tr>
-                                            <th>no</th>
-                                            <th>id</th>
-                                            <th>username</th>
-                                            <th>nama</th>
-                                            <th>aksi</th>
+                                            <td><?= $i + 1; ?></td>
+                                            <td><?= $data_users[$i]['id']; ?></td>
+                                            <td><?= $data_users[$i]['username']; ?></td>
+                                            <td><?= $data_users[$i]['fullname']; ?></td>
+                                            <td>
+                                                <form action="/gantipasswordbyadmin" method="get" enctype="multipart/form-data">
+                                                    <?= csrf_field(); ?>
+                                                    <input type="hidden" class="form-control" name="iddata" id="iddata" value="<?= $data_users[$i]['id']; ?>">
+                                                    <input type="hidden" class="form-control" name="fullname" id="fullname" value="<?= $data_users[$i]['fullname']; ?>">
+                                                    <button type="submit" class="btn btn-secondary"><i class="fas fa-undo"></i> reset password</button>
+                                                </form>
+                                            </td>
                                         </tr>
-                                    </thead>
-                                    <tbody>
-                                        <?php $hitungusers = count($data_users) ?>
-                                        <?php for ($i = 0; $i < $hitungusers; $i++) { ?>
-                                            <tr>
-                                                <td><?= $i + 1; ?></td>
-                                                <td><?= $data_users[$i]['id']; ?></td>
-                                                <td><?= $data_users[$i]['username']; ?></td>
-                                                <td><?= $data_users[$i]['fullname']; ?></td>
-                                                <td>
-                                                    <form action="/gantipasswordbyadmin" method="get" enctype="multipart/form-data">
-                                                        <?= csrf_field(); ?>
-                                                        <input type="hidden" class="form-control" name="iddata" id="iddata" value="<?= $data_users[$i]['id']; ?>">
-                                                        <input type="hidden" class="form-control" name="fullname" id="fullname" value="<?= $data_users[$i]['fullname']; ?>">
-                                                        <button type="submit" class="btn btn-secondary"><i class="fas fa-undo"></i> reset password</button>
-                                                    </form>
-                                                </td>
-                                            </tr>
-                                        <?php } ?>
-                                    </tbody>
-                                    <tfoot>
-                                        <tr>
-                                            <th>no</th>
-                                            <th>id</th>
-                                            <th>username</th>
-                                            <th>nama</th>
-                                            <th>aksi</th>
-                                        </tr>
-                                    </tfoot>
-                                </table>
-                            </div>
-                            <!-- /.card-body -->
+                                    <?php } ?>
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <th>no</th>
+                                        <th>id</th>
+                                        <th>username</th>
+                                        <th>nama</th>
+                                        <th>aksi</th>
+                                    </tr>
+                                </tfoot>
+                            </table>
                         </div>
-                        <!-- /.card -->
+                        <!-- /.card-body -->
                     </div>
-                    <!-- /.col -->
+                    <!-- /.card -->
                 </div>
-                <!-- /.row -->
+                <!-- /.col -->
+            </div>
+            <!-- /.row -->
         </div>
 
-    <?php
-            } else {
-    ?>
-        <div class="alert alert-warning alert-dismissible">
-            <h5><i class="icon fas fa-exclamation-triangle"></i> Perhatian!</h5>
-            Anda belum memilih tahun anggaran. Data tidak akan tersinkron sebelum memilih tahun anggaran.
-        </div>
-    <?php
-            }
-    ?>
-
-    <!-- /.container-fluid -->
+        <!-- /.container-fluid -->
     </section>
     <!-- /.content -->
 </div>
