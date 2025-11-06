@@ -24,10 +24,6 @@
     <!-- Main content -->
     <section class="content">
         <div class="container-fluid">
-            <?php
-                if (isset($_SESSION['years'])) {
-            ?>
-            
             <div class="row">
                 <div class="col-6">
                     <div class="card">
@@ -48,16 +44,6 @@
                 </div>
                 <!-- /.col -->
             </div>
-            <?php
-                } else{
-            ?>
-            <div class="alert alert-warning alert-dismissible">
-                <h5><i class="icon fas fa-exclamation-triangle"></i> Perhatian!</h5>
-                Anda belum memilih tahun anggaran. Data tidak akan tersinkron sebelum memilih tahun anggaran.
-            </div>
-            <?php
-                }
-            ?>
             <!-- /.row -->
         </div>
         <!-- /.container-fluid -->
