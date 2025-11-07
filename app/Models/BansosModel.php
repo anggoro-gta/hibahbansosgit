@@ -69,4 +69,75 @@ class BansosModel extends Model
         // Return the single row as an object
         return $query->getRow();
     }
+
+    public function get_all_usulan($kode_opd = null, $tahun = null)
+    {
+        $db = \Config\Database::connect();
+        $builder = $db->table('tb_usulan_bansos a');
+
+        $builder->select('a.*, b.nama, b.alamat, c.nama_kabupaten, d.nama_kecamatan, e.nama_desa');
+        $builder->join('ms_bansos b', 'a.fk_ms_bansos_id = b.id');
+        $builder->join('ms_kabupaten c', 'b.fk_kabupaten_id = c.id');
+        $builder->join('ms_kecamatan d', 'b.fk_kecamatan_id = d.id');
+        $builder->join('ms_desa e', 'b.fk_desa_id = e.id');
+
+        if(!empty($kode_opd)){
+            $builder->where([
+                'b.kode_opd' => $kode_opd
+            ]);
+        }
+
+        if(!empty($tahun)){
+            $builder->where([
+                'a.tahun' => $tahun
+            ]);
+        }
+
+        $builder->orderBy('a.id', 'ASC');
+
+        $query = $builder->get();
+        return $query->getResultArray();
+    }
+
+    public function get_layak_usulan(string $kode_opd = null)
+    {
+        $builder = $this->builder('ms_bansos a');
+
+        $builder->select('a.*, b.nama_kabupaten, c.nama_kecamatan, d.nama_desa')
+                ->join('ms_kabupaten b', 'a.fk_kabupaten_id = b.id', 'left')
+                ->join('ms_kecamatan c', 'a.fk_kecamatan_id = c.id', 'left')
+                ->join('ms_desa d', 'a.fk_desa_id = d.id', 'left');
+
+        // belum punya usulan di luar tahun ini & tahun lalu
+        $builder->where("
+            NOT EXISTS (
+                SELECT 1
+                FROM tb_usulan_bansos u
+                WHERE u.fk_ms_bansos_id = a.id
+                AND u.tahun IN (YEAR(CURDATE()), YEAR(CURDATE()) - 1)
+            )
+        ", null, false);
+
+        if ($kode_opd) {
+            $builder->where('a.kode_opd', $kode_opd);
+        }
+
+        return $builder->get()->getResultArray();
+    }
+
+    public function get_usulan_by_id($id)
+    {
+        $db = \Config\Database::connect();        
+        // Select all fields
+        $builder = $db->table('tb_usulan_bansos a');
+
+        $builder->select('a.*, b.nama, b.nik');
+        $builder->join('ms_bansos b', 'a.fk_ms_bansos_id = b.id');
+        
+        // Use an associative array directly for where condition
+        $query = $builder->getWhere(['a.id' => $id]);
+
+        // Return the single row as an object
+        return $query->getRow();
+    }
 }

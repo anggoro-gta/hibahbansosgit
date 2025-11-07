@@ -198,7 +198,6 @@
             responsive: true,
             autoWidth: false,
             ordering: true,
-            lengthMenu: [[30,40,50,100,-1],[30,40,50,100,"All"]],
             processing: true,
             serverSide: false,
             ajax: {

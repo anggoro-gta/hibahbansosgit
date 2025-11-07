@@ -71,6 +71,25 @@ $routes->post('master/hibah/update', 'MasterHibah::update');
 $routes->get('master/hibah/delete/(:num)', 'MasterHibah::delete/$1');
 $routes->post('master/hibah/detail-json', 'MasterHibah::detailJson');
 
+// Usulan-Hibah
+$routes->get('usulan/hibah', 'UsulanHibah::index');
+$routes->match(['get', 'post'], 'usulan/hibah/datatable', 'UsulanHibah::datatable');
+$routes->get('usulan/hibah/create', 'UsulanHibah::create');
+$routes->post('usulan/hibah/store', 'UsulanHibah::store');
+$routes->get('usulan/hibah/edit/(:num)', 'UsulanHibah::edit/$1');
+$routes->post('usulan/hibah/update', 'UsulanHibah::update');
+$routes->get('usulan/hibah/delete/(:num)', 'UsulanHibah::delete/$1');
+
+// Usulan-Bansos
+$routes->get('usulan/bansos', 'UsulanBansos::index');
+$routes->match(['get', 'post'], 'usulan/bansos/datatable', 'UsulanBansos::datatable');
+$routes->get('usulan/bansos/create', 'UsulanBansos::create');
+$routes->post('usulan/bansos/store', 'UsulanBansos::store');
+$routes->get('usulan/bansos/edit/(:num)', 'UsulanBansos::edit/$1');
+$routes->post('usulan/bansos/update', 'UsulanBansos::update');
+$routes->get('usulan/bansos/delete/(:num)', 'UsulanBansos::delete/$1');
+
+
 //ajax
 $routes->get('master/kecamatan/(:num)', 'MasterBansos::getKecamatan/$1');
 $routes->get('master/desa/(:num)', 'MasterBansos::getDesa/$1');
@@ -85,6 +104,7 @@ $routes->post('import-excel-hibah/do', 'ImportExcel::doImportHibah');
 
 $routes->get('import-excel-bansos', 'ImportExcel::index_bansos');
 $routes->post('import-excel-bansos/do', 'ImportExcel::doImportBansos');
+
 
 /*
  * --------------------------------------------------------------------

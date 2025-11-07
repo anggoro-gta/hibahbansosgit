@@ -157,17 +157,17 @@
                         </a>
                         <ul class="nav nav-treeview">
                             <li class="nav-item">
-                                <a href="/usulanhibahadmin" class="nav-link ahrefusulanhibahadmin">
+                                <a href="<?= base_url('usulan/hibah'); ?>" class="nav-link ahref-usulan-hibah">
                                     <i class="far fa-circle nav-icon"></i>
-                                    <p>usulan hibah</p>
+                                    <p>Usulan Hibah</p>
                                 </a>
                             </li>
                         </ul>
                         <ul class="nav nav-treeview">
                             <li class="nav-item">
-                                <a href="/entryusulan" class="nav-link ahrefbidangadmin">
+                                <a href="<?= base_url('usulan/bansos'); ?>" class="nav-link ahref-usulan-bansos">
                                     <i class="far fa-circle nav-icon"></i>
-                                    <p>usulan bansos</p>
+                                    <p>Usulan Bansos</p>
                                 </a>
                             </li>
                         </ul>

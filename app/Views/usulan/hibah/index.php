@@ -8,12 +8,12 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>Master Bansos</h1>
+                    <h1>Usulan Hibah</h1>
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="#">Master</a></li>
-                        <li class="breadcrumb-item active">Bansos</li>
+                        <li class="breadcrumb-item"><a href="#">Usulan</a></li>
+                        <li class="breadcrumb-item active">Hibah</li>
                     </ol>
                 </div>
             </div>
@@ -22,14 +22,16 @@
 
     <!-- Main content -->
     <section class="content">
-        <div class="container-fluid">            
+        <div class="container-fluid">      
+            <?php
+            if (isset($_SESSION['years'])) {
+            ?>                  
             <div class="row">
                 <div class="col-12">
                     <div class="card">
                         <?php if (in_groups(['useropd'])) : ?>
                         <div class="card-header">
-                            <a href="<?= base_url('master/bansos/create') ?>" class="btn btn-sm btn-success"><i class="fa fa-plus mr-2"></i>Tambah</a>
-                            <a href="<?= base_url('import-excel-bansos') ?>" class="btn btn-sm btn-outline-primary"><i class="fa fa-upload mr-2"></i>Import</a>
+                            <a href="<?= base_url('usulan/hibah/create') ?>" class="btn btn-sm btn-success"><i class="fa fa-plus mr-2"></i>Tambah</a>
                         </div>
                         <?php endif; ?>
                         <div class="card-body">
@@ -37,9 +39,12 @@
                                 <thead>
                                     <tr>
                                         <th>No</th>
-                                        <th>NIK</th>
-                                        <th>Nama</th>
+                                        <th>Lembaga</th>
                                         <th>Alamat</th>
+                                        <th>APBD <?= $_SESSION['years'] ?></th>
+                                        <th>Perubahan PERBUP 1 <?= $_SESSION['years'] ?></th>
+                                        <th>Perubahan PERBUP 2 <?= $_SESSION['years'] ?></th>
+                                        <th>P-APBD <?= $_SESSION['years'] ?></th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -49,9 +54,12 @@
                                 <tfoot>
                                     <tr>
                                         <th>No</th>
-                                        <th>NIK</th>
-                                        <th>Nama</th>
+                                        <th>Lembaga</th>
                                         <th>Alamat</th>
+                                        <th>APBD <?= $_SESSION['years'] ?></th>
+                                        <th>Perubahan PERBUP 1 <?= $_SESSION['years'] ?></th>
+                                        <th>Perubahan PERBUP 2 <?= $_SESSION['years'] ?></th>
+                                        <th>P-APBD <?= $_SESSION['years'] ?></th>
                                         <th>Action</th>
                                     </tr>
                                 </tfoot>
@@ -64,6 +72,16 @@
                 <!-- /.col -->
             </div>            
             <!-- /.row -->
+            <?php
+            } else {
+            ?>
+                <div class="alert alert-warning alert-dismissible">
+                    <h5><i class="icon fas fa-exclamation-triangle"></i> Perhatian!</h5>
+                    Anda belum memilih tahun anggaran. Data tidak akan tersinkron sebelum memilih tahun anggaran.
+                </div>
+            <?php
+            }
+            ?>
         </div>
         <!-- /.container-fluid -->
     </section>
@@ -76,43 +94,18 @@
     <i class="fas fa-arrow-up"></i>
 </button>
 
-<!-- Modal Detail -->
-<div class="modal fade" id="modalDetail" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-        <div class="modal-header">
-            <h5 class="modal-title">TANGGING NOMENKLATUR <span class="text-sm text-info" id="span-id-bansos"></span></h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span>&times;</span>
-            </button>
-        </div>
-        <div class="modal-body">
-            <dl class="row mb-0">
-                <dt class="col-sm-3">Nama Program</dt><dd class="col-sm-9" id="d-program">-</dd>
-                <dt class="col-sm-3">Nama Kegiatan</dt><dd class="col-sm-9" id="d-kegiatan">-</dd>
-                <dt class="col-sm-3">Nama Sub Kegiatan</dt><dd class="col-sm-9" id="d-sub-kegiatan">-</dd>
-            </dl>
-        </div>
-        <div class="modal-footer">
-            <button class="btn btn-secondary" data-dismiss="modal">Tutup</button>
-        </div>
-        </div>
-    </div>
-</div>
-
-
 
 <?= $this->endSection(); ?>
 
 <?= $this->section('javascriptkhusus'); ?>
 <script>
-    const limaster = document.querySelector('.limaster');
-    const ahrefmaster = document.querySelector('.ahrefmaster');
-    const ahrefbansos = document.querySelector('.ahref-master-bansos');
+    const liparent = document.querySelector('.liinputadmin');
+    const ahrefparent = document.querySelector('.ahrefinputadmin');
+    const ahrefhibah = document.querySelector('.ahref-usulan-hibah');
 
-    limaster.classList.add("menu-open");
-    ahrefmaster.classList.add('active');
-    ahrefbansos.classList.add('active');
+    liparent.classList.add("menu-open");
+    ahrefparent.classList.add('active');
+    ahrefhibah.classList.add('active');
 </script>
 <script>
     //Get the button
@@ -146,29 +139,43 @@
     $(function () {
         const BASE = "<?= site_url() ?>";        // utk link di kolom Action
 
-        // kolom wajib (tanpa Action)
         const columns = [
             { data: null, render: (d,t,r,meta) => meta.row + 1 },
-            { data: 'nik', defaultContent: '-' },
-            { data: 'nama',   defaultContent: '-' },
-            { data: 'alamat',    defaultContent: '-' }
+            { data: 'nama_lembaga', defaultContent: '-' },
+            { data: 'alamat',    defaultContent: '-' },
+            { data: 'apbd', className:'text-right', render: (data,type) => {
+                if (type === 'display') return Number(data || 0).toLocaleString('id-ID');
+                    return data;
+                } 
+            },
+            { data: 'perubahan_perbup_1', className:'text-right', render: (data,type) => {
+                if (type === 'display') return Number(data || 0).toLocaleString('id-ID');
+                    return data;
+                } 
+            },
+            { data: 'perubahan_perbup_2', className:'text-right', render: (data,type) => {
+                if (type === 'display') return Number(data || 0).toLocaleString('id-ID');
+                    return data;
+                } 
+            },
+            { data: 'papbd', className:'text-right', render: (data,type) => {
+                if (type === 'display') return Number(data || 0).toLocaleString('id-ID');
+                    return data;
+                } 
+            }
         ];
 
         
         columns.push({
             data: null, orderable:false, searchable:false, className:'text-center',
             render: r => `
-                <button type="button" class="btn btn-sm btn-info mb-1 btn-detail" 
-                        data-id="${r.id}" title="Taging Nomenklatur">
-                    <i class="fa fa-eye"></i>
-                </button>
-                <a href="${BASE}master/bansos/edit/${r.id}" 
+                <a href="${BASE}usulan/hibah/edit/${r.id}" 
                     class="btn btn-sm btn-primary mb-1" title="Edit">
                     <i class="fa fa-edit"></i>
                 </a>
-                <a href="${BASE}master/bansos/delete/${r.id}" 
+                <a href="${BASE}usulan/hibah/delete/${r.id}" 
                     class="btn btn-sm btn-danger mb-1" title="Delete" 
-                    onclick="return confirmDelete('${BASE}master/bansos/delete/${r.id}')">
+                    onclick="return confirmDelete('${BASE}usulan/hibah/delete/${r.id}')">
                     <i class="fa fa-trash"></i>
                 </a>`
         });
@@ -198,7 +205,7 @@
             processing: true,
             serverSide: false,
             ajax: {
-                url: "<?= site_url('master/bansos/datatable'); ?>",
+                url: "<?= site_url('usulan/hibah/datatable'); ?>",
                 type: "POST",
                 data: d => { d["<?= csrf_token() ?>"] = "<?= csrf_hash() ?>"; },
                 dataSrc: json => {
@@ -211,40 +218,6 @@
 
         // contoh: reload saat ganti tahun
         $('#years').on('change', () => table.ajax.reload(null, false));
-
-        const valOrDash = v => (v === null || v === undefined || v === '') ? '-' : v;
-
-        $(document).on('click', '.btn-detail', function () {
-            const id = $(this).data('id');
-            const tokenName = "<?= csrf_token() ?>";
-            const tokenVal  = $('meta[name="<?= csrf_token() ?>"]').attr('content');
-
-            $('#modalDetail').modal('show');
-
-            $.ajax({
-                url: "<?= site_url('master/bansos/detail-json'); ?>",
-                type: "POST",
-                data: { [tokenName]: tokenVal, id: id },
-                success: (res) => {
-                    if (res.csrf) $('meta[name="<?= csrf_token() ?>"]').attr('content', res.csrf);
-                    if (!res || !res.data) {
-                        $('#modalDetail .modal-body').html('<div class="text-danger">Data detail tidak ditemukan.</div>');
-                        return;
-                    }
-                    const d = res.data;
-                    $('#d-program').text(`: `+valOrDash(d.nama_program));
-                    $('#d-kegiatan').text(`: `+valOrDash(d.nama_kegiatan));
-                    $('#d-sub-kegiatan').text(`: `+valOrDash(d.nama_sub_kegiatan));
-                    $('#span-id-bansos').text(`[ ${d.nik} ] [ ${d.nama} ]`);
-                    // Tambah field lain/riwayat kalau perlu…
-                },
-                error: () => {
-                    $('#modalDetail .modal-body').html('<div class="text-danger">Gagal memuat data.</div>');
-                }
-            });
-        });
-
-
     });
     function confirmDelete(url) {
         // Menampilkan konfirmasi menggunakan SweetAlert2
