@@ -99,7 +99,7 @@ class BansosModel extends Model
         return $query->getResultArray();
     }
 
-    public function get_layak_usulan(string $kode_opd = null)
+    public function get_layak_usulan(string $kode_opd = null, $tahun)
     {
         $builder = $this->builder('ms_bansos a');
 
@@ -108,13 +108,16 @@ class BansosModel extends Model
                 ->join('ms_kecamatan c', 'a.fk_kecamatan_id = c.id', 'left')
                 ->join('ms_desa d', 'a.fk_desa_id = d.id', 'left');
 
-        // belum punya usulan di luar tahun ini & tahun lalu
+        $tahun_select = $tahun;
+        $tahun_kemarin = $tahun-1;
+        $tahun_berikutnya = $tahun+1;
+        
         $builder->where("
             NOT EXISTS (
                 SELECT 1
                 FROM tb_usulan_bansos u
                 WHERE u.fk_ms_bansos_id = a.id
-                AND u.tahun IN (YEAR(CURDATE()), YEAR(CURDATE()) - 1)
+                AND u.tahun IN ('$tahun_kemarin', '$tahun_select', '$tahun_berikutnya')
             )
         ", null, false);
 

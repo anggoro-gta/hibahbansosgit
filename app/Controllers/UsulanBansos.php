@@ -92,11 +92,13 @@ class UsulanBansos extends BaseController
 
     public function create()
     {
+        $tahun = $_SESSION['years'];
+
         $data = [
             'url'    => site_url('usulan/bansos/store'),
             'button' => 'Tambah',
             'tittle' => 'Tambah Usulan Bansos',
-            'rows'   => $this->bansos_model->get_layak_usulan($this->kode_user)
+            'rows'   => $this->bansos_model->get_layak_usulan($this->kode_user, $tahun)
         ];
         
         return view('usulan/bansos/form', $data);
@@ -119,7 +121,7 @@ class UsulanBansos extends BaseController
             }
 
             // contoh insert ke tb_usulan_bansos
-            $tahun = date('Y');
+            $tahun = $_SESSION['years'];
 
             $batchData = [];
             foreach ($ids as $msBansosId) {

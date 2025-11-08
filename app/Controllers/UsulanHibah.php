@@ -92,11 +92,13 @@ class UsulanHibah extends BaseController
 
     public function create()
     {
+        $tahun = $_SESSION['years'];
+
         $data = [
             'url'    => site_url('usulan/hibah/store'),
             'button' => 'Tambah',
             'tittle' => 'Tambah Usulan Hibah',
-            'rows'   => $this->hibah_model->get_layak_usulan($this->kode_user)
+            'rows'   => $this->hibah_model->get_layak_usulan($this->kode_user, $tahun)
         ];
         
         return view('usulan/hibah/form', $data);
@@ -119,7 +121,7 @@ class UsulanHibah extends BaseController
             }
 
             // contoh insert ke tb_usulan_hibah
-            $tahun = date('Y');
+            $tahun = $_SESSION['years'];
 
             $batchData = [];
             foreach ($ids as $msHibahId) {

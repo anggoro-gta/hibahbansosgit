@@ -99,7 +99,7 @@ class HibahModel extends Model
         return $query->getResultArray();
     }
 
-    public function get_layak_usulan(string $kode_opd = null)
+    public function get_layak_usulan(string $kode_opd = null, $tahun)
     {
         $builder = $this->builder('ms_hibah a');
 
@@ -112,13 +112,16 @@ class HibahModel extends Model
         $builder->where('a.tgl_berdiri IS NOT NULL', null, false);
         $builder->where('a.tgl_berdiri <= DATE_SUB(CURDATE(), INTERVAL 2 YEAR)', null, false);
 
-        // belum punya usulan di luar tahun ini & tahun lalu
+        $tahun_select = $tahun;
+        $tahun_kemarin = $tahun-1;
+        $tahun_berikutnya = $tahun+1;
+        
         $builder->where("
             NOT EXISTS (
                 SELECT 1
                 FROM tb_usulan_hibah u
                 WHERE u.fk_ms_hibah_id = a.id
-                AND u.tahun IN (YEAR(CURDATE()), YEAR(CURDATE()) - 1)
+                AND u.tahun IN ('$tahun_kemarin', '$tahun_select', '$tahun_berikutnya')
             )
         ", null, false);
 
