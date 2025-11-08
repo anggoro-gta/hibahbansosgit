@@ -100,23 +100,23 @@
 
                 <?php if (in_groups(['admin', 'useropd'])) : ?>
                     <?php if (in_groups('admin')) : ?>
-                    <li class="nav-item lisetting">
-                        <a href="#" class="nav-link ahrefsetting">
-                            <i class="nav-icon fas fa-cog"></i>
-                            <p>
-                                Setting
-                                <i class="fas fa-angle-left right"></i>
-                            </p>
-                        </a>
-                        <ul class="nav nav-treeview">
-                            <li class="nav-item">
-                                <a href="/indexusers" class="nav-link ahrefsettingusers">
-                                    <i class="far fa-circle nav-icon"></i>
-                                    <p>users</p>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
+                        <li class="nav-item lisetting">
+                            <a href="#" class="nav-link ahrefsetting">
+                                <i class="nav-icon fas fa-cog"></i>
+                                <p>
+                                    Setting
+                                    <i class="fas fa-angle-left right"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="/indexusers" class="nav-link ahrefsettingusers">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>users</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
                     <?php endif; ?>
 
                     <li class="nav-item limaster">
@@ -127,7 +127,7 @@
                                 <i class="fas fa-angle-left right"></i>
                             </p>
                         </a>
-                        
+
                         <ul class="nav nav-treeview">
                             <li class="nav-item">
                                 <a href="<?= base_url('master/hibah'); ?>" class="nav-link ahref-master-hibah">
@@ -146,7 +146,7 @@
                             </li>
                         </ul>
                     </li>
-                    
+
                     <li class="nav-item liinputadmin">
                         <a href="#" class="nav-link ahrefinputadmin">
                             <i class="nav-icon fas fa-edit"></i>
@@ -201,12 +201,12 @@
                 <?php endif; ?>
 
                 <?php if (in_groups(['useropd', 'userkec'])) : ?>
-                    <li class="nav-item">
+                    <!-- <li class="nav-item">
                         <a href="<?= base_url('usulan/data'); ?>" class="nav-link ahref-usulan">
                             <i class="nav-icon fas fa-list"></i>
                             <p>
                                 Data Usulan
-                                <!-- <i class="fas fa-angle-left right"></i> -->
+                                <i class="fas fa-angle-left right"></i>
                             </p>
                         </a>
                     </li>
@@ -217,7 +217,7 @@
                                 Data laporan
                             </p>
                         </a>
-                    </li>
+                    </li> -->
                 <?php endif; ?>
 
                 <?php if (in_groups('bidangadmin')) : ?>
