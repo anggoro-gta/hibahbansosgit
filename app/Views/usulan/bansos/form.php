@@ -2,7 +2,9 @@
 
 <?= $this->section('content'); ?>
 <style>
-    .uppercase { text-transform: uppercase; }
+    .uppercase {
+        text-transform: uppercase;
+    }
 </style>
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
@@ -28,11 +30,11 @@
     <section class="content">
         <div class="container-fluid">
             <div class="row">
-                <div class="<?= $button=='Tambah' ? 'col-12' : 'col-5'?>">
+                <div class="<?= $button == 'Tambah' ? 'col-12' : 'col-5' ?>">
                     <div class="card">
-                        <form id="<?= $button=='Tambah' ? 'form-tambah' : 'form-edit'?>" method="POST" action="<?= $url ?>">
+                        <form id="<?= $button == 'Tambah' ? 'form-tambah' : 'form-edit' ?>" method="POST" action="<?= $url ?>">
                             <div class="card-body">
-                                <?php if($button=='Tambah') : ?>
+                                <?php if ($button == 'Tambah') : ?>
                                     <input type="hidden" name="selected_ids" id="selected_ids">
                                     <table id="example1" class="table table-bordered table-striped table-sm">
                                         <thead>
@@ -49,54 +51,54 @@
                                         </thead>
                                         <tbody>
                                             <?php foreach ($rows as $item) : ?>
-                                            <tr>
-                                                <td class="text-center">
-                                                    <div class="custom-control custom-checkbox">
-                                                        <input class="custom-control-input child-check" type="checkbox" id="customCheckbox<?= $item['id'] ?>" value="<?= $item['id'] ?>">
-                                                        <label for="customCheckbox<?= $item['id'] ?>" class="custom-control-label">&nbsp;</label>
-                                                    </div>
-                                                </td>
-                                                <td><?= $item['nik'] ?></td>
-                                                <td>
-                                                    <?= $item['nama'] ?><br>
-                                                    <span class="text-sm text-info"><?= $item['nama_kabupaten'].', '.$item['nama_kecamatan'].', '.$item['nama_desa'].', '.$item['alamat'] ?></span>
-                                                </td>
-                                            </tr>
+                                                <tr>
+                                                    <td class="text-center">
+                                                        <div class="custom-control custom-checkbox">
+                                                            <input class="custom-control-input child-check" type="checkbox" id="customCheckbox<?= $item['id'] ?>" value="<?= $item['id'] ?>">
+                                                            <label for="customCheckbox<?= $item['id'] ?>" class="custom-control-label">&nbsp;</label>
+                                                        </div>
+                                                    </td>
+                                                    <td><?= $item['nik'] ?></td>
+                                                    <td>
+                                                        <?= $item['nama'] ?><br>
+                                                        <span class="text-sm text-info"><?= $item['nama_kabupaten'] . ', ' . $item['nama_kecamatan'] . ', ' . $item['nama_desa'] . ', ' . $item['alamat'] ?></span>
+                                                    </td>
+                                                </tr>
                                             <?php endforeach ?>
                                         </tbody>
                                     </table>
                                 <?php else : ?>
-                                <input type="hidden" class="form-control" name="id" id="id" required value="<?= $id ?>">
-                                <div class="row">
-                                    <div class="form-group col-md-4">
-                                        <label>Tahun Usulan <sup class="text-danger">*</sup></label>
-                                        <input type="text"class="form-control uppercase" name="tahun" id="tahun" value="<?= $tahun ?>" readonly>
+                                    <input type="hidden" class="form-control" name="id" id="id" required value="<?= $id ?>">
+                                    <div class="row">
+                                        <div class="form-group col-md-4">
+                                            <label>Tahun Usulan <sup class="text-danger">*</sup></label>
+                                            <input type="text" class="form-control uppercase" name="tahun" id="tahun" value="<?= $tahun ?>" readonly>
+                                        </div>
+                                        <div class="form-group col-md-8">
+                                            <label>NIK <sup class="text-danger">*</sup></label>
+                                            <input type="text" class="form-control uppercase" name="nik" id="nik" value="<?= $nik ?>" readonly>
+                                        </div>
+                                        <div class="form-group col-md-12">
+                                            <label>Nama <sup class="text-danger">*</sup></label>
+                                            <input type="text" class="form-control" name="nama" id="nama" readonly value="<?= $nama ?>">
+                                        </div>
+                                        <div class="form-group col-md-12">
+                                            <label>APBD</label>
+                                            <input type="text" class="form-control nominal" name="apbd" id="apbd" value="<?= $apbd > 0 ? number_format($apbd, 0, ',', '.') : '' ?>">
+                                        </div>
+                                        <div class="form-group col-md-12">
+                                            <label>Perubahan PERBUP 1</label>
+                                            <input type="text" class="form-control nominal" name="perubahan_perbup_1" id="perubahan_perbup_1" value="<?= $perubahan_perbup_1 > 0 ? number_format($perubahan_perbup_1, 0, ',', '.') : '' ?>">
+                                        </div>
+                                        <div class="form-group col-md-12">
+                                            <label>Perubahan PERBUP 2</label>
+                                            <input type="text" class="form-control nominal" name="perubahan_perbup_2" id="perubahan_perbup_2" value="<?= $perubahan_perbup_2 > 0 ? number_format($perubahan_perbup_2, 0, ',', '.') : '' ?>">
+                                        </div>
+                                        <div class="form-group col-md-12">
+                                            <label>P-APBD</label>
+                                            <input type="text" class="form-control nominal" name="papbd" id="papbd" value="<?= $papbd > 0 ? number_format($papbd, 0, ',', '.') : '' ?>">
+                                        </div>
                                     </div>
-                                    <div class="form-group col-md-8">
-                                        <label>NIK <sup class="text-danger">*</sup></label>
-                                        <input type="text"class="form-control uppercase" name="nik" id="nik" value="<?= $nik ?>" readonly>
-                                    </div>
-                                    <div class="form-group col-md-12">
-                                        <label>Nama <sup class="text-danger">*</sup></label>
-                                        <input type="text" class="form-control" name="nama" id="nama" readonly value="<?= $nama ?>">
-                                    </div>
-                                    <div class="form-group col-md-12">
-                                        <label>APBD</label>
-                                        <input type="text" class="form-control nominal" name="apbd" id="apbd" value="<?= $apbd > 0 ? number_format($apbd, 0, ',', '.') : '' ?>">
-                                    </div>
-                                    <div class="form-group col-md-12">
-                                        <label>Perubahan PERBUP 1</label>
-                                        <input type="text" class="form-control nominal" name="perubahan_perbup_1" id="perubahan_perbup_1" value="<?= $perubahan_perbup_1 > 0 ? number_format($perubahan_perbup_1, 0, ',', '.') : '' ?>">
-                                    </div>
-                                    <div class="form-group col-md-12">
-                                        <label>Perubahan PERBUP 2</label>
-                                        <input type="text" class="form-control nominal" name="perubahan_perbup_2" id="perubahan_perbup_2" value="<?= $perubahan_perbup_2 > 0 ? number_format($perubahan_perbup_2, 0, ',', '.') : '' ?>">
-                                    </div>
-                                    <div class="form-group col-md-12">
-                                        <label>P-APBD</label>
-                                        <input type="text" class="form-control nominal" name="papbd" id="papbd" value="<?= $papbd > 0 ? number_format($papbd, 0, ',', '.') : '' ?>">
-                                    </div>
-                                </div>
                                 <?php endif ?>
                             </div>
                             <!-- /.card-body -->
@@ -129,11 +131,11 @@
 <script>
     const liparent = document.querySelector('.liinputadmin');
     const ahrefparent = document.querySelector('.ahrefinputadmin');
-    const ahrefhibah = document.querySelector('.ahref-usulan-hibah');
+    const ahrefbansos = document.querySelector('.ahref-usulan-bansos');
 
     liparent.classList.add("menu-open");
     ahrefparent.classList.add('active');
-    ahrefhibah.classList.add('active');
+    ahrefbansos.classList.add('active');
 </script>
 <script>
     //Get the button
@@ -168,136 +170,140 @@
     }
 </script>
 <script>
-$(function () {
-    const MAX_CHECK = 100;
-    // tempat nyimpen id yang sudah dipilih, lintas halaman
-    const selectedIds = new Set();
+    $(function() {
+        const MAX_CHECK = 100;
+        // tempat nyimpen id yang sudah dipilih, lintas halaman
+        const selectedIds = new Set();
 
-    const table = $('#example1').DataTable({
-        'oLanguage':
-        {
-            "sProcessing":   "Sedang memproses...",
-            "sLengthMenu":   "Tampilkan _MENU_ entri",
-            "sZeroRecords":  "Data tidak ditemukan",
-            "sInfo":         "Menampilkan _START_ sampai _END_ dari _TOTAL_ entri",
-            "sInfoEmpty":    "Menampilkan 0 sampai 0 dari 0 entri",
-            "sInfoFiltered": "(disaring dari _MAX_ entri keseluruhan)",
-            "sInfoPostFix":  "",
-            "sSearch":       "Cari:",
-            "sUrl":          "",
-            "oPaginate": {
-            "sFirst":    "Pertama",
-            "sPrevious": "Sebelumnya",
-            "sNext":     "Selanjutnya",
-            "sLast":     "Terakhir"
-            }
-        },
-        pageLength: 10,
-        columnDefs: [{ orderable: false, targets: 0 }],
-        order: [[1, 'asc']],
-        // ini penting: setiap tabel digambar ulang, kita sync checkbox
-        drawCallback: function () {
-            syncCheckboxes();
-        }
-    });
-
-    function syncCheckboxes() {
-        // set centang / disabled per baris
-        $('#example1 tbody tr').each(function () {
-            const $chk = $(this).find('.child-check');
-            const id = $chk.val();
-
-            // centang kalau id ada di set
-            $chk.prop('checked', selectedIds.has(id));
-
-            // kalau sudah penuh, yang belum kepilih dimatiin
-            if (selectedIds.size >= MAX_CHECK && !selectedIds.has(id)) {
-                $chk.prop('disabled', true);
-            } else {
-                $chk.prop('disabled', false);
+        const table = $('#example1').DataTable({
+            'oLanguage': {
+                "sProcessing": "Sedang memproses...",
+                "sLengthMenu": "Tampilkan _MENU_ entri",
+                "sZeroRecords": "Data tidak ditemukan",
+                "sInfo": "Menampilkan _START_ sampai _END_ dari _TOTAL_ entri",
+                "sInfoEmpty": "Menampilkan 0 sampai 0 dari 0 entri",
+                "sInfoFiltered": "(disaring dari _MAX_ entri keseluruhan)",
+                "sInfoPostFix": "",
+                "sSearch": "Cari:",
+                "sUrl": "",
+                "oPaginate": {
+                    "sFirst": "Pertama",
+                    "sPrevious": "Sebelumnya",
+                    "sNext": "Selanjutnya",
+                    "sLast": "Terakhir"
+                }
+            },
+            pageLength: 10,
+            columnDefs: [{
+                orderable: false,
+                targets: 0
+            }],
+            order: [
+                [1, 'asc']
+            ],
+            // ini penting: setiap tabel digambar ulang, kita sync checkbox
+            drawCallback: function() {
+                syncCheckboxes();
             }
         });
 
-        // hitung hanya yang masih boleh dipilih (enabled)
-        const $allEnabled   = $('#example1 .child-check:enabled');
-        const enabledChecked = $allEnabled.filter(':checked').length;
+        function syncCheckboxes() {
+            // set centang / disabled per baris
+            $('#example1 tbody tr').each(function() {
+                const $chk = $(this).find('.child-check');
+                const id = $chk.val();
 
-        $('#customCheckboxAll').prop(
-            'checked',
-            $allEnabled.length > 0 && $allEnabled.length === enabledChecked
-        );
-    }
+                // centang kalau id ada di set
+                $chk.prop('checked', selectedIds.has(id));
 
-    // pertama kali jalan
-    syncCheckboxes();
+                // kalau sudah penuh, yang belum kepilih dimatiin
+                if (selectedIds.size >= MAX_CHECK && !selectedIds.has(id)) {
+                    $chk.prop('disabled', true);
+                } else {
+                    $chk.prop('disabled', false);
+                }
+            });
 
-    // klik satuan
-    $('#example1').on('change', '.child-check', function () {
-        const id = $(this).val();
+            // hitung hanya yang masih boleh dipilih (enabled)
+            const $allEnabled = $('#example1 .child-check:enabled');
+            const enabledChecked = $allEnabled.filter(':checked').length;
 
-        if (this.checked) {
-            if (selectedIds.size >= MAX_CHECK) {
-                // batalin
-                this.checked = false;
+            $('#customCheckboxAll').prop(
+                'checked',
+                $allEnabled.length > 0 && $allEnabled.length === enabledChecked
+            );
+        }
+
+        // pertama kali jalan
+        syncCheckboxes();
+
+        // klik satuan
+        $('#example1').on('change', '.child-check', function() {
+            const id = $(this).val();
+
+            if (this.checked) {
+                if (selectedIds.size >= MAX_CHECK) {
+                    // batalin
+                    this.checked = false;
+                    Swal.fire({
+                        title: 'Peringatan',
+                        text: 'Maksimal hanya boleh memilih ' + MAX_CHECK + ' data.',
+                        icon: 'info', // Menampilkan icon info
+                        confirmButtonText: 'OK' // Tombol konfirmasi
+                    });
+                    return;
+                }
+                selectedIds.add(id);
+            } else {
+                selectedIds.delete(id);
+            }
+
+            syncCheckboxes();
+        });
+
+        // klik select-all halaman aktif
+        $('#customCheckboxAll').on('change', function() {
+            const mauCheck = this.checked;
+
+            if (mauCheck) {
+                // centang yang ada di halaman ini, tapi hormati batas
+                $('#example1 .child-check').each(function() {
+                    const id = $(this).val();
+                    if (!selectedIds.has(id) && selectedIds.size < MAX_CHECK) {
+                        selectedIds.add(id);
+                    }
+                });
+            } else {
+                // uncheck semua yang kelihatan
+                $('#example1 .child-check').each(function() {
+                    const id = $(this).val();
+                    selectedIds.delete(id);
+                });
+            }
+
+            syncCheckboxes();
+        });
+
+        $('#form-tambah').on('submit', function(e) {
+            if (selectedIds.size === 0) {
                 Swal.fire({
                     title: 'Peringatan',
-                    text: 'Maksimal hanya boleh memilih ' + MAX_CHECK + ' data.',
+                    text: 'Pilih minimal 1 data dulu.',
                     icon: 'info', // Menampilkan icon info
                     confirmButtonText: 'OK' // Tombol konfirmasi
                 });
+                e.preventDefault();
                 return;
             }
-            selectedIds.add(id);
-        } else {
-            selectedIds.delete(id);
-        }
 
-        syncCheckboxes();
+            // masukkan ke hidden input sebagai JSON atau csv
+            $('#selected_ids').val(JSON.stringify(Array.from(selectedIds)));
+        });
     });
-
-    // klik select-all halaman aktif
-    $('#customCheckboxAll').on('change', function () {
-        const mauCheck = this.checked;
-
-        if (mauCheck) {
-            // centang yang ada di halaman ini, tapi hormati batas
-            $('#example1 .child-check').each(function () {
-                const id = $(this).val();
-                if (!selectedIds.has(id) && selectedIds.size < MAX_CHECK) {
-                    selectedIds.add(id);
-                }
-            });
-        } else {
-            // uncheck semua yang kelihatan
-            $('#example1 .child-check').each(function () {
-                const id = $(this).val();
-                selectedIds.delete(id);
-            });
-        }
-
-        syncCheckboxes();
-    });
-
-    $('#form-tambah').on('submit', function (e) {
-        if (selectedIds.size === 0) {
-            Swal.fire({
-                title: 'Peringatan',
-                text: 'Pilih minimal 1 data dulu.',
-                icon: 'info', // Menampilkan icon info
-                confirmButtonText: 'OK' // Tombol konfirmasi
-            });
-            e.preventDefault();
-            return;
-        }
-
-        // masukkan ke hidden input sebagai JSON atau csv
-        $('#selected_ids').val(JSON.stringify(Array.from(selectedIds)));
-    });
-});
 </script>
 <script>
     $(document).ready(function() {
-        $('.nominal').on('keyup', function () {
+        $('.nominal').on('keyup', function() {
             var angka = $(this).val();
             if (angka === '' || angka === '0' || angka === '0.00') {
                 // $(this).val('0');
