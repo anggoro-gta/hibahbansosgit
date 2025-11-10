@@ -49,7 +49,7 @@ $routes->get('/gantipasswordbyadmin/(:num)', 'Home::gantipasswordbyadmin/$1', ['
 $routes->post('/home/updatepasswordbyadmin', 'Home::updatepasswordbyid', ['filter' => 'role:admin']);
 $routes->get('/indexhibah', 'Masterhibah::index', ['filter' => 'role:admin']);
 $routes->get('/usulanhibahadmin', 'Usulanhibahadmin::index', ['filter' => 'role:admin']);
-$routes->match(['get', 'post'], 'setting/users/datatable', 'Home::datatableusers');
+$routes->match(['get', 'post'], 'setting/users/datatable', 'Home::datatableusers', ['filter' => 'role:admin']);
 
 // Master-Bansos
 $routes->get('master/bansos', 'MasterBansos::index');
@@ -88,7 +88,6 @@ $routes->post('usulan/bansos/store', 'UsulanBansos::store');
 $routes->get('usulan/bansos/edit/(:num)', 'UsulanBansos::edit/$1');
 $routes->post('usulan/bansos/update', 'UsulanBansos::update');
 $routes->get('usulan/bansos/delete/(:num)', 'UsulanBansos::delete/$1');
-
 
 //ajax
 $routes->get('master/kecamatan/(:num)', 'MasterBansos::getKecamatan/$1');
