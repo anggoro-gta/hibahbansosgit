@@ -110,7 +110,9 @@ class HibahModel extends Model
 
         // minimal sudah 2 tahun
         $builder->where('a.tgl_berdiri IS NOT NULL', null, false);
-        $builder->where('a.tgl_berdiri <= DATE_SUB(CURDATE(), INTERVAL 2 YEAR)', null, false);
+        // $builder->where('a.tgl_berdiri <= DATE_SUB(CURDATE(), INTERVAL 2 YEAR)', null, false);
+
+        // $builder->where('a.tgl_berdiri < CURDATE()', null, false);
 
         $tahun_select = $tahun;
         $tahun_kemarin = $tahun-1;
