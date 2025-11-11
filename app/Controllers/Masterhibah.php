@@ -140,6 +140,127 @@ class MasterHibah extends BaseController
 
             $db->table('ms_hibah')->insert($data);
 
+            $lastId = $db->insertID();
+
+            $file_1 = $this->request->getFile('file_1');
+            $file_2 = $this->request->getFile('file_2');
+            $file_3 = $this->request->getFile('file_3');
+            $file_4 = $this->request->getFile('file_4');
+
+            $dir = FCPATH . 'upload/hibah/';
+            if (!is_dir($dir)) {
+                @mkdir($dir, 0775, true);
+            }
+
+            $rowsDoc = [];
+
+            // helper kecil
+            $allowedExt = ['jpg','jpeg','png','pdf']; // tambahkan kalau mau pdf
+
+            if ($file_1 && $file_1->isValid() && !$file_1->hasMoved()) {
+                $ext  = strtolower($file_1->getClientExtension() ?? '');
+                $mime = strtolower($file_1->getMimeType() ?? '');
+
+                // ijinkan kalau ekstensi boleh ATAU mime image/pdf
+                if (in_array($ext, $allowedExt) || strpos($mime, 'image/') === 0 || $mime === 'application/pdf') {
+
+                    $newName  = $file_1->getRandomName();
+                    $origName = $file_1->getClientName();
+
+                    // simpan fisik
+                    $file_1->move($dir, $newName);
+
+                    $rowsDoc[] = [
+                        'table_name'     => 'ms_hibah_akta',  // atau ms_hibah_akta kalau memang begitu
+                        'table_id'       => $lastId,
+                        'file_name'      => $newName,
+                        'originale_name'  => $origName,
+                        'disk_name'      => 'public',
+                        'url_name'       => 'upload/hibah/' . $newName,
+                        'created_at'     => $now,
+                    ];
+                }
+            }
+
+            if ($file_2 && $file_2->isValid() && !$file_2->hasMoved()) {
+                $ext  = strtolower($file_2->getClientExtension() ?? '');
+                $mime = strtolower($file_2->getMimeType() ?? '');
+
+                // ijinkan kalau ekstensi boleh ATAU mime image/pdf
+                if (in_array($ext, $allowedExt) || strpos($mime, 'image/') === 0 || $mime === 'application/pdf') {
+
+                    $newName  = $file_2->getRandomName();
+                    $origName = $file_2->getClientName();
+
+                    // simpan fisik
+                    $file_2->move($dir, $newName);
+
+                    $rowsDoc[] = [
+                        'table_name'     => 'ms_hibah_bukti_lapor',  // atau ms_hibah_akta kalau memang begitu
+                        'table_id'       => $lastId,
+                        'file_name'      => $newName,
+                        'originale_name'  => $origName,
+                        'disk_name'      => 'public',
+                        'url_name'       => 'upload/hibah/' . $newName,
+                        'created_at'     => $now,
+                    ];
+                }
+            }
+
+            if ($file_3 && $file_3->isValid() && !$file_3->hasMoved()) {
+                $ext  = strtolower($file_3->getClientExtension() ?? '');
+                $mime = strtolower($file_3->getMimeType() ?? '');
+
+                // ijinkan kalau ekstensi boleh ATAU mime image/pdf
+                if (in_array($ext, $allowedExt) || strpos($mime, 'image/') === 0 || $mime === 'application/pdf') {
+
+                    $newName  = $file_3->getRandomName();
+                    $origName = $file_3->getClientName();
+
+                    // simpan fisik
+                    $file_3->move($dir, $newName);
+
+                    $rowsDoc[] = [
+                        'table_name'     => 'ms_hibah_npwp',  // atau ms_hibah_akta kalau memang begitu
+                        'table_id'       => $lastId,
+                        'file_name'      => $newName,
+                        'originale_name'  => $origName,
+                        'disk_name'      => 'public',
+                        'url_name'       => 'upload/hibah/' . $newName,
+                        'created_at'     => $now,
+                    ];
+                }
+            }
+
+            if ($file_4 && $file_4->isValid() && !$file_4->hasMoved()) {
+                $ext  = strtolower($file_4->getClientExtension() ?? '');
+                $mime = strtolower($file_4->getMimeType() ?? '');
+
+                // ijinkan kalau ekstensi boleh ATAU mime image/pdf
+                if (in_array($ext, $allowedExt) || strpos($mime, 'image/') === 0 || $mime === 'application/pdf') {
+
+                    $newName  = $file_4->getRandomName();
+                    $origName = $file_4->getClientName();
+
+                    // simpan fisik
+                    $file_4->move($dir, $newName);
+
+                    $rowsDoc[] = [
+                        'table_name'     => 'ms_hibah_domisili',  // atau ms_hibah_akta kalau memang begitu
+                        'table_id'       => $lastId,
+                        'file_name'      => $newName,
+                        'originale_name'  => $origName,
+                        'disk_name'      => 'public',
+                        'url_name'       => 'upload/hibah/' . $newName,
+                        'created_at'     => $now,
+                    ];
+                }
+            }
+
+            if (!empty($rowsDoc)) {
+                $db->table('dokumen')->insertBatch($rowsDoc);
+            }
+
             if ($db->transStatus() === false) {
                 throw new \RuntimeException('DB transaction failed');
             }
@@ -158,6 +279,7 @@ class MasterHibah extends BaseController
 
     public function edit($id)
     {
+        $db  = \Config\Database::connect();
         $row = $this->hibah_model->get_by_id($id);
 
         $data = [
@@ -180,9 +302,12 @@ class MasterHibah extends BaseController
             'ref_kecamatan'    => $this->kec_model->get_all($row->fk_kabupaten_id),
             'ref_desa'         => $this->desa_model->get_all($row->fk_kecamatan_id),
             'ref_kegiatan'     => $this->kegiatan_model->get_all($row->fk_program_id),
-            'ref_sub_kegiatan' => $this->sub_kegiatan_model->get_all($row->fk_kegiatan_id)
+            'ref_sub_kegiatan' => $this->sub_kegiatan_model->get_all($row->fk_kegiatan_id),
+            'file_1'           => $this->hibah_model->get_dokumen('ms_hibah_akta', $id),
+            'file_2'           => $this->hibah_model->get_dokumen('ms_hibah_bukti_lapor', $id),
+            'file_3'           => $this->hibah_model->get_dokumen('ms_hibah_npwp', $id),
+            'file_4'           => $this->hibah_model->get_dokumen('ms_hibah_domisili', $id)
         ];
-        
 
         return view('master/hibah/form', $data);
     }
@@ -214,6 +339,189 @@ class MasterHibah extends BaseController
 
             $db->table('ms_hibah')->where('id', $id)->update($data);
 
+            $file_1 = $this->request->getFile('file_1');
+            $file_2 = $this->request->getFile('file_2');
+            $file_3 = $this->request->getFile('file_3');
+            $file_4 = $this->request->getFile('file_4');
+
+            $dir = FCPATH . 'upload/hibah/';
+            if (!is_dir($dir)) {
+                @mkdir($dir, 0775, true);
+            }
+
+            $rowsDoc = [];
+
+            // helper kecil
+            $allowedExt = ['jpg','jpeg','png','pdf']; // tambahkan kalau mau pdf
+
+            if ($file_1 && $file_1->isValid() && !$file_1->hasMoved()) {
+
+                $old_file_1 = $this->hibah_model->get_dokumen('ms_hibah_akta', $id);
+
+                if(!empty($old_file_1)){
+                    $absPath = FCPATH . $old_file_1->url_name; // hasil: .../public/usulan/xxx.jpg
+                    if (is_file($absPath)) {
+                        @unlink($absPath);            // @ untuk mencegah warning kalau file sudah tidak ada
+                    }
+
+                    // Hapus baris dokumen di DB
+                    $db->table('dokumen')
+                    ->where('table_name', 'ms_hibah_akta')
+                    ->where('table_id', $id)
+                    ->delete();
+                }
+
+                $ext  = strtolower($file_1->getClientExtension() ?? '');
+                $mime = strtolower($file_1->getMimeType() ?? '');
+
+                // ijinkan kalau ekstensi boleh ATAU mime image/pdf
+                if (in_array($ext, $allowedExt) || strpos($mime, 'image/') === 0 || $mime === 'application/pdf') {
+
+                    $newName  = $file_1->getRandomName();
+                    $origName = $file_1->getClientName();
+
+                    // simpan fisik
+                    $file_1->move($dir, $newName);
+
+                    $rowsDoc[] = [
+                        'table_name'     => 'ms_hibah_akta',  // atau ms_hibah_akta kalau memang begitu
+                        'table_id'       => $id,
+                        'file_name'      => $newName,
+                        'originale_name'  => $origName,
+                        'disk_name'      => 'public',
+                        'url_name'       => 'upload/hibah/' . $newName,
+                        'created_at'     => $now,
+                    ];
+                }
+            }
+
+            if ($file_2 && $file_2->isValid() && !$file_2->hasMoved()) {
+
+                $old_file_2 = $this->hibah_model->get_dokumen('ms_hibah_bukti_lapor', $id);
+
+                if(!empty($old_file_2)){
+                    $absPath = FCPATH . $old_file_2->url_name; // hasil: .../public/usulan/xxx.jpg
+                    if (is_file($absPath)) {
+                        @unlink($absPath);            // @ untuk mencegah warning kalau file sudah tidak ada
+                    }
+
+                    // Hapus baris dokumen di DB
+                    $db->table('dokumen')
+                    ->where('table_name', 'ms_hibah_bukti_lapor')
+                    ->where('table_id', $id)
+                    ->delete();
+                }
+
+                $ext  = strtolower($file_2->getClientExtension() ?? '');
+                $mime = strtolower($file_2->getMimeType() ?? '');
+
+                // ijinkan kalau ekstensi boleh ATAU mime image/pdf
+                if (in_array($ext, $allowedExt) || strpos($mime, 'image/') === 0 || $mime === 'application/pdf') {
+
+                    $newName  = $file_2->getRandomName();
+                    $origName = $file_2->getClientName();
+
+                    // simpan fisik
+                    $file_2->move($dir, $newName);
+
+                    $rowsDoc[] = [
+                        'table_name'     => 'ms_hibah_bukti_lapor',  // atau ms_hibah_akta kalau memang begitu
+                        'table_id'       => $id,
+                        'file_name'      => $newName,
+                        'originale_name'  => $origName,
+                        'disk_name'      => 'public',
+                        'url_name'       => 'upload/hibah/' . $newName,
+                        'created_at'     => $now,
+                    ];
+                }
+            }
+
+            if ($file_3 && $file_3->isValid() && !$file_3->hasMoved()) {
+
+                $old_file_3 = $this->hibah_model->get_dokumen('ms_hibah_npwp', $id);
+
+                if(!empty($old_file_3)){
+                    $absPath = FCPATH . $old_file_3->url_name; // hasil: .../public/usulan/xxx.jpg
+                    if (is_file($absPath)) {
+                        @unlink($absPath);            // @ untuk mencegah warning kalau file sudah tidak ada
+                    }
+
+                    // Hapus baris dokumen di DB
+                    $db->table('dokumen')
+                    ->where('table_name', 'ms_hibah_npwp')
+                    ->where('table_id', $id)
+                    ->delete();
+                }
+
+                $ext  = strtolower($file_3->getClientExtension() ?? '');
+                $mime = strtolower($file_3->getMimeType() ?? '');
+
+                // ijinkan kalau ekstensi boleh ATAU mime image/pdf
+                if (in_array($ext, $allowedExt) || strpos($mime, 'image/') === 0 || $mime === 'application/pdf') {
+
+                    $newName  = $file_3->getRandomName();
+                    $origName = $file_3->getClientName();
+
+                    // simpan fisik
+                    $file_3->move($dir, $newName);
+
+                    $rowsDoc[] = [
+                        'table_name'     => 'ms_hibah_npwp',  // atau ms_hibah_akta kalau memang begitu
+                        'table_id'       => $id,
+                        'file_name'      => $newName,
+                        'originale_name'  => $origName,
+                        'disk_name'      => 'public',
+                        'url_name'       => 'upload/hibah/' . $newName,
+                        'created_at'     => $now,
+                    ];
+                }
+            }
+
+            if ($file_4 && $file_4->isValid() && !$file_4->hasMoved()) {
+
+                $old_file_4 = $this->hibah_model->get_dokumen('ms_hibah_domisili', $id);
+
+                if(!empty($old_file_4)){
+                    $absPath = FCPATH . $old_file_4->url_name; // hasil: .../public/usulan/xxx.jpg
+                    if (is_file($absPath)) {
+                        @unlink($absPath);            // @ untuk mencegah warning kalau file sudah tidak ada
+                    }
+
+                    // Hapus baris dokumen di DB
+                    $db->table('dokumen')
+                    ->where('table_name', 'ms_hibah_domisili')
+                    ->where('table_id', $id)
+                    ->delete();
+                }
+
+                $ext  = strtolower($file_4->getClientExtension() ?? '');
+                $mime = strtolower($file_4->getMimeType() ?? '');
+
+                // ijinkan kalau ekstensi boleh ATAU mime image/pdf
+                if (in_array($ext, $allowedExt) || strpos($mime, 'image/') === 0 || $mime === 'application/pdf') {
+
+                    $newName  = $file_4->getRandomName();
+                    $origName = $file_4->getClientName();
+
+                    // simpan fisik
+                    $file_4->move($dir, $newName);
+
+                    $rowsDoc[] = [
+                        'table_name'     => 'ms_hibah_domisili',  // atau ms_hibah_akta kalau memang begitu
+                        'table_id'       => $id,
+                        'file_name'      => $newName,
+                        'originale_name'  => $origName,
+                        'disk_name'      => 'public',
+                        'url_name'       => 'upload/hibah/' . $newName,
+                        'created_at'     => $now,
+                    ];
+                }
+            }
+
+            if (!empty($rowsDoc)) {
+                $db->table('dokumen')->insertBatch($rowsDoc);
+            }
+
             if ($db->transStatus() === false) {
                 throw new \RuntimeException('DB transaction failed');
             }
@@ -223,9 +531,10 @@ class MasterHibah extends BaseController
             return redirect()->to('/master/hibah');
 
         } catch (\Throwable $e) {
+            echo $e->getMessage();
             $db->transRollback();
             session()->setFlashdata('error', 'Gagal update: ' . $e->getMessage());
-            return redirect()->to('/master/hibah');
+            // return redirect()->to('/master/hibah');
         }
         
     }

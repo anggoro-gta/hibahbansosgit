@@ -127,6 +127,7 @@ nb-configuration.xml
 
 # Abaikan semua file foto hasil upload
 public/usulan/*
+public/upload/*
 
 # Tetapi tetap commit placeholder agar folder ada di repo
 !public/usulan/.gitkeep

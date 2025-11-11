@@ -150,5 +150,16 @@ class HibahModel extends Model
         return $query->getRow();
     }
 
+    public function get_dokumen($table_name, $table_id)
+    {
+        $db = \Config\Database::connect();        
+        // Select all fields
+        $builder = $db->table('dokumen');
+        // Use an associative array directly for where condition
+        $query = $builder->getWhere(['table_name' => $table_name, 'table_id' => $table_id]);
+        // Return the single row as an object
+        return $query->getRow();
+    }
+
 
 }

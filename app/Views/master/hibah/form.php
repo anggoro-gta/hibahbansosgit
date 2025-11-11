@@ -2,6 +2,9 @@
 
 <?= $this->section('content'); ?>
 <style>
+    #preview-grid { gap:.5rem; }
+    #preview-grid .thumb { width:100px; }
+    #preview-grid .thumb img { cursor:pointer; }
     .uppercase { text-transform: uppercase; }
 </style>
 <!-- Content Wrapper. Contains page content -->
@@ -30,7 +33,7 @@
             <div class="row">
                 <div class="col-12">
                     <div class="card">
-                        <form method="POST" action="<?= $url ?>">
+                        <form method="POST" action="<?= $url ?>" enctype="multipart/form-data"> 
                             <input type="hidden" class="form-control" name="id" id="id" required value="<?= $id ?>">
                             <div class="card-body">
                                 <div class="row">
@@ -103,6 +106,78 @@
                                             <option value="<?= $item['id'] ?>" <?= $sub_kegiatan==$item['id'] ? 'selected' : '' ?>><?= $item['nama_sub_kegiatan'] ?></option>
                                             <?php endforeach ?>
                                         </select>
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label>File Akta Berbadan Hukum</label>
+                                        <input type="file" class="form-control" name="file_1" id="file_1" accept=".jpg, .jpeg, .png, .pdf">
+                                        <?php if (isset($file_1) && !empty($file_1)): ?>
+                                            <div class="div-file col-12 col-sm-8 col-lg-6 border border-2 rounded-lg p-1 mb-2 bg-gray-light mt-2">
+                                                <div class="d-flex align-items-center justify-content-between">
+                                                    <div class="d-flex align-items-center flex-grow-1" style="min-width:0">
+                                                        <i class="fas fa-paperclip text-muted mr-2"></i>
+                                                        
+                                                        <a href="<?= base_url($file_1->url_name) ?>" target="_blank" class="text-muted text-truncate"
+                                                            style="display:inline-block; max-width:100%;">
+                                                            <?= esc($file_1->originale_name ?? $file_1->file_name) ?>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        <?php endif; ?>
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label>File Bukti Telah Lapor ke Bupati</label>
+                                        <input type="file" class="form-control" name="file_2" id="file_2" accept=".jpg, .jpeg, .png, .pdf">
+                                        <?php if (isset($file_2) && !empty($file_2)): ?>
+                                            <div class="div-file col-12 col-sm-8 col-lg-6 border border-2 rounded-lg p-1 mb-2 bg-gray-light mt-2">
+                                                <div class="d-flex align-items-center justify-content-between">
+                                                    <div class="d-flex align-items-center flex-grow-1" style="min-width:0">
+                                                        <i class="fas fa-paperclip text-muted mr-2"></i>
+                                                        
+                                                        <a href="<?= base_url($file_2->url_name) ?>" target="_blank" class="text-muted text-truncate"
+                                                            style="display:inline-block; max-width:100%;">
+                                                            <?= esc($file_2->originale_name ?? $file_2->file_name) ?>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        <?php endif; ?>
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label>File NPWP</label>
+                                        <input type="file" class="form-control" name="file_3" id="file_3" accept=".jpg, .jpeg, .png, .pdf">
+                                        <?php if (isset($file_3) && !empty($file_2)): ?>
+                                            <div class="div-file col-12 col-sm-8 col-lg-6 border border-2 rounded-lg p-1 mb-2 bg-gray-light mt-2">
+                                                <div class="d-flex align-items-center justify-content-between">
+                                                    <div class="d-flex align-items-center flex-grow-1" style="min-width:0">
+                                                        <i class="fas fa-paperclip text-muted mr-2"></i>
+                                                        
+                                                        <a href="<?= base_url($file_3->url_name) ?>" target="_blank" class="text-muted text-truncate"
+                                                            style="display:inline-block; max-width:100%;">
+                                                            <?= esc($file_3->originale_name ?? $file_3->file_name) ?>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        <?php endif; ?>
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label>File Surat Keterangan Domisili</label>
+                                        <input type="file" class="form-control" name="file_4" id="file_4" accept=".jpg, .jpeg, .png, .pdf">
+                                        <?php if (isset($file_4) && !empty($file_4)): ?>
+                                            <div class="div-file col-12 col-sm-8 col-lg-6 border border-2 rounded-lg p-1 mb-2 bg-gray-light mt-2">
+                                                <div class="d-flex align-items-center justify-content-between">
+                                                    <div class="d-flex align-items-center flex-grow-1" style="min-width:0">
+                                                        <i class="fas fa-paperclip text-muted mr-2"></i>
+                                                        
+                                                        <a href="<?= base_url($file_4->url_name) ?>" target="_blank" class="text-muted text-truncate"
+                                                            style="display:inline-block; max-width:100%;">
+                                                            <?= esc($file_4->originale_name ?? $file_4->file_name) ?>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        <?php endif; ?>
                                     </div>
                                 </div>
                             </div>
