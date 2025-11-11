@@ -204,19 +204,20 @@
                                             <!-- /.user-block -->
                                             <div class="row mb-3">
                                                 <div class="col-sm-6">
-                                                    <img class="img-fluid" src="../../assets/dist/img/photo1.png" alt="Photo">
+                                                    <img class="img-fluid" src="../../assets/dist/img/photo1.jpg" alt="Photo">
                                                 </div>
                                                 <!-- /.col -->
                                                 <div class="col-sm-6">
                                                     <div class="row">
                                                         <div class="col-sm-6">
-                                                            <img class="img-fluid mb-3" src="../../assets/dist/img/photo2.png" alt="Photo">
+                                                            <img class="img-fluid mb-3" src="../../assets/dist/img/photo2.jpg" alt="Photo">
                                                             <img class="img-fluid" src="../../assets/dist/img/photo3.jpg" alt="Photo">
                                                         </div>
                                                         <!-- /.col -->
                                                         <div class="col-sm-6">
                                                             <img class="img-fluid mb-3" src="../../assets/dist/img/photo4.jpg" alt="Photo">
-                                                            <img class="img-fluid" src="../../assets/dist/img/photo1.png" alt="Photo">
+                                                            <img class="img-fluid" src="../../assets/dist/img/photo5.jpg
+                                                            " alt="Photo">
                                                         </div>
                                                         <!-- /.col -->
                                                     </div>

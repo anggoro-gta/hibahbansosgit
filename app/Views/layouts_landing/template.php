@@ -52,29 +52,31 @@
 
 </head>
 
-<body class="hold-transition sidebar-mini">
+<body class="hold-transition layout-top-nav">
     <div class="wrapper">
 
         <!-- navbar dan sidebar -->
-        <?= $this->include('layouts/navbarsidebar'); ?>
+        <?= $this->include('layouts_landing/navbarsidebar'); ?>
 
         <!-- section isinya disini -->
-        <?= $this->renderSection('content'); ?>
+        <?= $this->renderSection('contentlanding'); ?>
         <!-- section isinya disini -->
-
-        <!-- footer -->
-        <footer class="main-footer">
-            <div class="float-right d-none d-sm-block">
-                <b>Version</b> 1.0.0
-            </div>
-            <strong>Copyright &copy; <?= date('Y'); ?> Bappeda Kab. Kediri All rights reserved, Design by gta_project and <a href="https://adminlte.io">AdminLTE.io</a>.</strong>.
-        </footer>
 
         <!-- Control Sidebar -->
         <aside class="control-sidebar control-sidebar-dark">
             <!-- Control sidebar content goes here -->
         </aside>
         <!-- /.control-sidebar -->
+
+        <!-- Main Footer -->
+        <footer class="main-footer">
+            <!-- To the right -->
+            <div class="float-right d-none d-sm-inline">
+                <b>Version</b> 1.0.0
+            </div>
+            <!-- Default to the left -->
+            <strong>Copyright &copy; 2025 Bappeda Kab. Kediri All rights reserved, Designed by gta_project and <a href="https://adminlte.io">AdminLTE.io</a>.</strong>
+        </footer>
     </div>
     <!-- ./wrapper -->
 
