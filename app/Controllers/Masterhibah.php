@@ -548,6 +548,63 @@ class MasterHibah extends BaseController
 
             $row = $this->hibah_model->get_by_id($id);
 
+            $file_1 = $this->hibah_model->get_dokumen('ms_hibah_akta', $id);
+            $file_2 = $this->hibah_model->get_dokumen('ms_hibah_bukti_lapor', $id);
+            $file_3 = $this->hibah_model->get_dokumen('ms_hibah_npwp', $id);
+            $file_4 = $this->hibah_model->get_dokumen('ms_hibah_domisili', $id);
+
+            if(!empty($file_1)){
+                $absPath = FCPATH . $file_1->url_name; // hasil: .../public/usulan/xxx.jpg
+                if (is_file($absPath)) {
+                    @unlink($absPath);            // @ untuk mencegah warning kalau file sudah tidak ada
+                }
+
+                // Hapus baris dokumen di DB
+                $db->table('dokumen')
+                ->where('table_name', 'ms_hibah_akta')
+                ->where('table_id', $id)
+                ->delete();
+            }
+
+            if(!empty($file_2)){
+                $absPath = FCPATH . $file_2->url_name; // hasil: .../public/usulan/xxx.jpg
+                if (is_file($absPath)) {
+                    @unlink($absPath);            // @ untuk mencegah warning kalau file sudah tidak ada
+                }
+
+                // Hapus baris dokumen di DB
+                $db->table('dokumen')
+                ->where('table_name', 'ms_hibah_bukti_lapor')
+                ->where('table_id', $id)
+                ->delete();
+            }
+
+            if(!empty($file_3)){
+                $absPath = FCPATH . $file_3->url_name; // hasil: .../public/usulan/xxx.jpg
+                if (is_file($absPath)) {
+                    @unlink($absPath);            // @ untuk mencegah warning kalau file sudah tidak ada
+                }
+
+                // Hapus baris dokumen di DB
+                $db->table('dokumen')
+                ->where('table_name', 'ms_hibah_npwp')
+                ->where('table_id', $id)
+                ->delete();
+            }
+
+            if(!empty($file_4)){
+                $absPath = FCPATH . $file_4->url_name; // hasil: .../public/usulan/xxx.jpg
+                if (is_file($absPath)) {
+                    @unlink($absPath);            // @ untuk mencegah warning kalau file sudah tidak ada
+                }
+
+                // Hapus baris dokumen di DB
+                $db->table('dokumen')
+                ->where('table_name', 'ms_hibah_domisili')
+                ->where('table_id', $id)
+                ->delete();
+            }
+
             if($row){
                 $db->table('ms_hibah')->where('id', $id)->delete();
             }
