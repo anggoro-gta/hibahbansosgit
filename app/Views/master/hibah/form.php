@@ -108,8 +108,9 @@
                                         </select>
                                     </div>
                                     <div class="form-group col-md-6">
-                                        <label>File Akta Berbadan Hukum</label>
+                                        <label>File Akta Berbadan Hukum <sup class="text-danger text-sm">*) Hanya boleh jpg/png/jpeg/pdf</sup></label>
                                         <input type="file" class="form-control" name="file_1" id="file_1" accept=".jpg, .jpeg, .png, .pdf">
+                                        <span class="text-sm text-danger">NB: Maksimal ukuran file 10 MB</span>
                                         <?php if (isset($file_1) && !empty($file_1)): ?>
                                             <div class="div-file col-12 col-sm-8 col-lg-6 border border-2 rounded-lg p-1 mb-2 bg-gray-light mt-2">
                                                 <div class="d-flex align-items-center justify-content-between">
@@ -126,8 +127,9 @@
                                         <?php endif; ?>
                                     </div>
                                     <div class="form-group col-md-6">
-                                        <label>File Bukti Telah Lapor ke Bupati</label>
+                                        <label>File Bukti Telah Lapor ke Bupati <sup class="text-danger text-sm">*) Hanya boleh jpg/png/jpeg/pdf</sup></label>
                                         <input type="file" class="form-control" name="file_2" id="file_2" accept=".jpg, .jpeg, .png, .pdf">
+                                        <span class="text-sm text-danger">NB: Maksimal ukuran file 10 MB</span>
                                         <?php if (isset($file_2) && !empty($file_2)): ?>
                                             <div class="div-file col-12 col-sm-8 col-lg-6 border border-2 rounded-lg p-1 mb-2 bg-gray-light mt-2">
                                                 <div class="d-flex align-items-center justify-content-between">
@@ -144,8 +146,9 @@
                                         <?php endif; ?>
                                     </div>
                                     <div class="form-group col-md-6">
-                                        <label>File NPWP</label>
+                                        <label>File NPWP <sup class="text-danger text-sm">*) Hanya boleh jpg/png/jpeg/pdf</sup></label>
                                         <input type="file" class="form-control" name="file_3" id="file_3" accept=".jpg, .jpeg, .png, .pdf">
+                                        <span class="text-sm text-danger">NB: Maksimal ukuran file 10 MB</span>
                                         <?php if (isset($file_3) && !empty($file_2)): ?>
                                             <div class="div-file col-12 col-sm-8 col-lg-6 border border-2 rounded-lg p-1 mb-2 bg-gray-light mt-2">
                                                 <div class="d-flex align-items-center justify-content-between">
@@ -162,8 +165,9 @@
                                         <?php endif; ?>
                                     </div>
                                     <div class="form-group col-md-6">
-                                        <label>File Surat Keterangan Domisili</label>
+                                        <label>File Surat Keterangan Domisili <sup class="text-danger text-sm">*) Hanya boleh jpg/png/jpeg/pdf</sup></label>
                                         <input type="file" class="form-control" name="file_4" id="file_4" accept=".jpg, .jpeg, .png, .pdf">
+                                        <span class="text-sm text-danger">NB: Maksimal ukuran file 10 MB</span>
                                         <?php if (isset($file_4) && !empty($file_4)): ?>
                                             <div class="div-file col-12 col-sm-8 col-lg-6 border border-2 rounded-lg p-1 mb-2 bg-gray-light mt-2">
                                                 <div class="d-flex align-items-center justify-content-between">
@@ -402,6 +406,78 @@
                 });
             } else {
                 $('#sub_kegiatan').empty().append('<option value="">Pilih Sub Kegiatan</option>');
+            }
+        });
+
+        $('#file_1').on('change', function() {
+            const file = this.files[0];
+            if (!file) return; // kalau user batal pilih
+
+            const maxSize = 10 * 1024 * 1024; // 10 MB dalam byte
+
+            if (file.size > maxSize) {
+                Swal.fire({
+                    title: 'Peringatan',
+                    text: 'Ukuran file maksimal 10 MB!',
+                    icon: 'info', // Menampilkan icon info
+                    confirmButtonText: 'OK' // Tombol konfirmasi
+                });
+                // kosongkan lagi inputnya
+                $(this).val('');
+            }
+        });
+
+        $('#file_2').on('change', function() {
+            const file = this.files[0];
+            if (!file) return; // kalau user batal pilih
+
+            const maxSize = 10 * 1024 * 1024; // 10 MB dalam byte
+
+            if (file.size > maxSize) {
+                Swal.fire({
+                    title: 'Peringatan',
+                    text: 'Ukuran file maksimal 10 MB!',
+                    icon: 'info', // Menampilkan icon info
+                    confirmButtonText: 'OK' // Tombol konfirmasi
+                });
+                // kosongkan lagi inputnya
+                $(this).val('');
+            }
+        });
+
+        $('#file_3').on('change', function() {
+            const file = this.files[0];
+            if (!file) return; // kalau user batal pilih
+
+            const maxSize = 10 * 1024 * 1024; // 10 MB dalam byte
+
+            if (file.size > maxSize) {
+                Swal.fire({
+                    title: 'Peringatan',
+                    text: 'Ukuran file maksimal 10 MB!',
+                    icon: 'info', // Menampilkan icon info
+                    confirmButtonText: 'OK' // Tombol konfirmasi
+                });
+                // kosongkan lagi inputnya
+                $(this).val('');
+            }
+        });
+
+        $('#file_4').on('change', function() {
+            const file = this.files[0];
+            if (!file) return; // kalau user batal pilih
+
+            const maxSize = 10 * 1024 * 1024; // 10 MB dalam byte
+
+            if (file.size > maxSize) {
+                Swal.fire({
+                    title: 'Peringatan',
+                    text: 'Ukuran file maksimal 10 MB!',
+                    icon: 'info', // Menampilkan icon info
+                    confirmButtonText: 'OK' // Tombol konfirmasi
+                });
+                // kosongkan lagi inputnya
+                $(this).val('');
             }
         });
 

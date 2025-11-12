@@ -40,7 +40,7 @@
                                         <th>NIK</th>
                                         <th>Nama</th>
                                         <th>Alamat</th>
-                                        <th>Action</th>
+                                        <th width="15%">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -52,7 +52,7 @@
                                         <th>NIK</th>
                                         <th>Nama</th>
                                         <th>Alamat</th>
-                                        <th>Action</th>
+                                        <th width="15%">Action</th>
                                     </tr>
                                 </tfoot>
                             </table>

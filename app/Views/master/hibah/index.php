@@ -41,7 +41,7 @@
                                         <th>Lembaga</th>
                                         <th>No. Akta</th>
                                         <th>Alamat</th>
-                                        <th>Action</th>
+                                        <th width="15%">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -54,7 +54,7 @@
                                         <th>Lembaga</th>
                                         <th>No. Akta</th>
                                         <th>Alamat</th>
-                                        <th>Action</th>
+                                        <th width="15%">Action</th>
                                     </tr>
                                 </tfoot>
                             </table>

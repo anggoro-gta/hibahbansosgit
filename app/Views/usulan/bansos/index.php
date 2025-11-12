@@ -45,7 +45,7 @@
                                         <th>Perubahan PERBUP 1 <?= $_SESSION['years'] ?></th>
                                         <th>Perubahan PERBUP 2 <?= $_SESSION['years'] ?></th>
                                         <th>P-APBD <?= $_SESSION['years'] ?></th>
-                                        <th>Action</th>
+                                        <th width="10%">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -60,7 +60,7 @@
                                         <th>Perubahan PERBUP 1 <?= $_SESSION['years'] ?></th>
                                         <th>Perubahan PERBUP 2 <?= $_SESSION['years'] ?></th>
                                         <th>P-APBD <?= $_SESSION['years'] ?></th>
-                                        <th>Action</th>
+                                        <th width="10%">Action</th>
                                     </tr>
                                 </tfoot>
                             </table>
