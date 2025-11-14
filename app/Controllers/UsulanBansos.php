@@ -59,35 +59,55 @@ class UsulanBansos extends BaseController
 
     public function datatable()
     {
-        if (!$this->request->isAJAX()) {
-            return $this->response->setStatusCode(400)->setJSON(['data'=>[]]);
+        try {
+            if (!$this->request->isAJAX()) {
+                return $this->response->setStatusCode(400)->setJSON(['data'=>[]]);
+            }
+
+            $draw   = (int) $this->request->getPost('draw');
+            $start  = (int) $this->request->getPost('start');   // offset
+            $length = (int) $this->request->getPost('length');  // limit
+            $search = $this->request->getPost('search')['value'] ?? '';
+            $orderReq = $this->request->getPost('order')[0] ?? null; // column index & dir
+            $kodeOpd = $this->kode_user;
+            $tahun = $_SESSION['years'];
+
+            // mapping index kolom -> nama kolom di DB
+            $orderCols = ['b.nama', 'alamat_full', 'apbd', 'perubahan_perbup_1', 'perubahan_perbup_2', 'papbd'];
+            $orderBy = $orderCols[$orderReq['column'] - 1] ?? 'a.id'; // -1 karena kolom nomor urut
+            $orderDir = ($orderReq['dir'] ?? 'asc') === 'desc' ? 'DESC' : 'ASC';
+
+            $recordsTotal    = $this->bansos_model->count_all_usulan($kodeOpd, $tahun);                          // total baris (tanpa search)
+            $recordsFiltered = $this->bansos_model->count_filtered_usulan($kodeOpd, $tahun, $search);            // total setelah search
+            $rows            = $this->bansos_model->get_page_usulan($kodeOpd, $tahun, $search, $orderBy, $orderDir, $length, $start);
+
+            $data = [];
+            foreach ($rows as $r) {
+                
+                $btn = ' <a href="'.base_url('usulan/bansos/edit/'.$r['id']).'" class="btn btn-sm btn-primary mb-1"><i class="fa fa-edit"></i></a>
+                            <a href="'.base_url('usulan/bansos/delete/'.$r['id']).'" class="btn btn-sm btn-danger mb-1" onclick="return confirmDelete(\''.base_url('usulan/bansos/delete/'.$r['id']).'\')"><i class="fa fa-trash"></i></a>';
+
+                $data[] = [
+                    'nama'               => $r['nama'] ?? '-',
+                    'alamat'             => $r['alamat_full'],
+                    'apbd'               => $r['apbd'],
+                    'perubahan_perbup_1' => $r['perubahan_perbup_1'],
+                    'perubahan_perbup_2' => $r['perubahan_perbup_2'],
+                    'papbd'              => $r['papbd'],
+                    'action'             => $btn,
+                ];
+            }
+
+            return $this->response->setJSON([
+                'draw'            => $draw,
+                'recordsTotal'    => $recordsTotal,
+                'recordsFiltered' => $recordsFiltered,
+                'data'            => $data,
+                'csrf'            => function_exists('csrf_hash') ? csrf_hash() : null,
+            ]);
+        } catch (\Throwable $th) {
+            echo $th->getMessage();
         }
-
-        $tahun = $_SESSION['years'];
-
-        $rows = $this->bansos_model->get_all_usulan($this->kode_user, $tahun);
-
-        // Bentuk array untuk DataTables (paling gampang: array of arrays)
-        $data = [];
-        $no = 1;
-        foreach ($rows as $r) {
-            $alamat = $r['nama_kabupaten'].', '.$r['nama_kecamatan'].', '.$r['nama_desa'].', '.$r['alamat'];
-            $data[] = [
-                'id'                 => (int)($r['id'] ?? 0),
-                'nama'               => $r['nama'] ?? '-',
-                'alamat'             => $alamat,
-                'apbd'               => $r['apbd'] ?? '',
-                'perubahan_perbup_1' => $r['perubahan_perbup_1'] ?? '',
-                'perubahan_perbup_2' => $r['perubahan_perbup_2'] ?? '',
-                'papbd'              => $r['papbd'] ?? '',
-            ];
-        }
-
-        // Jika CSRF aktif & regenerate, kirim token baru (opsional)
-        $resp = ['data' => $data];
-        if (function_exists('csrf_hash')) $resp['csrf'] = csrf_hash();
-
-        return $this->response->setJSON($resp);
     }
 
     public function create()

@@ -6,7 +6,7 @@
     <!-- Content Header (Page header) -->
     <section class="content-header">
         <div class="container-fluid">
-            <div class="row mb-2">
+            <div class="row">
                 <div class="col-sm-6">
                     <h1>Master Bansos</h1>
                 </div>
@@ -15,6 +15,12 @@
                         <li class="breadcrumb-item"><a href="#">Master</a></li>
                         <li class="breadcrumb-item active">Bansos</li>
                     </ol>
+                </div>
+                <div class="col-sm-6 pt-2">
+                    <?php if (in_groups(['useropd'])) : ?>
+                        <a href="<?= base_url('master/bansos/create') ?>" class="btn btn-sm btn-success"><i class="fa fa-plus mr-2"></i>Tambah</a>
+                        <a href="<?= base_url('import-excel-bansos') ?>" class="btn btn-sm btn-outline-primary"><i class="fa fa-upload mr-2"></i>Import</a>
+                    <?php endif; ?>
                 </div>
             </div>
         </div><!-- /.container-fluid -->
@@ -26,12 +32,18 @@
             <div class="row">
                 <div class="col-12">
                     <div class="card">
-                        <?php if (in_groups(['useropd'])) : ?>
                         <div class="card-header">
-                            <a href="<?= base_url('master/bansos/create') ?>" class="btn btn-sm btn-success"><i class="fa fa-plus mr-2"></i>Tambah</a>
-                            <a href="<?= base_url('import-excel-bansos') ?>" class="btn btn-sm btn-outline-primary"><i class="fa fa-upload mr-2"></i>Import</a>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <select class="form-control select2" name="kode_opd" id="kode_opd">
+                                        <option value="all">Semua OPD</option>
+                                        <?php foreach ($ref_opd as $item) : ?>
+                                        <option value="<?= $item['kode_opd'] ?>"><?= $item['nama_opd'] ?></option>
+                                        <?php endforeach ?>
+                                    </select>
+                                </div>
+                            </div>
                         </div>
-                        <?php endif; ?>
                         <div class="card-body">
                             <table id="example1" class="table table-bordered table-striped">
                                 <thead>
@@ -40,7 +52,8 @@
                                         <th>NIK</th>
                                         <th>Nama</th>
                                         <th>Alamat</th>
-                                        <th width="15%">Action</th>
+                                        <th>OPD</th>
+                                        <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -52,7 +65,8 @@
                                         <th>NIK</th>
                                         <th>Nama</th>
                                         <th>Alamat</th>
-                                        <th width="15%">Action</th>
+                                        <th>OPD</th>
+                                        <th>Action</th>
                                     </tr>
                                 </tfoot>
                             </table>
@@ -144,36 +158,11 @@
 
 <script>
     $(function () {
-        const BASE = "<?= site_url() ?>";        // utk link di kolom Action
+        $('.select2').select2();
 
-        // kolom wajib (tanpa Action)
-        const columns = [
-            { data: null, render: (d,t,r,meta) => meta.row + 1 },
-            { data: 'nik', defaultContent: '-' },
-            { data: 'nama',   defaultContent: '-' },
-            { data: 'alamat',    defaultContent: '-' }
-        ];
+        let kodeOpd = $('#kode_opd').val();
 
-        
-        columns.push({
-            data: null, orderable:false, searchable:false, className:'text-center',
-            render: r => `
-                <button type="button" class="btn btn-sm btn-info mb-1 btn-detail" 
-                        data-id="${r.id}" title="Taging Nomenklatur">
-                    <i class="fa fa-eye"></i>
-                </button>
-                <a href="${BASE}master/bansos/edit/${r.id}" 
-                    class="btn btn-sm btn-primary mb-1" title="Edit">
-                    <i class="fa fa-edit"></i>
-                </a>
-                <a href="${BASE}master/bansos/delete/${r.id}" 
-                    class="btn btn-sm btn-danger mb-1" title="Delete" 
-                    onclick="return confirmDelete('${BASE}master/bansos/delete/${r.id}')">
-                    <i class="fa fa-trash"></i>
-                </a>`
-        });
-
-        const table = $("#example1").DataTable({
+        const table = $('#example1').DataTable({
             'oLanguage':
             {
                 "sProcessing":   "Sedang memproses...",
@@ -192,25 +181,34 @@
                 "sLast":     "Terakhir"
                 }
             },
-            responsive: true,
-            autoWidth: false,
-            ordering: true,
             processing: true,
-            serverSide: false,
+            serverSide: true,
+            deferRender: true,
             ajax: {
                 url: "<?= site_url('master/bansos/datatable'); ?>",
                 type: "POST",
-                data: d => { d["<?= csrf_token() ?>"] = "<?= csrf_hash() ?>"; },
-                dataSrc: json => {
-                    if (json.csrf) $('meta[name="<?= csrf_token() ?>"]').attr('content', json.csrf);
-                    return json.data || [];
+                data: d => {
+                    d.kode_opd = kodeOpd;
+                    d["<?= csrf_token() ?>"] = "<?= csrf_hash() ?>";
                 }
             },
-            columns
+            columns: [
+                { data: null, render: (d,t,r,meta) => meta.row + 1 + +$('#example1').DataTable().page.info().start },
+                { data: 'nik' },
+                { data: 'nama' },
+                { data: 'alamat' },
+                { data: 'nama_opd' },
+                { data: 'action', orderable:false, searchable:false, className:'text-center' }
+            ]
+        });
+
+        $('#kode_opd').on('change', function(){
+            kodeOpd = $(this).val();
+            table.ajax.reload(null, true);
         });
 
         // contoh: reload saat ganti tahun
-        $('#years').on('change', () => table.ajax.reload(null, false));
+        // $('#years').on('change', () => table.ajax.reload(null, false));
 
         const valOrDash = v => (v === null || v === undefined || v === '') ? '-' : v;
 

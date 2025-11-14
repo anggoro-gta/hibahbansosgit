@@ -45,7 +45,7 @@
                                         <th>Perubahan PERBUP 1 <?= $_SESSION['years'] ?></th>
                                         <th>Perubahan PERBUP 2 <?= $_SESSION['years'] ?></th>
                                         <th>P-APBD <?= $_SESSION['years'] ?></th>
-                                        <th width="10%">Action</th>
+                                        <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -60,7 +60,7 @@
                                         <th>Perubahan PERBUP 1 <?= $_SESSION['years'] ?></th>
                                         <th>Perubahan PERBUP 2 <?= $_SESSION['years'] ?></th>
                                         <th>P-APBD <?= $_SESSION['years'] ?></th>
-                                        <th width="10%">Action</th>
+                                        <th>Action</th>
                                     </tr>
                                 </tfoot>
                             </table>
@@ -137,50 +137,7 @@
 
 <script>
     $(function () {
-        const BASE = "<?= site_url() ?>";        // utk link di kolom Action
-
-        const columns = [
-            { data: null, render: (d,t,r,meta) => meta.row + 1 },
-            { data: 'nama_lembaga', defaultContent: '-' },
-            { data: 'alamat',    defaultContent: '-' },
-            { data: 'apbd', className:'text-right', render: (data,type) => {
-                if (type === 'display') return Number(data || 0).toLocaleString('id-ID');
-                    return data;
-                } 
-            },
-            { data: 'perubahan_perbup_1', className:'text-right', render: (data,type) => {
-                if (type === 'display') return Number(data || 0).toLocaleString('id-ID');
-                    return data;
-                } 
-            },
-            { data: 'perubahan_perbup_2', className:'text-right', render: (data,type) => {
-                if (type === 'display') return Number(data || 0).toLocaleString('id-ID');
-                    return data;
-                } 
-            },
-            { data: 'papbd', className:'text-right', render: (data,type) => {
-                if (type === 'display') return Number(data || 0).toLocaleString('id-ID');
-                    return data;
-                } 
-            }
-        ];
-
-        
-        columns.push({
-            data: null, orderable:false, searchable:false, className:'text-center',
-            render: r => `
-                <a href="${BASE}usulan/hibah/edit/${r.id}" 
-                    class="btn btn-sm btn-primary mb-1" title="Edit">
-                    <i class="fa fa-edit"></i>
-                </a>
-                <a href="${BASE}usulan/hibah/delete/${r.id}" 
-                    class="btn btn-sm btn-danger mb-1" title="Delete" 
-                    onclick="return confirmDelete('${BASE}usulan/hibah/delete/${r.id}')">
-                    <i class="fa fa-trash"></i>
-                </a>`
-        });
-
-        const table = $("#example1").DataTable({
+        const table = $('#example1').DataTable({
             'oLanguage':
             {
                 "sProcessing":   "Sedang memproses...",
@@ -199,25 +156,46 @@
                 "sLast":     "Terakhir"
                 }
             },
-            responsive: true,
-            autoWidth: false,
-            ordering: true,
             processing: true,
-            serverSide: false,
+            serverSide: true,
+            deferRender: true,
             ajax: {
                 url: "<?= site_url('usulan/hibah/datatable'); ?>",
                 type: "POST",
-                data: d => { d["<?= csrf_token() ?>"] = "<?= csrf_hash() ?>"; },
-                dataSrc: json => {
-                    if (json.csrf) $('meta[name="<?= csrf_token() ?>"]').attr('content', json.csrf);
-                    return json.data || [];
+                data: d => {
+                    d["<?= csrf_token() ?>"] = "<?= csrf_hash() ?>";
                 }
             },
-            columns
+            columns: [
+                { data: null, render: (d,t,r,meta) => meta.row + 1 + +$('#example1').DataTable().page.info().start },
+                { data: 'nama_lembaga', defaultContent: '-' },
+                { data: 'alamat',    defaultContent: '-' },
+                { data: 'apbd', className:'text-right', render: (data,type) => {
+                    if (type === 'display') return Number(data || 0).toLocaleString('id-ID');
+                        return data;
+                    } 
+                },
+                { data: 'perubahan_perbup_1', className:'text-right', render: (data,type) => {
+                    if (type === 'display') return Number(data || 0).toLocaleString('id-ID');
+                        return data;
+                    } 
+                },
+                { data: 'perubahan_perbup_2', className:'text-right', render: (data,type) => {
+                    if (type === 'display') return Number(data || 0).toLocaleString('id-ID');
+                        return data;
+                    } 
+                },
+                { data: 'papbd', className:'text-right', render: (data,type) => {
+                    if (type === 'display') return Number(data || 0).toLocaleString('id-ID');
+                        return data;
+                    } 
+                },
+                { data: 'action', orderable:false, searchable:false, className:'text-center' }
+            ]
         });
 
         // contoh: reload saat ganti tahun
-        $('#years').on('change', () => table.ajax.reload(null, false));
+        // $('#years').on('change', () => table.ajax.reload(null, false));
     });
     function confirmDelete(url) {
         // Menampilkan konfirmasi menggunakan SweetAlert2

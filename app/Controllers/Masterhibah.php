@@ -51,7 +51,8 @@ class MasterHibah extends BaseController
     public function index()
     {
         $data = [
-            'tittle' => 'Master Hibah'
+            'tittle' => 'Master Hibah',
+            'ref_opd' => $this->hibah_model->get_all_opd()
         ];
         
         return view('master/hibah/index', $data);
@@ -59,31 +60,55 @@ class MasterHibah extends BaseController
 
     public function datatable()
     {
-        if (!$this->request->isAJAX()) {
-            return $this->response->setStatusCode(400)->setJSON(['data'=>[]]);
+        try {
+            if (!$this->request->isAJAX()) {
+                return $this->response->setStatusCode(400)->setJSON(['data'=>[]]);
+            }
+
+            $draw   = (int) $this->request->getPost('draw');
+            $start  = (int) $this->request->getPost('start');   // offset
+            $length = (int) $this->request->getPost('length');  // limit
+            $search = $this->request->getPost('search')['value'] ?? '';
+            $orderReq = $this->request->getPost('order')[0] ?? null; // column index & dir
+            $kodeOpd = $this->request->getPost('kode_opd');
+
+            // mapping index kolom -> nama kolom di DB
+            $orderCols = ['mh.tgl_berdiri','mh.nama_lembaga','mh.no_akta_hukum','alamat_full', 'nama_opd'];
+            $orderBy = $orderCols[$orderReq['column'] - 1] ?? 'mh.id'; // -1 karena kolom nomor urut
+            $orderDir = ($orderReq['dir'] ?? 'asc') === 'desc' ? 'DESC' : 'ASC';
+
+            $recordsTotal    = $this->hibah_model->count_all($kodeOpd);                          // total baris (tanpa search)
+            $recordsFiltered = $this->hibah_model->count_filtered($kodeOpd, $search);            // total setelah search
+            $rows            = $this->hibah_model->get_page($kodeOpd, $search, $orderBy, $orderDir, $length, $start);
+
+            $data = [];
+            foreach ($rows as $r) {
+                $btn = '<button type="button" class="btn btn-sm btn-info mb-1 btn-detail" data-id="'.$r['id'].'" title="Taging Nomenklatur"><i class="fa fa-eye"></i></button>';
+                if ($this->kode_user == $r['kode_opd']) {
+                    $btn .= ' <a href="'.base_url('master/hibah/edit/'.$r['id']).'" class="btn btn-sm btn-primary mb-1"><i class="fa fa-edit"></i></a>
+                            <a href="'.base_url('master/hibah/delete/'.$r['id']).'" class="btn btn-sm btn-danger mb-1" onclick="return confirmDelete(\''.base_url('master/hibah/delete/'.$r['id']).'\')"><i class="fa fa-trash"></i></a>';
+                }
+
+                $data[] = [
+                    'tgl_berdiri'   => date('d-m-Y', strtotime($r['tgl_berdiri'])),
+                    'nama_lembaga'  => $r['nama_lembaga'] ?? '-',
+                    'no_akta_hukum' => $r['no_akta_hukum'] ?? '-',
+                    'alamat'        => $r['alamat_full'],
+                    'nama_opd'        => $r['nama_opd'],
+                    'action'        => $btn,
+                ];
+            }
+
+            return $this->response->setJSON([
+                'draw'            => $draw,
+                'recordsTotal'    => $recordsTotal,
+                'recordsFiltered' => $recordsFiltered,
+                'data'            => $data,
+                'csrf'            => function_exists('csrf_hash') ? csrf_hash() : null,
+            ]);
+        } catch (\Throwable $th) {
+            echo $th->getMessage();
         }
-
-        $rows = $this->hibah_model->get_all($this->kode_user);
-
-        // Bentuk array untuk DataTables (paling gampang: array of arrays)
-        $data = [];
-        $no = 1;
-        foreach ($rows as $r) {
-            $alamat = $r['nama_kabupaten'].', '.$r['nama_kecamatan'].', '.$r['nama_desa'].', '.$r['alamat'];
-            $data[] = [
-                'id'            => (int)($r['id'] ?? 0),
-                'tgl_berdiri'   => date('d-m-Y', strtotime($r['tgl_berdiri'])),
-                'no_akta_hukum' => $r['no_akta_hukum'] ?? '-',
-                'nama_lembaga'  => $r['nama_lembaga'] ?? '-',
-                'alamat'        => $alamat,
-            ];
-        }
-
-        // Jika CSRF aktif & regenerate, kirim token baru (opsional)
-        $resp = ['data' => $data];
-        if (function_exists('csrf_hash')) $resp['csrf'] = csrf_hash();
-
-        return $this->response->setJSON($resp);
     }
 
     public function create()

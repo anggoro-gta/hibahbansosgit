@@ -10,17 +10,65 @@ class BansosModel extends Model
     protected $useTimestamps = true;
     // protected $allowedFields = ['email', 'username'];
 
+    private function baseQuery($kodeOpd, $search = '')
+    {
+        $db = \Config\Database::connect();
+        $builder = $db->table('ms_bansos mb')
+            ->select("mb.id, mb.nik, mb.nama, mb.kode_opd, CONCAT(mk.nama_kabupaten, ', ', k.nama_kecamatan, ', ', d.nama_desa, ', ', mb.alamat) AS alamat_full, nama_opd")
+            ->join('ms_kabupaten mk', 'mb.fk_kabupaten_id = mk.id')
+            ->join('ms_kecamatan k', 'mb.fk_kecamatan_id = k.id')
+            ->join('ms_desa d', 'mb.fk_desa_id = d.id')
+            ->join('ms_opd e', 'mb.kode_opd = e.kode_opd');
+
+        if (!empty($kodeOpd) && $kodeOpd !== 'all') {
+            $builder->where('mb.kode_opd', $kodeOpd);
+        }
+
+        if ($search !== '') {
+            $builder->groupStart()
+                ->like('mb.nama', $search)
+                ->orLike('mb.nik', $search)
+                ->orLike('mb.alamat', $search)
+                ->orLike('mk.nama_kabupaten', $search)
+                ->orLike('k.nama_kecamatan', $search)
+                ->orLike('d.nama_desa', $search)
+                ->orLike('e.nama_opd', $search)
+                ->groupEnd();
+        }
+
+        return $builder;
+    }
+
+    public function count_all($kodeOpd)
+    {
+        return $this->baseQuery($kodeOpd)->countAllResults(false);
+    }
+
+    public function count_filtered($kodeOpd, $search)
+    {
+        return $this->baseQuery($kodeOpd, $search)->countAllResults(false);
+    }
+
+    public function get_page($kodeOpd, $search, $orderBy, $orderDir, $limit, $offset)
+    {
+        return $this->baseQuery($kodeOpd, $search)
+            ->orderBy($orderBy, $orderDir)
+            ->limit($limit, $offset)
+            ->get()->getResultArray();
+    }
+
     public function get_all($kode_opd = null)
     {
         $db = \Config\Database::connect();
         $builder = $db->table('ms_bansos mb');
 
-        $builder->select('mb.*,	mk.nama_kabupaten, k.nama_kecamatan, d.nama_desa');
+        $builder->select('mb.*,	mk.nama_kabupaten, k.nama_kecamatan, d.nama_desa, e.nama_opd');
         $builder->join('ms_kabupaten mk', 'mb.fk_kabupaten_id = mk.id');
         $builder->join('ms_kecamatan k', 'mb.fk_kecamatan_id = k.id');
         $builder->join('ms_desa d', 'mb.fk_desa_id = d.id');
+        $builder->join('ms_opd e', 'mb.kode_opd = e.kode_opd');
 
-        if(!empty($kode_opd)){
+        if(!empty($kode_opd) && $kode_opd!='all'){
             $builder->where([
                 'mb.kode_opd' => $kode_opd
             ]);
@@ -70,12 +118,21 @@ class BansosModel extends Model
         return $query->getRow();
     }
 
-    public function get_all_usulan($kode_opd = null, $tahun = null)
+    public function get_all_usulan($kode_opd = null, $tahun = null, $search = '')
     {
         $db = \Config\Database::connect();
         $builder = $db->table('tb_usulan_bansos a');
 
-        $builder->select('a.*, b.nama, b.alamat, c.nama_kabupaten, d.nama_kecamatan, e.nama_desa');
+        $builder->select(
+            "a.id, 
+            b.nama, 
+            a.apbd, 
+            a.perubahan_perbup_1, 
+            a.perubahan_perbup_2, 
+            a.papbd, 
+            CONCAT(c.nama_kabupaten, ', ', d.nama_kecamatan, ', ', e.nama_desa, ', ', b.alamat) AS alamat_full",
+            false
+        );
         $builder->join('ms_bansos b', 'a.fk_ms_bansos_id = b.id');
         $builder->join('ms_kabupaten c', 'b.fk_kabupaten_id = c.id');
         $builder->join('ms_kecamatan d', 'b.fk_kecamatan_id = d.id');
@@ -93,10 +150,35 @@ class BansosModel extends Model
             ]);
         }
 
-        $builder->orderBy('a.id', 'ASC');
+        if ($search !== '') {
+            $builder->groupStart()
+                ->like('b.nama', $search)
+                ->orLike('b.alamat', $search)
+                ->orLike('c.nama_kabupaten', $search)
+                ->orLike('d.nama_kecamatan', $search)
+                ->orLike('e.nama_desa', $search)
+                ->groupEnd();
+        }
 
-        $query = $builder->get();
-        return $query->getResultArray();
+        return $builder;
+    }
+
+    public function count_all_usulan($kodeOpd, $tahun)
+    {
+        return $this->get_all_usulan($kodeOpd, $tahun)->countAllResults(false);
+    }
+
+    public function count_filtered_usulan($kodeOpd, $tahun, $search)
+    {
+        return $this->get_all_usulan($kodeOpd, $tahun, $search)->countAllResults(false);
+    }
+
+    public function get_page_usulan($kodeOpd, $tahun, $search, $orderBy, $orderDir, $limit, $offset)
+    {
+        return $this->get_all_usulan($kodeOpd, $tahun, $search)
+            ->orderBy($orderBy, $orderDir)
+            ->limit($limit, $offset)
+            ->get()->getResultArray();
     }
 
     public function get_layak_usulan(string $kode_opd = null, $tahun)
@@ -151,5 +233,17 @@ class BansosModel extends Model
 
         // Return the single row as an object
         return $query->getRow();
+    }
+
+    public function get_all_opd()
+    {
+        $db = \Config\Database::connect();
+        $builder = $db->table('ms_opd');
+
+        $builder->select('kode_opd, nama_opd');
+        $builder->orderBy('nama_opd', 'ASC');
+
+        $query = $builder->get();
+        return $query->getResultArray();
     }
 }
