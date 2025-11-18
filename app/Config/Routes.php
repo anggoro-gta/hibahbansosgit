@@ -54,17 +54,6 @@ $routes->get('/indexhibah', 'Masterhibah::index', ['filter' => 'role:admin']);
 $routes->get('/usulanhibahadmin', 'Usulanhibahadmin::index', ['filter' => 'role:admin']);
 $routes->match(['get', 'post'], 'setting/users/datatable', 'Home::datatableusers', ['filter' => 'role:admin']);
 
-// Master-Bansos
-$routes->get('master/bansos', 'MasterBansos::index', ['filter' => 'role:admin,useropd']);
-$routes->match(['get', 'post'], 'master/bansos/datatable', 'MasterBansos::datatable', ['filter' => 'role:admin,useropd']);
-$routes->get('master/bansos/create', 'MasterBansos::create', ['filter' => 'role:admin,useropd']);
-$routes->post('master/bansos/store', 'MasterBansos::store', ['filter' => 'role:admin,useropd']);
-$routes->get('master/bansos/edit/(:num)', 'MasterBansos::edit/$1', ['filter' => 'role:admin,useropd']);
-$routes->post('master/bansos/update', 'MasterBansos::update', ['filter' => 'role:admin,useropd']);
-$routes->get('master/bansos/delete/(:num)', 'MasterBansos::delete/$1', ['filter' => 'role:admin,useropd']);
-$routes->post('master/bansos/detail-json', 'MasterBansos::detailJson', ['filter' => 'role:admin,useropd']);
-$routes->post('master/bansos/history-json', 'MasterBansos::historyUsulanJson', ['filter' => 'role:admin,useropd']);
-
 // Master-Hibah
 $routes->get('master/hibah', 'MasterHibah::index', ['filter' => 'role:admin,useropd']);
 $routes->match(['get', 'post'], 'master/hibah/datatable', 'MasterHibah::datatable', ['filter' => 'role:admin,useropd']);
@@ -84,6 +73,18 @@ $routes->post('usulan/hibah/store', 'UsulanHibah::store', ['filter' => 'role:adm
 $routes->get('usulan/hibah/edit/(:num)', 'UsulanHibah::edit/$1', ['filter' => 'role:admin,useropd']);
 $routes->post('usulan/hibah/update', 'UsulanHibah::update', ['filter' => 'role:admin,useropd']);
 $routes->get('usulan/hibah/delete/(:num)', 'UsulanHibah::delete/$1', ['filter' => 'role:admin,useropd']);
+$routes->post('usulan/hibah/layak-usulan-json', 'UsulanHibah::layakUsulanJson', ['filter' => 'role:admin,useropd']);
+
+// Master-Bansos
+$routes->get('master/bansos', 'MasterBansos::index', ['filter' => 'role:admin,useropd']);
+$routes->match(['get', 'post'], 'master/bansos/datatable', 'MasterBansos::datatable', ['filter' => 'role:admin,useropd']);
+$routes->get('master/bansos/create', 'MasterBansos::create', ['filter' => 'role:admin,useropd']);
+$routes->post('master/bansos/store', 'MasterBansos::store', ['filter' => 'role:admin,useropd']);
+$routes->get('master/bansos/edit/(:num)', 'MasterBansos::edit/$1', ['filter' => 'role:admin,useropd']);
+$routes->post('master/bansos/update', 'MasterBansos::update', ['filter' => 'role:admin,useropd']);
+$routes->get('master/bansos/delete/(:num)', 'MasterBansos::delete/$1', ['filter' => 'role:admin,useropd']);
+$routes->post('master/bansos/detail-json', 'MasterBansos::detailJson', ['filter' => 'role:admin,useropd']);
+$routes->post('master/bansos/history-json', 'MasterBansos::historyUsulanJson', ['filter' => 'role:admin,useropd']);
 
 // Usulan-Bansos
 $routes->get('usulan/bansos', 'UsulanBansos::index', ['filter' => 'role:admin,useropd']);
@@ -93,6 +94,7 @@ $routes->post('usulan/bansos/store', 'UsulanBansos::store', ['filter' => 'role:a
 $routes->get('usulan/bansos/edit/(:num)', 'UsulanBansos::edit/$1', ['filter' => 'role:admin,useropd']);
 $routes->post('usulan/bansos/update', 'UsulanBansos::update', ['filter' => 'role:admin,useropd']);
 $routes->get('usulan/bansos/delete/(:num)', 'UsulanBansos::delete/$1', ['filter' => 'role:admin,useropd']);
+$routes->post('usulan/bansos/layak-usulan-json', 'UsulanBansos::layakUsulanJson', ['filter' => 'role:admin,useropd']);
 
 //ajax
 $routes->get('master/kecamatan/(:num)', 'MasterBansos::getKecamatan/$1', ['filter' => 'role:admin,useropd']);

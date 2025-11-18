@@ -182,14 +182,15 @@ class HibahModel extends Model
             ->get()->getResultArray();
     }
 
-    public function get_layak_usulan(string $kode_opd = null, $tahun)
+    public function get_layak_usulan($kode_opd=null, $tahun)
     {
         $builder = $this->builder('ms_hibah a');
 
-        $builder->select('a.*, b.nama_kabupaten, c.nama_kecamatan, d.nama_desa')
+        $builder->select('a.*, b.nama_kabupaten, c.nama_kecamatan, d.nama_desa, e.kode_opd, e.nama_opd')
                 ->join('ms_kabupaten b', 'a.fk_kabupaten_id = b.id', 'left')
                 ->join('ms_kecamatan c', 'a.fk_kecamatan_id = c.id', 'left')
-                ->join('ms_desa d', 'a.fk_desa_id = d.id', 'left');
+                ->join('ms_desa d', 'a.fk_desa_id = d.id', 'left')
+                ->join('ms_opd e', 'a.kode_opd = e.kode_opd');
 
         // minimal sudah 2 tahun
         $builder->where('a.tgl_berdiri IS NOT NULL', null, false);

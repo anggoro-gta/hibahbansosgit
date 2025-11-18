@@ -31,6 +31,20 @@
                 <div class="<?= $button=='Tambah' ? 'col-12' : 'col-5'?>">
                     <div class="card">
                         <form id="<?= $button=='Tambah' ? 'form-tambah' : 'form-edit'?>" method="POST" action="<?= $url ?>">
+                            <?php if ($button == 'Tambah') : ?>
+                                <div class="card-header">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <select class="form-control select2" name="kode_opd" id="kode_opd">
+                                                <option value="all">Semua OPD</option>
+                                                <?php foreach ($ref_opd as $item) : ?>
+                                                <option value="<?= $item['kode_opd'] ?>"><?= $item['nama_opd'] ?></option>
+                                                <?php endforeach ?>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php endif ?>
                             <div class="card-body">
                                 <?php if($button=='Tambah') : ?>
                                     <input type="hidden" name="selected_ids" id="selected_ids">
@@ -43,29 +57,13 @@
                                                         <label for="customCheckboxAll" class="custom-control-label">&nbsp;</label>
                                                     </div>
                                                 </th>
-                                                <th>Tgl Berdiri</th>
-                                                <th>Lembaga / Alamat</th>
-                                                <th>No. Akta</th>
+                                                <th width="10%" class="text-center">Tgl Berdiri</th>
+                                                <th class="text-center">No. Akta</th>
+                                                <th class="text-center">Lembaga / Alamat</th>
+                                                <th class="text-center">OPD</th>
                                             </tr>
                                         </thead>
-                                        <tbody>
-                                            <?php foreach ($rows as $item) : ?>
-                                            <tr>
-                                                <td class="text-center">
-                                                    <div class="custom-control custom-checkbox">
-                                                        <input class="custom-control-input child-check" type="checkbox" id="customCheckbox<?= $item['id'] ?>" value="<?= $item['id'] ?>">
-                                                        <label for="customCheckbox<?= $item['id'] ?>" class="custom-control-label">&nbsp;</label>
-                                                    </div>
-                                                </td>
-                                                <td><?= date('d-m-Y', strtotime($item['tgl_berdiri'])) ?></td>
-                                                <td>
-                                                    <?= $item['nama_lembaga'] ?><br>
-                                                    <span class="text-sm text-info"><?= $item['nama_kabupaten'].', '.$item['nama_kecamatan'].', '.$item['nama_desa'].', '.$item['alamat'] ?></span>
-                                                </td>
-                                                <td><?= $item['no_akta_hukum'] ?></td>
-                                            </tr>
-                                            <?php endforeach ?>
-                                        </tbody>
+                                        <tbody></tbody>
                                     </table>
                                 <?php else : ?>
                                 <input type="hidden" class="form-control" name="id" id="id" required value="<?= $id ?>">
@@ -171,6 +169,8 @@
 </script>
 <script>
 $(function () {
+    $('.select2').select2();
+
     const MAX_CHECK = 100;
     // tempat nyimpen id yang sudah dipilih, lintas halaman
     const selectedIds = new Set();
@@ -195,7 +195,40 @@ $(function () {
             }
         },
         pageLength: 10,
-        columnDefs: [{ orderable: false, targets: 0 }],
+        processing: true,
+        serverSide: true,
+        ajax: {
+            url: "<?= site_url('usulan/hibah/layak-usulan-json'); ?>",
+            type: "POST",
+            data: function (d) {
+                d.kode_opd = $('#kode_opd').val(); // kirim kode_opd ke server
+            }
+        },
+        columns: [
+            { // checkbox
+                data: 'id',
+                orderable: false,
+                className: 'text-center',
+                render: function (data, type, row) {
+                    return `
+                        <div class="custom-control custom-checkbox">
+                            <input class="custom-control-input child-check"
+                                    type="checkbox"
+                                    id="customCheckbox${data}"
+                                    value="${data}">
+                            <label for="customCheckbox${data}"
+                                    class="custom-control-label">&nbsp;</label>
+                        </div>`;
+                }
+            },
+            { data: 'tgl_berdiri', className: 'text-center' },
+            { data: 'no_akta' },
+            { data: 'lembaga' },
+            { data: 'nama_opd' }
+        ],
+        columnDefs: [
+            { orderable: false, targets: 0 }
+        ],
         order: [[1, 'asc']],
         // ini penting: setiap tabel digambar ulang, kita sync checkbox
         drawCallback: function () {
@@ -203,31 +236,26 @@ $(function () {
         }
     });
 
+    // ketika kode_opd diganti ⇒ reload data dari server
+    $('#kode_opd').on('change', function () {
+        selectedIds.clear();      // biasanya lebih aman di-clear saat ganti OPD
+        $('#customCheckboxAll').prop('checked', false);
+        table.ajax.reload();
+    });
+
     function syncCheckboxes() {
-        // set centang / disabled per baris
         $('#example1 tbody tr').each(function () {
             const $chk = $(this).find('.child-check');
             const id = $chk.val();
 
-            // centang kalau id ada di set
             $chk.prop('checked', selectedIds.has(id));
 
-            // kalau sudah penuh, yang belum kepilih dimatiin
             if (selectedIds.size >= MAX_CHECK && !selectedIds.has(id)) {
                 $chk.prop('disabled', true);
             } else {
                 $chk.prop('disabled', false);
             }
         });
-
-        // hitung hanya yang masih boleh dipilih (enabled)
-        const $allEnabled   = $('#example1 .child-check:enabled');
-        const enabledChecked = $allEnabled.filter(':checked').length;
-
-        $('#customCheckboxAll').prop(
-            'checked',
-            $allEnabled.length > 0 && $allEnabled.length === enabledChecked
-        );
     }
 
     // pertama kali jalan
