@@ -103,13 +103,14 @@ class BansosModel extends Model
         $builder = $db->table('ms_bansos mb');
         
         // Select all fields
-        $builder->select('mb.*,	nama_kabupaten, nama_kecamatan, nama_desa, nama_program, nama_kegiatan, nama_sub_kegiatan');
+        $builder->select('mb.*,	nama_kabupaten, nama_kecamatan, nama_desa, nama_program, nama_kegiatan, nama_sub_kegiatan, nama_opd');
         $builder->join('ms_kabupaten', 'mb.fk_kabupaten_id = ms_kabupaten.id');
         $builder->join('ms_kecamatan', 'mb.fk_kecamatan_id = ms_kecamatan.id');
         $builder->join('ms_desa', 'mb.fk_desa_id = ms_desa.id');
         $builder->join('ms_program', 'mb.fk_program_id = ms_program.id');
         $builder->join('ms_kegiatan', 'mb.fk_kegiatan_id = ms_kegiatan.id');
         $builder->join('ms_sub_kegiatan', 'mb.fk_sub_kegiatan_id = ms_sub_kegiatan.id');
+        $builder->join('ms_opd', 'mb.kode_opd = ms_opd.kode_opd');
         
         // Use an associative array directly for where condition
         $query = $builder->getWhere(['mb.id' => $id]);
@@ -181,7 +182,7 @@ class BansosModel extends Model
             ->get()->getResultArray();
     }
 
-    public function get_layak_usulan(string $kode_opd = null, $tahun)
+    public function get_layak_usulan($tahun)
     {
         $builder = $this->builder('ms_bansos a');
 
@@ -212,10 +213,6 @@ class BansosModel extends Model
             )
         ", null, false);
 
-        if ($kode_opd) {
-            $builder->where('a.kode_opd', $kode_opd);
-        }
-
         return $builder->get()->getResultArray();
     }
 
@@ -245,5 +242,18 @@ class BansosModel extends Model
 
         $query = $builder->get();
         return $query->getResultArray();
+    }
+
+    public function get_usulan_by_ms_bansos_id($id)
+    {
+        $db      = \Config\Database::connect();
+        $builder = $db->table('tb_usulan_bansos a');
+
+        $builder->select('a.tahun, c.nama_opd')
+                ->join('ms_bansos b', 'a.fk_ms_bansos_id = b.id')
+                ->join('ms_opd c', 'b.kode_opd = c.kode_opd')
+                ->where('a.fk_ms_bansos_id', $id);
+
+        return $builder;
     }
 }

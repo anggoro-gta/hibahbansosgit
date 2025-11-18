@@ -33,6 +33,20 @@
                 <div class="<?= $button == 'Tambah' ? 'col-12' : 'col-5' ?>">
                     <div class="card">
                         <form id="<?= $button == 'Tambah' ? 'form-tambah' : 'form-edit' ?>" method="POST" action="<?= $url ?>">
+                            <?php if ($button == 'Tambah') : ?>
+                                <div class="card-header">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <select class="form-control select2" name="kode_opd" id="kode_opd">
+                                                <option value="all">Semua OPD</option>
+                                                <?php foreach ($ref_opd as $item) : ?>
+                                                <option value="<?= $item['kode_opd'] ?>"><?= $item['nama_opd'] ?></option>
+                                                <?php endforeach ?>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php endif ?>
                             <div class="card-body">
                                 <?php if ($button == 'Tambah') : ?>
                                     <input type="hidden" name="selected_ids" id="selected_ids">
@@ -171,6 +185,10 @@
 </script>
 <script>
     $(function() {
+        $('.select2').select2();
+
+        let kodeOpd = $('#kode_opd').val();
+        
         const MAX_CHECK = 100;
         // tempat nyimpen id yang sudah dipilih, lintas halaman
         const selectedIds = new Set();

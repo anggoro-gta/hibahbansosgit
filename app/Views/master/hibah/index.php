@@ -97,7 +97,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
         <div class="modal-header">
-            <h5 class="modal-title">TANGGING NOMENKLATUR <span class="text-sm text-info" id="span-id-hibah"></span></h5>
+            <h5 class="modal-title">TANGGING NOMENKLATUR <span id="span-id-hibah"></span></h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span>&times;</span>
             </button>
@@ -107,6 +107,7 @@
                 <dt class="col-sm-3">Nama Program</dt><dd class="col-sm-9" id="d-program">-</dd>
                 <dt class="col-sm-3">Nama Kegiatan</dt><dd class="col-sm-9" id="d-kegiatan">-</dd>
                 <dt class="col-sm-3">Nama Sub Kegiatan</dt><dd class="col-sm-9" id="d-sub-kegiatan">-</dd>
+                <dt class="col-sm-3">Diinput Oleh</dt><dd class="col-sm-9" id="d-input">-</dd>
             </dl>
         </div>
         <div class="modal-footer">
@@ -115,6 +116,42 @@
         </div>
     </div>
 </div>
+
+<!-- Modal History -->
+<div class="modal fade" id="modalHistory" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    RIWAYAT USULAN HIBAH <span id="span-info-history"></span>
+                </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span>&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <table id="table-riwayat" class="table table-bordered table-striped" width="100%">
+                    <thead>
+                        <tr>
+                            <th>No.</th>
+                            <th>Tahun</th>
+                            <th>Nama OPD</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
 
 
 
@@ -236,12 +273,55 @@
                     $('#d-program').text(`: `+valOrDash(d.nama_program));
                     $('#d-kegiatan').text(`: `+valOrDash(d.nama_kegiatan));
                     $('#d-sub-kegiatan').text(`: `+valOrDash(d.nama_sub_kegiatan));
-                    $('#span-id-hibah').text(`[ ${d.no_akta_hukum} ] [ ${d.nama_lembaga} ]`);
+                    $('#d-input').html(`: <b>`+valOrDash(d.nama_opd)+`</b>`);
+                    $('#span-id-hibah').html(`<small class="text-primary">[ ${d.nama_lembaga} ]</small> <small class="text-success">[ ${d.no_akta_hukum} ]</small>`);
                     // Tambah field lain/riwayat kalau perlu…
                 },
                 error: () => {
                     $('#modalDetail .modal-body').html('<div class="text-danger">Gagal memuat data.</div>');
                 }
+            });
+        });
+
+        $(document).on('click', '.btn-history', function () {
+            const id        = $(this).data('id'); // data-id di tombol
+            const tokenName = "<?= csrf_token() ?>";
+            const tokenVal  = $('meta[name="<?= csrf_token() ?>"]').attr('content');
+
+            $('#modalHistory').data('id', id);        // simpan id di modal
+            $('#modalHistory').modal('show');
+
+            // hancurkan DT lama kalau ada
+            if ($.fn.DataTable.isDataTable('#table-riwayat')) {
+                $('#table-riwayat').DataTable().destroy();
+                $('#table-riwayat tbody').empty();
+            }
+
+            $('#table-riwayat').DataTable({
+                processing: true,
+                serverSide: false, // kalau mau bikin serverSide, nanti querynya dipecah lagi
+                autoWidth: false, 
+                ajax: {
+                    url: "<?= site_url('master/hibah/history-json'); ?>",
+                    type: "POST",
+                    data: function (d) {
+                        d[tokenName] = tokenVal;
+                        d.id         = id;
+                    },
+                    dataSrc: function (json) {
+                        if (json.csrf) {
+                            $('meta[name="<?= csrf_token() ?>"]').attr('content', json.csrf);
+                        }
+                        const d = json.detail;
+                        $('#span-info-history').html(`<small class="text-primary">[ ${d.nama_lembaga} ]</small> <small class="text-success">[ ${d.no_akta_hukum} ]</small>`);
+                        return json.data;
+                    }
+                },
+                columns: [
+                    { data: 0, className: 'text-center', width: '40px' },
+                    { data: 1, className: 'text-center', width: '80px' },
+                    { data: 2 },
+                ]
             });
         });
 

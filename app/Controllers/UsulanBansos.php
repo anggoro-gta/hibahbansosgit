@@ -118,7 +118,8 @@ class UsulanBansos extends BaseController
             'url'    => site_url('usulan/bansos/store'),
             'button' => 'Tambah',
             'tittle' => 'Tambah Usulan Bansos',
-            'rows'   => $this->bansos_model->get_layak_usulan($this->kode_user, $tahun)
+            'rows'   => $this->bansos_model->get_layak_usulan($tahun),
+            'ref_opd' => $this->bansos_model->get_all_opd()
         ];
         
         return view('usulan/bansos/form', $data);

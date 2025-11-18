@@ -63,6 +63,7 @@ $routes->get('master/bansos/edit/(:num)', 'MasterBansos::edit/$1', ['filter' => 
 $routes->post('master/bansos/update', 'MasterBansos::update', ['filter' => 'role:admin,useropd']);
 $routes->get('master/bansos/delete/(:num)', 'MasterBansos::delete/$1', ['filter' => 'role:admin,useropd']);
 $routes->post('master/bansos/detail-json', 'MasterBansos::detailJson', ['filter' => 'role:admin,useropd']);
+$routes->post('master/bansos/history-json', 'MasterBansos::historyUsulanJson', ['filter' => 'role:admin,useropd']);
 
 // Master-Hibah
 $routes->get('master/hibah', 'MasterHibah::index', ['filter' => 'role:admin,useropd']);
@@ -73,6 +74,7 @@ $routes->get('master/hibah/edit/(:num)', 'MasterHibah::edit/$1', ['filter' => 'r
 $routes->post('master/hibah/update', 'MasterHibah::update', ['filter' => 'role:admin,useropd']);
 $routes->get('master/hibah/delete/(:num)', 'MasterHibah::delete/$1', ['filter' => 'role:admin,useropd']);
 $routes->post('master/hibah/detail-json', 'MasterHibah::detailJson', ['filter' => 'role:admin,useropd']);
+$routes->post('master/hibah/history-json', 'MasterHibah::historyUsulanJson', ['filter' => 'role:admin,useropd']);
 
 // Usulan-Hibah
 $routes->get('usulan/hibah', 'UsulanHibah::index', ['filter' => 'role:admin,useropd']);

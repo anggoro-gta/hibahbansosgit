@@ -28,7 +28,7 @@ class HibahModel extends Model
             $builder->groupStart()
                 ->like('mh.nama_lembaga', $search)
                 ->orLike('mh.no_akta_hukum', $search)
-                ->orLike('mb.alamat', $search)
+                ->orLike('mh.alamat', $search)
                 ->orLike('mk.nama_kabupaten', $search)
                 ->orLike('k.nama_kecamatan', $search)
                 ->orLike('d.nama_desa', $search)
@@ -103,13 +103,14 @@ class HibahModel extends Model
         $builder = $db->table('ms_hibah mh');
         
         // Select all fields
-        $builder->select('mh.*,	nama_kabupaten, nama_kecamatan, nama_desa, nama_program, nama_kegiatan, nama_sub_kegiatan');
+        $builder->select('mh.*,	nama_kabupaten, nama_kecamatan, nama_desa, nama_program, nama_kegiatan, nama_sub_kegiatan, nama_opd');
         $builder->join('ms_kabupaten', 'mh.fk_kabupaten_id = ms_kabupaten.id');
         $builder->join('ms_kecamatan', 'mh.fk_kecamatan_id = ms_kecamatan.id');
         $builder->join('ms_desa', 'mh.fk_desa_id = ms_desa.id');
         $builder->join('ms_program', 'mh.fk_program_id = ms_program.id');
         $builder->join('ms_kegiatan', 'mh.fk_kegiatan_id = ms_kegiatan.id');
         $builder->join('ms_sub_kegiatan', 'mh.fk_sub_kegiatan_id = ms_sub_kegiatan.id');
+        $builder->join('ms_opd', 'mh.kode_opd = ms_opd.kode_opd');
         
         // Use an associative array directly for where condition
         $query = $builder->getWhere(['mh.id' => $id]);
@@ -264,5 +265,16 @@ class HibahModel extends Model
         return $query->getResultArray();
     }
 
+    public function get_usulan_by_ms_hibah_id($id)
+    {
+        $db      = \Config\Database::connect();
+        $builder = $db->table('tb_usulan_hibah a');
 
+        $builder->select('a.tahun, c.nama_opd')
+                ->join('ms_hibah b', 'a.fk_ms_hibah_id = b.id')
+                ->join('ms_opd c', 'b.kode_opd = c.kode_opd')
+                ->where('a.fk_ms_hibah_id', $id);
+
+        return $builder;
+    }
 }
