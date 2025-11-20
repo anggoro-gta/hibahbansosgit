@@ -145,6 +145,15 @@
                                 </a>
                             </li>
                         </ul>
+
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a href="<?= base_url('sampeanbuatkan'); ?>" class="nav-link ahref-master-bkk">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>BKK</p>
+                                </a>
+                            </li>
+                        </ul>
                     </li>
 
                     <li class="nav-item liinputadmin">
@@ -168,6 +177,14 @@
                                 <a href="<?= base_url('usulan/bansos'); ?>" class="nav-link ahref-usulan-bansos">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Usulan Bansos</p>
+                                </a>
+                            </li>
+                        </ul>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a href="<?= base_url('sampeanbuatkan'); ?>" class="nav-link ahref-usulan-bkk">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Usulan BKK</p>
                                 </a>
                             </li>
                         </ul>
