@@ -86,6 +86,16 @@ $routes->get('master/bansos/delete/(:num)', 'MasterBansos::delete/$1', ['filter'
 $routes->post('master/bansos/detail-json', 'MasterBansos::detailJson', ['filter' => 'role:admin,useropd']);
 $routes->post('master/bansos/history-json', 'MasterBansos::historyUsulanJson', ['filter' => 'role:admin,useropd']);
 
+// Master-BKK
+$routes->get('master/bkk', 'MasterBkk::index', ['filter' => 'role:admin,useropd']);
+$routes->match(['get', 'post'], 'master/bkk/datatable', 'MasterBkk::datatable', ['filter' => 'role:admin,useropd']);
+$routes->get('master/bkk/create', 'MasterBkk::create', ['filter' => 'role:admin,useropd']);
+$routes->post('master/bkk/store', 'MasterBkk::store', ['filter' => 'role:admin,useropd']);
+$routes->get('master/bkk/edit/(:num)', 'MasterBkk::edit/$1', ['filter' => 'role:admin,useropd']);
+$routes->post('master/bkk/update', 'MasterBkk::update', ['filter' => 'role:admin,useropd']);
+$routes->get('master/bkk/delete/(:num)', 'MasterBkk::delete/$1', ['filter' => 'role:admin,useropd']);
+$routes->post('master/bkk/detail-json', 'MasterBkk::detailJson', ['filter' => 'role:admin,useropd']);
+
 // Usulan-Bansos
 $routes->get('usulan/bansos', 'UsulanBansos::index', ['filter' => 'role:admin,useropd']);
 $routes->match(['get', 'post'], 'usulan/bansos/datatable', 'UsulanBansos::datatable', ['filter' => 'role:admin,useropd']);

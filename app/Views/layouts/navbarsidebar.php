@@ -148,7 +148,7 @@
 
                         <ul class="nav nav-treeview">
                             <li class="nav-item">
-                                <a href="<?= base_url('sampeanbuatkan'); ?>" class="nav-link ahref-master-bkk">
+                                <a href="<?= base_url('master/bkk'); ?>" class="nav-link ahref-master-bkk">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>BKK</p>
                                 </a>
