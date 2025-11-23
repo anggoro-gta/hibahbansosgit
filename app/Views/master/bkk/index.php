@@ -32,6 +32,18 @@
             <div class="row">
                 <div class="col-12">
                     <div class="card">
+                        <div class="card-header">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <select class="form-control select2" name="kode_opd" id="kode_opd">
+                                        <option value="all">Semua OPD</option>
+                                        <?php foreach ($ref_opd as $item) : ?>
+                                        <option value="<?= $item['kode_opd'] ?>"><?= $item['nama_opd'] ?></option>
+                                        <?php endforeach ?>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
                         <div class="card-body">
                             <table id="example1" class="table table-bordered table-striped">
                                 <thead>
@@ -91,6 +103,7 @@
                 <dt class="col-sm-3">Nama Program</dt><dd class="col-sm-9" id="d-program">-</dd>
                 <dt class="col-sm-3">Nama Kegiatan</dt><dd class="col-sm-9" id="d-kegiatan">-</dd>
                 <dt class="col-sm-3">Nama Sub Kegiatan</dt><dd class="col-sm-9" id="d-sub-kegiatan">-</dd>
+                <dt class="col-sm-3">Diinput Oleh</dt><dd class="col-sm-9" id="d-input">-</dd>
             </dl>
         </div>
         <div class="modal-footer">
@@ -143,6 +156,10 @@
 
 <script>
     $(function () {
+        $('.select2').select2();
+
+        let kodeOpd = $('#kode_opd').val();
+
         const table = $('#example1').DataTable({
             'oLanguage':
             {
@@ -169,6 +186,7 @@
                 url: "<?= site_url('master/bkk/datatable'); ?>",
                 type: "POST",
                 data: d => {
+                    d.kode_opd = kodeOpd;
                     d["<?= csrf_token() ?>"] = "<?= csrf_hash() ?>";
                 }
             },
@@ -179,6 +197,11 @@
                 { data: 'nama_desa' },
                 { data: 'action', orderable:false, searchable:false, className:'text-center' }
             ]
+        });
+
+        $('#kode_opd').on('change', function(){
+            kodeOpd = $(this).val();
+            table.ajax.reload(null, true);
         });
 
         const valOrDash = v => (v === null || v === undefined || v === '') ? '-' : v;
@@ -204,6 +227,7 @@
                     $('#d-program').text(`: `+valOrDash(d.nama_program));
                     $('#d-kegiatan').text(`: `+valOrDash(d.nama_kegiatan));
                     $('#d-sub-kegiatan').text(`: `+valOrDash(d.nama_sub_kegiatan));
+                    $('#d-input').html(`: <b>`+valOrDash(d.nama_opd)+`</b>`);
                     $('#span-id-info').html(`<small class="text-primary">[ ${d.nama_desa} ]</small> <small class="text-success">[ ${d.nama_kecamatan} ]</small>`);
                     // Tambah field lain/riwayat kalau perlu…
                 },

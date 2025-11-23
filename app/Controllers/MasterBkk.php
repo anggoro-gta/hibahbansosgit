@@ -48,7 +48,8 @@ class MasterBkk extends BaseController
     public function index()
     {
         $data = [
-            'tittle' => 'Master BKK'
+            'tittle' => 'Master BKK',
+            'ref_opd' => $this->desa_model->get_all_opd()
         ];
         
         return view('master/bkk/index', $data);
@@ -66,22 +67,24 @@ class MasterBkk extends BaseController
             $length = (int) $this->request->getPost('length');  // limit
             $search = $this->request->getPost('search')['value'] ?? '';
             $orderReq = $this->request->getPost('order')[0] ?? null; // column index & dir
+            $kodeOpd = $this->request->getPost('kode_opd');
 
             // mapping index kolom -> nama kolom di DB
             $orderCols = ['ms_desa.id','a.nama_kabupaten','b.nama_kecamatan', 'ms_desa.nama_desa'];
             $orderBy = $orderCols[$orderReq['column'] - 1] ?? 'ms_desa.id'; // -1 karena kolom nomor urut
             $orderDir = ($orderReq['dir'] ?? 'asc') === 'desc' ? 'DESC' : 'ASC';
 
-            $recordsTotal    = $this->desa_model->count_all();                          // total baris (tanpa search)
-            $recordsFiltered = $this->desa_model->count_filtered($search);            // total setelah search
-            $rows            = $this->desa_model->get_page($search, $orderBy, $orderDir, $length, $start);
+            $recordsTotal    = $this->desa_model->count_all($kodeOpd);                          // total baris (tanpa search)
+            $recordsFiltered = $this->desa_model->count_filtered($kodeOpd, $search);            // total setelah search
+            $rows            = $this->desa_model->get_page($kodeOpd, $search, $orderBy, $orderDir, $length, $start);
 
             $data = [];
             foreach ($rows as $r) {
                 $btn = '<button type="button" class="btn btn-sm btn-info mb-1 btn-detail" data-id="'.$r['id'].'" title="Taging Nomenklatur"><i class="fa fa-eye"></i></button>';
-                
-                $btn .= ' <a href="'.base_url('master/bkk/edit/'.$r['id']).'" class="btn btn-sm btn-primary mb-1"><i class="fa fa-edit"></i></a>
-                        <a href="'.base_url('master/bkk/delete/'.$r['id']).'" class="btn btn-sm btn-danger mb-1" onclick="return confirmDelete(\''.base_url('master/bkk/delete/'.$r['id']).'\')"><i class="fa fa-trash"></i></a>';
+                if ($this->kode_user == $r['kode_opd']) {
+                    $btn .= ' <a href="'.base_url('master/bkk/edit/'.$r['id']).'" class="btn btn-sm btn-primary mb-1"><i class="fa fa-edit"></i></a>
+                            <a href="'.base_url('master/bkk/delete/'.$r['id']).'" class="btn btn-sm btn-danger mb-1" onclick="return confirmDelete(\''.base_url('master/bkk/delete/'.$r['id']).'\')"><i class="fa fa-trash"></i></a>';
+                }
 
                 $data[] = [
                     'nama_kabupaten' => $r['nama_kabupaten'] ?? '-',
@@ -141,6 +144,7 @@ class MasterBkk extends BaseController
                 'fk_program_id'      => $this->request->getPost('program'),
                 'fk_kegiatan_id'     => $this->request->getPost('kegiatan'),
                 'fk_sub_kegiatan_id' => $this->request->getPost('sub_kegiatan'),
+                'kode_opd'           => $this->kode_user,
                 'created_at'         => $now,
                 'created_by'         => $userId
             ];
