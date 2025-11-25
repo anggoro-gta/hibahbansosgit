@@ -86,16 +86,6 @@ $routes->get('master/bansos/delete/(:num)', 'MasterBansos::delete/$1', ['filter'
 $routes->post('master/bansos/detail-json', 'MasterBansos::detailJson', ['filter' => 'role:admin,useropd']);
 $routes->post('master/bansos/history-json', 'MasterBansos::historyUsulanJson', ['filter' => 'role:admin,useropd']);
 
-// Master-BKK
-$routes->get('master/bkk', 'MasterBkk::index', ['filter' => 'role:admin,useropd']);
-$routes->match(['get', 'post'], 'master/bkk/datatable', 'MasterBkk::datatable', ['filter' => 'role:admin,useropd']);
-$routes->get('master/bkk/create', 'MasterBkk::create', ['filter' => 'role:admin,useropd']);
-$routes->post('master/bkk/store', 'MasterBkk::store', ['filter' => 'role:admin,useropd']);
-$routes->get('master/bkk/edit/(:num)', 'MasterBkk::edit/$1', ['filter' => 'role:admin,useropd']);
-$routes->post('master/bkk/update', 'MasterBkk::update', ['filter' => 'role:admin,useropd']);
-$routes->get('master/bkk/delete/(:num)', 'MasterBkk::delete/$1', ['filter' => 'role:admin,useropd']);
-$routes->post('master/bkk/detail-json', 'MasterBkk::detailJson', ['filter' => 'role:admin,useropd']);
-
 // Usulan-Bansos
 $routes->get('usulan/bansos', 'UsulanBansos::index', ['filter' => 'role:admin,useropd']);
 $routes->match(['get', 'post'], 'usulan/bansos/datatable', 'UsulanBansos::datatable', ['filter' => 'role:admin,useropd']);
@@ -105,6 +95,27 @@ $routes->get('usulan/bansos/edit/(:num)', 'UsulanBansos::edit/$1', ['filter' => 
 $routes->post('usulan/bansos/update', 'UsulanBansos::update', ['filter' => 'role:admin,useropd']);
 $routes->get('usulan/bansos/delete/(:num)', 'UsulanBansos::delete/$1', ['filter' => 'role:admin,useropd']);
 $routes->post('usulan/bansos/layak-usulan-json', 'UsulanBansos::layakUsulanJson', ['filter' => 'role:admin,useropd']);
+
+// Master-BKK
+$routes->get('master/bkk', 'MasterBkk::index', ['filter' => 'role:admin,useropd']);
+$routes->match(['get', 'post'], 'master/bkk/datatable', 'MasterBkk::datatable', ['filter' => 'role:admin,useropd']);
+$routes->get('master/bkk/create', 'MasterBkk::create', ['filter' => 'role:admin,useropd']);
+$routes->post('master/bkk/store', 'MasterBkk::store', ['filter' => 'role:admin,useropd']);
+$routes->get('master/bkk/edit/(:num)', 'MasterBkk::edit/$1', ['filter' => 'role:admin,useropd']);
+$routes->post('master/bkk/update', 'MasterBkk::update', ['filter' => 'role:admin,useropd']);
+$routes->get('master/bkk/delete/(:num)', 'MasterBkk::delete/$1', ['filter' => 'role:admin,useropd']);
+$routes->post('master/bkk/detail-json', 'MasterBkk::detailJson', ['filter' => 'role:admin,useropd']);
+$routes->post('master/bkk/history-json', 'MasterBkk::historyUsulanJson', ['filter' => 'role:admin,useropd']);
+
+// Usulan-BKK
+$routes->get('usulan/bkk', 'UsulanBkk::index', ['filter' => 'role:admin,useropd']);
+$routes->match(['get', 'post'], 'usulan/bkk/datatable', 'UsulanBkk::datatable', ['filter' => 'role:admin,useropd']);
+$routes->get('usulan/bkk/create', 'UsulanBkk::create', ['filter' => 'role:admin,useropd']);
+$routes->post('usulan/bkk/store', 'UsulanBkk::store', ['filter' => 'role:admin,useropd']);
+$routes->get('usulan/bkk/edit/(:num)', 'UsulanBkk::edit/$1', ['filter' => 'role:admin,useropd']);
+$routes->post('usulan/bkk/update', 'UsulanBkk::update', ['filter' => 'role:admin,useropd']);
+$routes->get('usulan/bkk/delete/(:num)', 'UsulanBkk::delete/$1', ['filter' => 'role:admin,useropd']);
+$routes->post('usulan/bkk/layak-usulan-json', 'UsulanBkk::layakUsulanJson', ['filter' => 'role:admin,useropd']);
 
 //ajax
 $routes->get('master/kecamatan/(:num)', 'MasterBansos::getKecamatan/$1', ['filter' => 'role:admin,useropd']);

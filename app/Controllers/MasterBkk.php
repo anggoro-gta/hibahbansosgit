@@ -81,6 +81,7 @@ class MasterBkk extends BaseController
             $data = [];
             foreach ($rows as $r) {
                 $btn = '<button type="button" class="btn btn-sm btn-info mb-1 btn-detail" data-id="'.$r['id'].'" title="Taging Nomenklatur"><i class="fa fa-eye"></i></button>';
+                $btn .= ' <button type="button" class="btn btn-sm btn-warning mb-1 btn-history" data-id="'.$r['id'].'" title="History"><i class="fa fa-list"></i></button>';
                 if ($this->kode_user == $r['kode_opd']) {
                     $btn .= ' <a href="'.base_url('master/bkk/edit/'.$r['id']).'" class="btn btn-sm btn-primary mb-1"><i class="fa fa-edit"></i></a>
                             <a href="'.base_url('master/bkk/delete/'.$r['id']).'" class="btn btn-sm btn-danger mb-1" onclick="return confirmDelete(\''.base_url('master/bkk/delete/'.$r['id']).'\')"><i class="fa fa-trash"></i></a>';
@@ -274,6 +275,37 @@ class MasterBkk extends BaseController
             $row = $this->desa_model->get_by_id($id);
 
             return $this->response->setJSON(['csrf' => $csrf, 'data' => $row]);
+        } catch (\Throwable $th) {
+            echo $th->getMessage();
+        }
+    }
+
+    public function historyUsulanJson()
+    {
+        try {
+            $this->response->setHeader('Content-Type', 'application/json');
+            if (strtolower($this->request->getMethod()) !== 'post') {
+                return $this->response->setJSON(['error' => 'Invalid method']);
+            }
+
+            $id = $this->request->getPost('id');
+            $csrf = csrf_hash();
+
+            $row = $this->desa_model->get_by_id($id);
+
+            $res = $this->desa_model->get_usulan_by_ms_desa_id($id)->get()->getResultArray();
+
+            $data = [];
+            $no   = 1;
+            foreach ($res as $r) {
+                $data[] = [
+                    $no++,
+                    esc($r['tahun']),
+                    esc($r['nama_opd']),
+                ];
+            }
+
+            return $this->response->setJSON(['csrf' => $csrf, 'data' => $data, 'detail' => $row]);
         } catch (\Throwable $th) {
             echo $th->getMessage();
         }

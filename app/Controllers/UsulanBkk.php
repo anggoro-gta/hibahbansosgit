@@ -3,7 +3,6 @@
 namespace App\Controllers;
 
 use Myth\Auth\Password;
-use App\Models\BansosModel;
 use App\Models\KabupatenModel;
 use App\Models\KecamatanModel;
 use App\Models\DesaModel;
@@ -12,9 +11,8 @@ use App\Models\KegiatanModel;
 use App\Models\SubKegiatanModel;
 use \Dompdf\Dompdf;
 
-class UsulanBansos extends BaseController
+class UsulanBkk extends BaseController
 {
-    protected $bansos_model;
     protected $kab_model;
     protected $kec_model;
     protected $desa_model;
@@ -28,7 +26,6 @@ class UsulanBansos extends BaseController
 
     public function __construct()
     {
-        $this->bansos_model = new BansosModel();
         $this->kab_model = new KabupatenModel();
         $this->kec_model = new KecamatanModel();
         $this->desa_model = new DesaModel();
@@ -51,10 +48,10 @@ class UsulanBansos extends BaseController
     public function index()
     {
         $data = [
-            'tittle' => 'Usulan Bansos'
+            'tittle' => 'Usulan BKK'
         ];
         
-        return view('usulan/bansos/index', $data);
+        return view('usulan/bkk/index', $data);
     }
 
     public function datatable()
@@ -73,23 +70,23 @@ class UsulanBansos extends BaseController
             $tahun = $_SESSION['years'];
 
             // mapping index kolom -> nama kolom di DB
-            $orderCols = ['b.nama', 'alamat_full', 'apbd', 'perubahan_perbup_1', 'perubahan_perbup_2', 'papbd'];
+            $orderCols = ['b.nama_kabupaten', 'c.nama_kecamatan', 'd.nama_desa', 'apbd', 'perubahan_perbup_1', 'perubahan_perbup_2', 'papbd'];
             $orderBy = $orderCols[$orderReq['column'] - 1] ?? 'a.id'; // -1 karena kolom nomor urut
             $orderDir = ($orderReq['dir'] ?? 'asc') === 'desc' ? 'DESC' : 'ASC';
 
-            $recordsTotal    = $this->bansos_model->count_all_usulan($userId, $tahun);                          // total baris (tanpa search)
-            $recordsFiltered = $this->bansos_model->count_filtered_usulan($userId, $tahun, $search);            // total setelah search
-            $rows            = $this->bansos_model->get_page_usulan($userId, $tahun, $search, $orderBy, $orderDir, $length, $start);
+            $recordsTotal    = $this->desa_model->count_all_usulan($userId, $tahun);                          // total baris (tanpa search)
+            $recordsFiltered = $this->desa_model->count_filtered_usulan($userId, $tahun, $search);            // total setelah search
+            $rows            = $this->desa_model->get_page_usulan($userId, $tahun, $search, $orderBy, $orderDir, $length, $start);
 
             $data = [];
             foreach ($rows as $r) {
                 
-                $btn = ' <a href="'.base_url('usulan/bansos/edit/'.$r['id']).'" class="btn btn-sm btn-primary mb-1"><i class="fa fa-edit"></i></a>
-                            <a href="'.base_url('usulan/bansos/delete/'.$r['id']).'" class="btn btn-sm btn-danger mb-1" onclick="return confirmDelete(\''.base_url('usulan/bansos/delete/'.$r['id']).'\')"><i class="fa fa-trash"></i></a>';
+                $btn = ' <a href="'.base_url('usulan/bkk/edit/'.$r['id']).'" class="btn btn-sm btn-primary mb-1"><i class="fa fa-edit"></i></a>
+                            <a href="'.base_url('usulan/bkk/delete/'.$r['id']).'" class="btn btn-sm btn-danger mb-1" onclick="return confirmDelete(\''.base_url('usulan/bkk/delete/'.$r['id']).'\')"><i class="fa fa-trash"></i></a>';
 
                 $data[] = [
-                    'nama'               => $r['nama'] ?? '-',
-                    'alamat'             => $r['alamat_full'],
+                    'nama_desa'          => $r['nama_desa'] . '<br><span class = "text-sm text-info">'
+                                            . $r['nama_kabupaten'].', '.$r['nama_kecamatan'].'</span>',
                     'apbd'               => $r['apbd'],
                     'perubahan_perbup_1' => $r['perubahan_perbup_1'],
                     'perubahan_perbup_2' => $r['perubahan_perbup_2'],
@@ -113,19 +110,19 @@ class UsulanBansos extends BaseController
     public function create()
     {
         if(!isset($_SESSION['years'])){
-            return redirect()->to('/usulan/bansos');
+            return redirect()->to('/usulan/bkk');
         }
         
         $tahun = $_SESSION['years'];
 
         $data = [
-            'url'    => site_url('usulan/bansos/store'),
+            'url'    => site_url('usulan/bkk/store'),
             'button' => 'Tambah',
-            'tittle' => 'Tambah Usulan Bansos',
-            'ref_opd' => $this->bansos_model->get_all_opd()
+            'tittle' => 'Tambah Usulan BKK',
+            'ref_opd' => $this->desa_model->get_all_opd()
         ];
         
-        return view('usulan/bansos/form', $data);
+        return view('usulan/bkk/form', $data);
     }
 
     public function store(){
@@ -148,16 +145,17 @@ class UsulanBansos extends BaseController
             $tahun = $_SESSION['years'];
 
             $batchData = [];
-            foreach ($ids as $msBansosId) {
+            foreach ($ids as $msBkkId) {
                 $batchData[] = [
-                    'fk_ms_bansos_id' => $msBansosId,
+                    'fk_ms_desa_id' => $msBkkId,
                     'tahun'          => $tahun,
-                    'created_by'     => $userId 
+                    'created_by'     => $userId ,
+                    'created_at'     => $now 
                 ];
             }
 
             // insert batch
-            $db->table('tb_usulan_bansos')->insertBatch($batchData);
+            $db->table('tb_usulan_bkk')->insertBatch($batchData);
 
             if ($db->transStatus() === false) {
                 throw new \RuntimeException('DB transaction failed');
@@ -165,28 +163,29 @@ class UsulanBansos extends BaseController
             $db->transCommit();
 
             session()->setFlashdata('success', 'Berhasil insert data');
-            return redirect()->to('/usulan/bansos');
+            return redirect()->to('/usulan/bkk');
 
         } catch (\Throwable $e) {
             $db->transRollback();
             session()->setFlashdata('error', 'Gagal menyimpan: ' . $e->getMessage());
-            return redirect()->to('/usulan/bansos');
+            return redirect()->to('/usulan/bkk');
         }
         
     }
 
     public function edit($id)
     {
-        $row = $this->bansos_model->get_usulan_by_id($id);
+        $row = $this->desa_model->get_usulan_by_id($id);
 
         $data = [
-            'url'                => site_url('usulan/bansos/update'),
+            'url'                => site_url('usulan/bkk/update'),
             'button'             => 'Edit',
-            'tittle'             => 'Edit Usulan Bansos',
+            'tittle'             => 'Edit Usulan BKK',
             'id'                 => old('id', $row->id),
             'tahun'              => old('tahun', $row->tahun),
-            'nik'                => old('nik', $row->nik),
-            'nama'               => old('nama', $row->nama),
+            'nama_desa'          => old('nama_desa', $row->nama_desa),
+            'nama_kabupaten'     => old('nama_kabupaten', $row->nama_kabupaten),
+            'nama_kecamatan'     => old('nama_kecamatan', $row->nama_kecamatan),
             'apbd'               => old('apbd', $row->apbd),
             'perubahan_perbup_1' => old('perubahan_perbup_1', $row->perubahan_perbup_1),
             'perubahan_perbup_2' => old('perubahan_perbup_2', $row->perubahan_perbup_2),
@@ -194,7 +193,7 @@ class UsulanBansos extends BaseController
         ];
         
 
-        return view('usulan/bansos/form', $data);
+        return view('usulan/bkk/form', $data);
     }
 
     public function update(){
@@ -219,7 +218,7 @@ class UsulanBansos extends BaseController
                 'updated_by'         => $userId
             ];
 
-            $db->table('tb_usulan_bansos')->where('id', $id)->update($data);
+            $db->table('tb_usulan_bkk')->where('id', $id)->update($data);
 
             if ($db->transStatus() === false) {
                 throw new \RuntimeException('DB transaction failed');
@@ -227,12 +226,12 @@ class UsulanBansos extends BaseController
             $db->transCommit();
 
             session()->setFlashdata('success', 'Berhasil update data');
-            return redirect()->to('/usulan/bansos');
+            return redirect()->to('/usulan/bkk');
 
         } catch (\Throwable $e) {
             $db->transRollback();
             session()->setFlashdata('error', 'Gagal update: ' . $e->getMessage());
-            return redirect()->to('/usulan/bansos');
+            return redirect()->to('/usulan/bkk');
         }
         
     }
@@ -244,10 +243,10 @@ class UsulanBansos extends BaseController
 
         try {
 
-            $row = $this->bansos_model->get_usulan_by_id($id);
+            $row = $this->desa_model->get_usulan_by_id($id);
 
             if($row){
-                $db->table('tb_usulan_bansos')->where('id', $id)->delete();
+                $db->table('tb_usulan_bkk')->where('id', $id)->delete();
             }
 
             if ($db->transStatus() === false) {
@@ -256,12 +255,12 @@ class UsulanBansos extends BaseController
             $db->transCommit();
 
             session()->setFlashdata('success', 'Berhasil hapus data');
-            return redirect()->to('/usulan/bansos');
+            return redirect()->to('/usulan/bkk');
 
         } catch (\Throwable $e) {
             $db->transRollback();
             session()->setFlashdata('error', 'Gagal hapus: ' . $e->getMessage());
-            return redirect()->to('/usulan/bansos');
+            return redirect()->to('/usulan/bkk');
         }
     }
 
@@ -285,24 +284,13 @@ class UsulanBansos extends BaseController
         $tahun = $_SESSION['years'];
 
         $db      = \Config\Database::connect();
-        $builder = $db->table('ms_bansos a'); // sesuaikan nama tabel
+        $builder = $db->table('ms_desa a'); // sesuaikan nama tabel
 
-        $builder->select('a.id, a.nama, a.alamat,
-                        kab.nama_kabupaten, kec.nama_kecamatan, des.nama_desa,
-                        a.nik, opd.nama_opd, opd.kode_opd')
-                ->join('ms_kabupaten kab', 'a.fk_kabupaten_id = kab.id', 'left')
-                ->join('ms_kecamatan kec', 'a.fk_kecamatan_id = kec.id', 'left')
-                ->join('ms_desa des', 'a.fk_desa_id = des.id', 'left')
+        $builder->select('a.id, a.nama_desa,
+                        kab.nama_kabupaten, kec.nama_kecamatan, opd.nama_opd, opd.kode_opd')
+                ->join('ms_kabupaten kab', 'a.fk_id_kabupaten = kab.id', 'left')
+                ->join('ms_kecamatan kec', 'a.fk_id_kecamatan = kec.id', 'left')
                 ->join('ms_opd opd', 'a.kode_opd = opd.kode_opd', 'left');
-
-        $builder->where("
-            NOT EXISTS (
-                SELECT 1
-                FROM tb_usulan_bansos u
-                WHERE u.fk_ms_bansos_id = a.id
-                AND u.tahun IN ('$tahun')
-            )
-        ", null, false);
 
         // filter kode_opd dari select
         $kodeOpd = $this->request->getPost('kode_opd');
@@ -323,12 +311,9 @@ class UsulanBansos extends BaseController
         // search global
         if ($search !== '') {
             $builder->groupStart()
-                    ->like('a.nama', $search)
-                    ->orLike('a.nik', $search)
-                    ->orLike('a.alamat', $search)
+                    ->like('a.nama_desa', $search)
                     ->orLike('kab.nama_kabupaten', $search)
                     ->orLike('kec.nama_kecamatan', $search)
-                    ->orLike('des.nama_desa', $search)
                     ->orLike('opd.nama_opd', $search)
                     ->groupEnd();
         }
@@ -348,10 +333,8 @@ class UsulanBansos extends BaseController
         foreach ($rows as $row) {
             $data[] = [
                 'id'       => $row['id'],
-                'nama'     => $row['nama'] . '<br><span class = "text-sm text-info">'
-                            . $row['nama_kabupaten'].', '.$row['nama_kecamatan'].', '
-                            . $row['nama_desa'].', '.$row['alamat'].'</span>',
-                'nik'      => $row['nik'],
+                'nama_desa'     => $row['nama_desa'] . '<br><span class = "text-sm text-info">'
+                            . $row['nama_kabupaten'].', '.$row['nama_kecamatan'].'</span>',
                 'nama_opd' => $row['nama_opd']
             ];
         }

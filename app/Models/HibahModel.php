@@ -119,7 +119,7 @@ class HibahModel extends Model
         return $query->getRow();
     }
 
-    public function get_all_usulan($kode_opd = null, $tahun = null, $search = '')
+    public function get_all_usulan($user_id = null, $tahun = null, $search = '')
     {
         $db = \Config\Database::connect();
         $builder = $db->table('tb_usulan_hibah a');
@@ -139,9 +139,9 @@ class HibahModel extends Model
         $builder->join('ms_kecamatan d', 'b.fk_kecamatan_id = d.id');
         $builder->join('ms_desa e', 'b.fk_desa_id = e.id');
 
-        if(!empty($kode_opd)){
+        if(!empty($user_id)){
             $builder->where([
-                'b.kode_opd' => $kode_opd
+                'a.created_by' => $user_id
             ]);
         }
 
@@ -164,19 +164,19 @@ class HibahModel extends Model
         return $builder;
     }
 
-    public function count_all_usulan($kodeOpd, $tahun)
+    public function count_all_usulan($user_id, $tahun)
     {
-        return $this->get_all_usulan($kodeOpd, $tahun)->countAllResults(false);
+        return $this->get_all_usulan($user_id, $tahun)->countAllResults(false);
     }
 
-    public function count_filtered_usulan($kodeOpd, $tahun, $search)
+    public function count_filtered_usulan($user_id, $tahun, $search)
     {
-        return $this->get_all_usulan($kodeOpd, $tahun, $search)->countAllResults(false);
+        return $this->get_all_usulan($user_id, $tahun, $search)->countAllResults(false);
     }
 
-    public function get_page_usulan($kodeOpd, $tahun, $search, $orderBy, $orderDir, $limit, $offset)
+    public function get_page_usulan($user_id, $tahun, $search, $orderBy, $orderDir, $limit, $offset)
     {
-        return $this->get_all_usulan($kodeOpd, $tahun, $search)
+        return $this->get_all_usulan($user_id, $tahun, $search)
             ->orderBy($orderBy, $orderDir)
             ->limit($limit, $offset)
             ->get()->getResultArray();

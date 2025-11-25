@@ -182,7 +182,7 @@
                         </ul>
                         <ul class="nav nav-treeview">
                             <li class="nav-item">
-                                <a href="<?= base_url('sampeanbuatkan'); ?>" class="nav-link ahref-usulan-bkk">
+                                <a href="<?= base_url('usulan/bkk'); ?>" class="nav-link ahref-usulan-bkk">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Usulan BKK</p>
                                 </a>

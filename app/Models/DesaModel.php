@@ -103,4 +103,96 @@ class DesaModel extends Model
         $query = $builder->get();
         return $query->getResultArray();
     }
+
+    public function get_all_usulan($user_id = null, $tahun = null, $search = '')
+    {
+        $db = \Config\Database::connect();
+        $builder = $db->table('tb_usulan_bkk a');
+
+        $builder->select(
+            "a.id, 
+            b.nama_kabupaten,
+            c.nama_kecamatan,
+            d.nama_desa, 
+            a.apbd, 
+            a.perubahan_perbup_1, 
+            a.perubahan_perbup_2, 
+            a.papbd",
+            false
+        );
+        $builder->join('ms_desa d', 'a.fk_ms_desa_id = d.id');
+        $builder->join('ms_kabupaten b', 'd.fk_id_kabupaten = b.id');
+        $builder->join('ms_kecamatan c', 'd.fk_id_kecamatan = c.id');
+
+        if(!empty($user_id)){
+            $builder->where([
+                'a.created_by' => $user_id
+            ]);
+        }
+
+        if(!empty($tahun)){
+            $builder->where([
+                'a.tahun' => $tahun
+            ]);
+        }
+
+        if ($search !== '') {
+            $builder->groupStart()
+                ->orLike('b.nama_kabupaten', $search)
+                ->orLike('c.nama_kecamatan', $search)
+                ->orLike('d.nama_desa', $search)
+                ->groupEnd();
+        }
+
+        return $builder;
+    }
+
+    public function count_all_usulan($user_id, $tahun)
+    {
+        return $this->get_all_usulan($user_id, $tahun)->countAllResults(false);
+    }
+
+    public function count_filtered_usulan($user_id, $tahun, $search)
+    {
+        return $this->get_all_usulan($user_id, $tahun, $search)->countAllResults(false);
+    }
+
+    public function get_page_usulan($user_id, $tahun, $search, $orderBy, $orderDir, $limit, $offset)
+    {
+        return $this->get_all_usulan($user_id, $tahun, $search)
+            ->orderBy($orderBy, $orderDir)
+            ->limit($limit, $offset)
+            ->get()->getResultArray();
+    }
+
+    public function get_usulan_by_id($id)
+    {
+        $db = \Config\Database::connect();        
+        // Select all fields
+        $builder = $db->table('tb_usulan_bkk a');
+
+        $builder->select('a.*, b.nama_desa, c.nama_kabupaten, d.nama_kecamatan');
+        $builder->join('ms_desa b', 'a.fk_ms_desa_id = b.id');
+        $builder->join('ms_kabupaten c', 'b.fk_id_kabupaten = c.id');
+        $builder->join('ms_kecamatan d', 'b.fk_id_kecamatan = d.id');
+        
+        // Use an associative array directly for where condition
+        $query = $builder->getWhere(['a.id' => $id]);
+
+        // Return the single row as an object
+        return $query->getRow();
+    }
+
+    public function get_usulan_by_ms_desa_id($id)
+    {
+        $db      = \Config\Database::connect();
+        $builder = $db->table('tb_usulan_bkk a');
+
+        $builder->select('a.tahun, c.nama_opd')
+                ->join('ms_desa b', 'a.fk_ms_desa_id = b.id')
+                ->join('ms_opd c', 'b.kode_opd = c.kode_opd')
+                ->where('a.fk_ms_desa_id', $id);
+
+        return $builder;
+    }
 }

@@ -69,7 +69,7 @@ class UsulanHibah extends BaseController
             $length = (int) $this->request->getPost('length');  // limit
             $search = $this->request->getPost('search')['value'] ?? '';
             $orderReq = $this->request->getPost('order')[0] ?? null; // column index & dir
-            $kodeOpd = $this->kode_user;
+            $userId = user()->id ?? null;
             $tahun = $_SESSION['years'];
 
             // mapping index kolom -> nama kolom di DB
@@ -77,9 +77,9 @@ class UsulanHibah extends BaseController
             $orderBy = $orderCols[$orderReq['column'] - 1] ?? 'a.id'; // -1 karena kolom nomor urut
             $orderDir = ($orderReq['dir'] ?? 'asc') === 'desc' ? 'DESC' : 'ASC';
 
-            $recordsTotal    = $this->hibah_model->count_all_usulan($kodeOpd, $tahun);                          // total baris (tanpa search)
-            $recordsFiltered = $this->hibah_model->count_filtered_usulan($kodeOpd, $tahun, $search);            // total setelah search
-            $rows            = $this->hibah_model->get_page_usulan($kodeOpd, $tahun, $search, $orderBy, $orderDir, $length, $start);
+            $recordsTotal    = $this->hibah_model->count_all_usulan($userId, $tahun);                          // total baris (tanpa search)
+            $recordsFiltered = $this->hibah_model->count_filtered_usulan($userId, $tahun, $search);            // total setelah search
+            $rows            = $this->hibah_model->get_page_usulan($userId, $tahun, $search, $orderBy, $orderDir, $length, $start);
 
             $data = [];
             foreach ($rows as $r) {
