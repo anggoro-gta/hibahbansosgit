@@ -133,7 +133,7 @@
                         <tr>
                             <th>No.</th>
                             <th>Tahun</th>
-                            <th>Nama OPD</th>
+                            <th>Diinput Oleh</th>
                         </tr>
                     </thead>
                     <tbody></tbody>

@@ -188,9 +188,8 @@ class DesaModel extends Model
         $db      = \Config\Database::connect();
         $builder = $db->table('tb_usulan_bkk a');
 
-        $builder->select('a.tahun, c.nama_opd')
-                ->join('ms_desa b', 'a.fk_ms_desa_id = b.id')
-                ->join('ms_opd c', 'b.kode_opd = c.kode_opd')
+        $builder->select('a.tahun, b.fullname AS nama_opd')
+                ->join('users b', 'a.created_by = b.id')
                 ->where('a.fk_ms_desa_id', $id);
 
         return $builder;

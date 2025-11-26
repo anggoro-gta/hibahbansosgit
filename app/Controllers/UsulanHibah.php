@@ -296,12 +296,15 @@ class UsulanHibah extends BaseController
 
         $builder->where('a.tgl_berdiri IS NOT NULL', null, false);
 
+        // $next_tahun = $tahun+1;
+        $prev_tahun = $tahun-1;
+
         $builder->where("
             NOT EXISTS (
                 SELECT 1
                 FROM tb_usulan_hibah u
                 WHERE u.fk_ms_hibah_id = a.id
-                AND u.tahun IN ('$tahun')
+                AND u.tahun IN ('$tahun', '$prev_tahun')
             )
         ", null, false);
 
