@@ -73,7 +73,7 @@ class UsulanHibah extends BaseController
             $tahun = $_SESSION['years'];
 
             // mapping index kolom -> nama kolom di DB
-            $orderCols = ['b.nama_lembaga', 'alamat_full', 'apbd', 'perubahan_perbup_1', 'perubahan_perbup_2', 'papbd'];
+            $orderCols = ['b.nama_lembaga', 'b.no_akta_hukum', 'alamat_full', 'apbd', 'perubahan_perbup_1', 'perubahan_perbup_2', 'papbd'];
             $orderBy = $orderCols[$orderReq['column'] - 1] ?? 'a.id'; // -1 karena kolom nomor urut
             $orderDir = ($orderReq['dir'] ?? 'asc') === 'desc' ? 'DESC' : 'ASC';
 
@@ -88,7 +88,8 @@ class UsulanHibah extends BaseController
                             <a href="'.base_url('usulan/hibah/delete/'.$r['id']).'" class="btn btn-sm btn-danger mb-1" onclick="return confirmDelete(\''.base_url('usulan/hibah/delete/'.$r['id']).'\')"><i class="fa fa-trash"></i></a>';
 
                 $data[] = [
-                    'nama_lembaga'       => $r['nama_lembaga'] ?? '-',
+                    'nama_lembaga'       => $r['nama_lembaga']. '<br><span class = "text-sm text-info">'
+                                            . $r['no_akta_hukum'].'</span>',
                     'alamat'             => $r['alamat_full'],
                     'apbd'               => $r['apbd'],
                     'perubahan_perbup_1' => $r['perubahan_perbup_1'],

@@ -73,7 +73,7 @@ class UsulanBansos extends BaseController
             $tahun = $_SESSION['years'];
 
             // mapping index kolom -> nama kolom di DB
-            $orderCols = ['b.nama', 'alamat_full', 'apbd', 'perubahan_perbup_1', 'perubahan_perbup_2', 'papbd'];
+            $orderCols = ['b.nama', 'b.nik', 'alamat_full', 'apbd', 'perubahan_perbup_1', 'perubahan_perbup_2', 'papbd'];
             $orderBy = $orderCols[$orderReq['column'] - 1] ?? 'a.id'; // -1 karena kolom nomor urut
             $orderDir = ($orderReq['dir'] ?? 'asc') === 'desc' ? 'DESC' : 'ASC';
 
@@ -88,7 +88,8 @@ class UsulanBansos extends BaseController
                             <a href="'.base_url('usulan/bansos/delete/'.$r['id']).'" class="btn btn-sm btn-danger mb-1" onclick="return confirmDelete(\''.base_url('usulan/bansos/delete/'.$r['id']).'\')"><i class="fa fa-trash"></i></a>';
 
                 $data[] = [
-                    'nama'               => $r['nama'] ?? '-',
+                    'nama'               => $r['nama']. '<br><span class = "text-sm text-info">'
+                                            . $r['nik'].'</span>',
                     'alamat'             => $r['alamat_full'],
                     'apbd'               => $r['apbd'],
                     'perubahan_perbup_1' => $r['perubahan_perbup_1'],

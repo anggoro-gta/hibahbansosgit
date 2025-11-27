@@ -127,6 +127,7 @@ class BansosModel extends Model
         $builder->select(
             "a.id, 
             b.nama, 
+            b.nik,
             a.apbd, 
             a.perubahan_perbup_1, 
             a.perubahan_perbup_2, 
@@ -154,6 +155,7 @@ class BansosModel extends Model
         if ($search !== '') {
             $builder->groupStart()
                 ->like('b.nama', $search)
+                ->orLike('b.nik', $search)
                 ->orLike('b.alamat', $search)
                 ->orLike('c.nama_kabupaten', $search)
                 ->orLike('d.nama_kecamatan', $search)
