@@ -183,6 +183,12 @@
                                             </div>
                                         <?php endif; ?>
                                     </div>
+                                    <div class="form-group col-md-6">
+                                        <div class="custom-control custom-checkbox">
+                                            <input class="custom-control-input" type="checkbox" name="is_vertikal" id="is_vertikal" value="1" <?= $is_vertikal=='1' ? 'checked' : '' ?>>
+                                            <label for="is_vertikal" class="custom-control-label">Instansi Vertikal</label>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             <!-- /.card-body -->
