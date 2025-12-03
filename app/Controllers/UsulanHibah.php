@@ -305,7 +305,8 @@ class UsulanHibah extends BaseController
                 SELECT 1
                 FROM tb_usulan_hibah u
                 WHERE u.fk_ms_hibah_id = a.id
-                AND u.tahun IN ('$tahun', '$prev_tahun')
+                AND u.tahun IN ($tahun, $prev_tahun)
+                AND (a.is_vertikal <> 1 OR u.tahun = $tahun)
             )
         ", null, false);
 
