@@ -194,4 +194,39 @@ class DesaModel extends Model
 
         return $builder;
     }
+
+    public function countallusulanbkkbytahun($tahun)
+    {
+        $db = \Config\Database::connect();
+        $builder = $db->table('tb_usulan_bkk');
+
+        $builder->select('*');
+
+        if (!empty($tahun)) {
+            $builder->where([
+                'tahun' => $tahun
+            ]);
+        }
+
+        $query = $builder->get();
+        return count($query->getResultArray());
+    }
+
+    public function countallusulanbkkbytahundanuserid($tahun, $userid)
+    {
+        $db = \Config\Database::connect();
+        $builder = $db->table('tb_usulan_bkk');
+
+        $builder->select('*');
+
+        if (!empty($tahun)) {
+            $builder->where([
+                'tahun' => $tahun,
+                'created_by' => $userid
+            ]);
+        }
+
+        $query = $builder->get();
+        return count($query->getResultArray());
+    }
 }

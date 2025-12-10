@@ -257,4 +257,39 @@ class BansosModel extends Model
 
         return $builder;
     }
+
+    public function countallusulanbansosbytahun($tahun)
+    {
+        $db = \Config\Database::connect();
+        $builder = $db->table('tb_usulan_bansos');
+
+        $builder->select('*');
+
+        if (!empty($tahun)) {
+            $builder->where([
+                'tahun' => $tahun
+            ]);
+        }
+
+        $query = $builder->get();
+        return count($query->getResultArray());
+    }
+
+    public function countallusulanbansosbytahundanuserid($tahun, $userid)
+    {
+        $db = \Config\Database::connect();
+        $builder = $db->table('tb_usulan_bansos');
+
+        $builder->select('*');
+
+        if (!empty($tahun)) {
+            $builder->where([
+                'tahun' => $tahun,
+                'created_by' => $userid
+            ]);
+        }
+
+        $query = $builder->get();
+        return count($query->getResultArray());
+    }
 }

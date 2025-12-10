@@ -156,39 +156,77 @@
                         </ul>
                     </li>
 
-                    <li class="nav-item liinputadmin">
-                        <a href="#" class="nav-link ahrefinputadmin">
-                            <i class="nav-icon fas fa-edit"></i>
-                            <p>
-                                Input
-                                <i class="fas fa-angle-left right"></i>
-                            </p>
-                        </a>
-                        <ul class="nav nav-treeview">
-                            <li class="nav-item">
-                                <a href="<?= base_url('usulan/hibah'); ?>" class="nav-link ahref-usulan-hibah">
-                                    <i class="far fa-circle nav-icon"></i>
-                                    <p>Usulan Hibah</p>
-                                </a>
-                            </li>
-                        </ul>
-                        <ul class="nav nav-treeview">
-                            <li class="nav-item">
-                                <a href="<?= base_url('usulan/bansos'); ?>" class="nav-link ahref-usulan-bansos">
-                                    <i class="far fa-circle nav-icon"></i>
-                                    <p>Usulan Bansos</p>
-                                </a>
-                            </li>
-                        </ul>
-                        <ul class="nav nav-treeview">
-                            <li class="nav-item">
-                                <a href="<?= base_url('usulan/bkk'); ?>" class="nav-link ahref-usulan-bkk">
-                                    <i class="far fa-circle nav-icon"></i>
-                                    <p>Usulan BKK</p>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
+                    <?php if (in_groups('useropd')) : ?>
+                        <li class="nav-item liinputadmin">
+                            <a href="#" class="nav-link ahrefinputadmin">
+                                <i class="nav-icon fas fa-edit"></i>
+                                <p>
+                                    Input
+                                    <i class="fas fa-angle-left right"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="<?= base_url('usulan/hibah'); ?>" class="nav-link ahref-usulan-hibah">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Usulan Hibah</p>
+                                    </a>
+                                </li>
+                            </ul>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="<?= base_url('usulan/bansos'); ?>" class="nav-link ahref-usulan-bansos">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Usulan Bansos</p>
+                                    </a>
+                                </li>
+                            </ul>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="<?= base_url('usulan/bkk'); ?>" class="nav-link ahref-usulan-bkk">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Usulan BKK</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    <?php endif; ?>
+
+                    <?php if (in_groups('admin')) : ?>
+                        <li class="nav-item liviewadmin">
+                            <a href="#" class="nav-link ahrefviewadmin">
+                                <i class="nav-icon fas fa-eye"></i>
+                                <p>
+                                    View
+                                    <i class="fas fa-angle-left right"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="<?= base_url('usulan/hibah'); ?>" class="nav-link ahref-view-usulan-hibah">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Usulan Hibah</p>
+                                    </a>
+                                </li>
+                            </ul>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="<?= base_url('usulan/bansos'); ?>" class="nav-link ahref-view-usulan-bansos">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Usulan Bansos</p>
+                                    </a>
+                                </li>
+                            </ul>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="<?= base_url('usulan/bkk'); ?>" class="nav-link ahref-view-usulan-bkk">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Usulan BKK</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    <?php endif; ?>
 
                     <!-- <li class="nav-item">
                         <a href="#" class="nav-link">

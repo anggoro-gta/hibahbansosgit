@@ -75,6 +75,9 @@ $routes->post('usulan/hibah/update', 'UsulanHibah::update', ['filter' => 'role:a
 $routes->get('usulan/hibah/delete/(:num)', 'UsulanHibah::delete/$1', ['filter' => 'role:admin,useropd']);
 $routes->post('usulan/hibah/layak-usulan-json', 'UsulanHibah::layakUsulanJson', ['filter' => 'role:admin,useropd']);
 
+//View Hibah
+$routes->get('view/hibah', 'ViewUsulanHibah::index', ['filter' => 'role:admin']);
+
 // Master-Bansos
 $routes->get('master/bansos', 'MasterBansos::index', ['filter' => 'role:admin,useropd']);
 $routes->match(['get', 'post'], 'master/bansos/datatable', 'MasterBansos::datatable', ['filter' => 'role:admin,useropd']);

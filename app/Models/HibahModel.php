@@ -68,7 +68,7 @@ class HibahModel extends Model
         $builder->join('ms_desa d', 'mh.fk_desa_id = d.id');
         $builder->join('ms_opd e', 'mh.kode_opd = e.kode_opd');
 
-        if(!empty($kode_opd) && $kode_opd!='all'){
+        if (!empty($kode_opd) && $kode_opd != 'all') {
             $builder->where([
                 'mh.kode_opd' => $kode_opd
             ]);
@@ -91,9 +91,9 @@ class HibahModel extends Model
         } else {
             $builder->where('no_akta_hukum', $no_akta);  // Jika tidak ada ID (untuk tambah data), hanya cek no_akta
         }
-        
+
         $query = $builder->get();
-        
+
         return $query->getNumRows() > 0;  // Mengembalikan true jika no_akta sudah ada
     }
 
@@ -101,7 +101,7 @@ class HibahModel extends Model
     {
         $db = \Config\Database::connect();
         $builder = $db->table('ms_hibah mh');
-        
+
         // Select all fields
         $builder->select('mh.*,	nama_kabupaten, nama_kecamatan, nama_desa, nama_program, nama_kegiatan, nama_sub_kegiatan, nama_opd');
         $builder->join('ms_kabupaten', 'mh.fk_kabupaten_id = ms_kabupaten.id');
@@ -111,7 +111,7 @@ class HibahModel extends Model
         $builder->join('ms_kegiatan', 'mh.fk_kegiatan_id = ms_kegiatan.id');
         $builder->join('ms_sub_kegiatan', 'mh.fk_sub_kegiatan_id = ms_sub_kegiatan.id');
         $builder->join('ms_opd', 'mh.kode_opd = ms_opd.kode_opd');
-        
+
         // Use an associative array directly for where condition
         $query = $builder->getWhere(['mh.id' => $id]);
 
@@ -140,13 +140,13 @@ class HibahModel extends Model
         $builder->join('ms_kecamatan d', 'b.fk_kecamatan_id = d.id');
         $builder->join('ms_desa e', 'b.fk_desa_id = e.id');
 
-        if(!empty($user_id)){
+        if (!empty($user_id)) {
             $builder->where([
                 'a.created_by' => $user_id
             ]);
         }
 
-        if(!empty($tahun)){
+        if (!empty($tahun)) {
             $builder->where([
                 'a.tahun' => $tahun
             ]);
@@ -184,15 +184,15 @@ class HibahModel extends Model
             ->get()->getResultArray();
     }
 
-    public function get_layak_usulan($kode_opd=null, $tahun)
+    public function get_layak_usulan($kode_opd = null, $tahun)
     {
         $builder = $this->builder('ms_hibah a');
 
         $builder->select('a.*, b.nama_kabupaten, c.nama_kecamatan, d.nama_desa, e.kode_opd, e.nama_opd')
-                ->join('ms_kabupaten b', 'a.fk_kabupaten_id = b.id', 'left')
-                ->join('ms_kecamatan c', 'a.fk_kecamatan_id = c.id', 'left')
-                ->join('ms_desa d', 'a.fk_desa_id = d.id', 'left')
-                ->join('ms_opd e', 'a.kode_opd = e.kode_opd');
+            ->join('ms_kabupaten b', 'a.fk_kabupaten_id = b.id', 'left')
+            ->join('ms_kecamatan c', 'a.fk_kecamatan_id = c.id', 'left')
+            ->join('ms_desa d', 'a.fk_desa_id = d.id', 'left')
+            ->join('ms_opd e', 'a.kode_opd = e.kode_opd');
 
         // minimal sudah 2 tahun
         $builder->where('a.tgl_berdiri IS NOT NULL', null, false);
@@ -201,9 +201,9 @@ class HibahModel extends Model
         // $builder->where('a.tgl_berdiri < CURDATE()', null, false);
 
         $tahun_select = $tahun;
-        $tahun_kemarin = $tahun-1;
-        $tahun_berikutnya = $tahun+1;
-        
+        $tahun_kemarin = $tahun - 1;
+        $tahun_berikutnya = $tahun + 1;
+
         // $builder->where("
         //     NOT EXISTS (
         //         SELECT 1
@@ -231,13 +231,13 @@ class HibahModel extends Model
 
     public function get_usulan_by_id($id)
     {
-        $db = \Config\Database::connect();        
+        $db = \Config\Database::connect();
         // Select all fields
         $builder = $db->table('tb_usulan_hibah a');
 
         $builder->select('a.*, b.nama_lembaga, b.tgl_berdiri, b.no_akta_hukum');
         $builder->join('ms_hibah b', 'a.fk_ms_hibah_id = b.id');
-        
+
         // Use an associative array directly for where condition
         $query = $builder->getWhere(['a.id' => $id]);
 
@@ -247,7 +247,7 @@ class HibahModel extends Model
 
     public function get_dokumen($table_name, $table_id)
     {
-        $db = \Config\Database::connect();        
+        $db = \Config\Database::connect();
         // Select all fields
         $builder = $db->table('dokumen');
         // Use an associative array directly for where condition
@@ -274,9 +274,44 @@ class HibahModel extends Model
         $builder = $db->table('tb_usulan_hibah a');
 
         $builder->select('a.tahun, b.fullname AS nama_opd')
-                ->join('users b', 'a.created_by = b.id')
-                ->where('a.fk_ms_hibah_id', $id);
+            ->join('users b', 'a.created_by = b.id')
+            ->where('a.fk_ms_hibah_id', $id);
 
         return $builder;
+    }
+
+    public function countallusulanhibahbytahun($tahun)
+    {
+        $db = \Config\Database::connect();
+        $builder = $db->table('tb_usulan_hibah');
+
+        $builder->select('*');
+
+        if (!empty($tahun)) {
+            $builder->where([
+                'tahun' => $tahun
+            ]);
+        }
+
+        $query = $builder->get();
+        return count($query->getResultArray());
+    }
+
+    public function countallusulanhibahbytahundanuserid($tahun, $userid)
+    {
+        $db = \Config\Database::connect();
+        $builder = $db->table('tb_usulan_hibah');
+
+        $builder->select('*');
+
+        if (!empty($tahun)) {
+            $builder->where([
+                'tahun' => $tahun,
+                'created_by' => $userid
+            ]);
+        }
+
+        $query = $builder->get();
+        return count($query->getResultArray());
     }
 }

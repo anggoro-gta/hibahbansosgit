@@ -26,15 +26,14 @@
             <?php
             if (isset($_SESSION['years'])) {
             ?>
-
                 <div class="row">
                     <div class="col-lg-3 col-6">
                         <!-- small box -->
                         <div class="small-box bg-info">
                             <div class="inner">
-                                <h3>100</h3>
+                                <h3><?= $jumlahusulanhibah; ?></h3>
 
-                                <p>Total Usulan</p>
+                                <p>Usulan Hibah</p>
                             </div>
                             <div class="icon">
                                 <i class="ion ion-stats-bars"></i>
@@ -42,108 +41,36 @@
                             <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
                         </div>
                     </div>
-                    <!-- ./col -->
+
                     <div class="col-lg-3 col-6">
                         <!-- small box -->
-                        <div class="small-box bg-success">
+                        <div class="small-box bg-info">
                             <div class="inner">
-                                <h3>90</h3>
+                                <h3><?= $jumlahusulanbansos; ?></h3>
 
-                                <p>Diakomodir</p>
+                                <p>Usulan Bansos</p>
                             </div>
                             <div class="icon">
-                                <i class="ion ion-android-checkbox-outline"></i>
+                                <i class="ion ion-stats-bars"></i>
                             </div>
                             <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
                         </div>
                     </div>
-                    <!-- ./col -->
 
-                    <!-- <div class="col-lg-3 col-6">                        
-                        <div class="small-box bg-warning">
-                            <div class="inner">
-                                <h3>44</h3>
-
-                                <p>User Registrations</p>
-                            </div>
-                            <div class="icon">
-                                <i class="ion ion-person-add"></i>
-                            </div>
-                            <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
-                        </div>
-                    </div> -->
-
-                    <!-- ./col -->
                     <div class="col-lg-3 col-6">
                         <!-- small box -->
-                        <div class="small-box bg-danger">
+                        <div class="small-box bg-info">
                             <div class="inner">
-                                <h3>98</h3>
+                                <h3><?= $jumlahusulanbkk; ?></h3>
 
-                                <p>Tdk Diakomodir</p>
+                                <p>Usulan BKK</p>
                             </div>
                             <div class="icon">
-                                <i class="ion ion-close-circled"></i>
+                                <i class="ion ion-stats-bars"></i>
                             </div>
                             <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
                         </div>
                     </div>
-                    <!-- ./col -->
-
-                    <div class="col-lg-3 col-6">
-                        <div class="small-box bg-warning">
-                            <div class="inner">
-                                <h3>90</h3>
-
-                                <p>Blm Proses</p>
-                            </div>
-                            <div class="icon">
-                                <i class="ion ion-refresh"></i>
-                            </div>
-                            <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-lg-6">
-                    <div class="card">
-                        <div class="card-header border-0">
-                            <div class="d-flex justify-content-between">
-                                <h3 class="card-title">Distribusi Usulan</h3>
-                                <!-- <a href="javascript:void(0);">View Report</a> -->
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <div class="d-flex">
-                                <p class="d-flex flex-column">
-                                    <span class="text-bold text-lg">1xxx</span>
-                                    <span>Total usulan</span>
-                                </p>
-                                <!-- <p class="ml-auto d-flex flex-column text-right">
-                                    <span class="text-success">
-                                        <i class="fas fa-arrow-up"></i> 33.1%
-                                    </span>
-                                    <span class="text-muted">Since last month</span>
-                                </p> -->
-                            </div>
-                            <!-- /.d-flex -->
-
-                            <div class="position-relative mb-4">
-                                <canvas id="sales-chart" height="200"></canvas>
-                            </div>
-
-                            <div class="d-flex flex-row justify-content-end">
-                                <span class="mr-2">
-                                    <i class="fas fa-square text-primary"></i> usulan
-                                </span>
-
-                                <!-- <span>
-                                    <i class="fas fa-square text-gray"></i> Last year
-                                </span> -->
-                            </div>
-                        </div>
-                    </div>
-                    <!-- /.card -->
                 </div>
 
                 <div class="row">
@@ -265,78 +192,6 @@
     lidashboard.classList.add("menu-open");
     ahrefdashboard.classList.add('active');
     ahrefhome.classList.add("active");
-</script>
-
-<script>
-    var ticksStyle = {
-        fontColor: '#495057',
-        fontStyle: 'bold'
-    }
-
-    var mode = 'index'
-    var intersect = true
-
-    var labelsdata = ['mojo', 'kras', 'ngadiluwih', 'kandat', 'wates', 'ngancar', 'puncu', 'plosoklaten', 'gurah', 'pagu', 'gampengrejo', 'grogol', 'papar', 'purwoasri', 'plemahan', 'pare', 'kepung', 'kandangan', 'tarokan', 'kunjang', 'banyakan', 'ringinrejo', 'kayenkidul', 'ngasem', 'badas', 'semen'];
-    var datavalue = [10, 15, 9, 9, 10, 12, 15, 1, 8, 2, 14, 16, 2, 11, 5, 9, 3, 5, 9, 11, 21, 6, 7, 9, 14, 12, 4];
-
-    var $salesChart = $('#sales-chart')
-    // eslint-disable-next-line no-unused-vars
-    var salesChart = new Chart($salesChart, {
-        type: 'bar',
-        data: {
-            labels: labelsdata,
-            datasets: [{
-                backgroundColor: '#007bff',
-                borderColor: '#007bff',
-                data: datavalue
-            }]
-        },
-        options: {
-            maintainAspectRatio: false,
-            tooltips: {
-                mode: mode,
-                intersect: intersect
-            },
-            hover: {
-                mode: mode,
-                intersect: intersect
-            },
-            legend: {
-                display: false
-            },
-            scales: {
-                yAxes: [{
-                    // display: false,
-                    gridLines: {
-                        display: true,
-                        lineWidth: '4px',
-                        color: 'rgba(0, 0, 0, .2)',
-                        zeroLineColor: 'transparent'
-                    },
-                    ticks: $.extend({
-                        beginAtZero: true,
-
-                        // Include a dollar sign in the ticks
-                        callback: function(value) {
-                            if (value >= 1000) {
-                                value /= 1000
-                                value += 'k'
-                            }
-
-                            return '$' + value
-                        }
-                    }, ticksStyle)
-                }],
-                xAxes: [{
-                    display: true,
-                    gridLines: {
-                        display: false
-                    },
-                    ticks: ticksStyle
-                }]
-            }
-        }
-    })
 </script>
 
 <?php if (session()->getFlashdata('pesan') == 'updatepass') : ?>

@@ -2,30 +2,68 @@
 
 namespace App\Controllers;
 
+use App\Models\BansosModel;
+use App\Models\DesaModel;
+use App\Models\HibahModel;
 use Myth\Auth\Password;
 use App\Models\usersModel;
 
 class Home extends BaseController
 {
     protected $usersModel;
-    protected $tbusulanmusren;
+    // protected $tbusulanmusren;
+    protected $hibahmodel;
+    protected $bansosmodel;
+    protected $desamodel;
 
     public function __construct()
     {
         $this->usersModel = new usersModel();
+        $this->hibahmodel = new HibahModel();
+        $this->bansosmodel = new BansosModel();
+        $this->desamodel = new DesaModel();
     }
 
     public function index()
     {
         if (isset($_SESSION['years'])) {
             $tahun = $_SESSION['years'];
+
+            if (in_groups('admin')) {
+                $jumlahusulanhibah = $this->hibahmodel->countallusulanhibahbytahun($tahun);
+                $jumlahusulanbansos = $this->bansosmodel->countallusulanbansosbytahun($tahun);
+                $jumlahusulanbkk = $this->desamodel->countallusulanbkkbytahun($tahun);
+
+                $data = [
+                    'jumlahusulanhibah' => $jumlahusulanhibah,
+                    'jumlahusulanbansos' => $jumlahusulanbansos,
+                    'jumlahusulanbkk' => $jumlahusulanbkk,
+                    'tittle' => 'Home',
+                ];
+
+                return view('pages/homenew', $data);
+            } else {
+                $userId = user()->id;
+                $jumlahusulanhibahid = $this->hibahmodel->countallusulanhibahbytahundanuserid($tahun, $userId);
+                $jumlahusulanbansosid = $this->bansosmodel->countallusulanbansosbytahundanuserid($tahun, $userId);
+                $jumlahusulanbkkid = $this->desamodel->countallusulanbkkbytahundanuserid($tahun, $userId);
+
+                $data = [
+                    'jumlahusulanhibah' => $jumlahusulanhibahid,
+                    'jumlahusulanbansos' => $jumlahusulanbansosid,
+                    'jumlahusulanbkk' => $jumlahusulanbkkid,
+                    'tittle' => 'Home',
+                ];
+
+                return view('pages/homenew', $data);
+            }
+        } else {
+            $data = [
+                'tittle' => 'Home',
+            ];
+
+            return view('pages/homenew', $data);
         }
-
-        $data = [
-            'tittle' => 'Home',
-        ];
-
-        return view('pages/homenew', $data);
     }
 
     public function indexusers()
@@ -69,7 +107,7 @@ class Home extends BaseController
     {
         date_default_timezone_set('Asia/Jakarta');
 
-        $getfullname = $this->usersModel->getfullname($id);        
+        $getfullname = $this->usersModel->getfullname($id);
 
         $data = [
             'tittle' => 'reset password users',
