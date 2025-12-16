@@ -190,6 +190,23 @@
                                 </li>
                             </ul>
                         </li>
+                        <li class="nav-item lisipd">
+                            <a href="#" class="nav-link ahrefsipd">
+                                <i class="nav-icon fas fa-file-export"></i>
+                                <p>
+                                    SIPD
+                                    <i class="fas fa-angle-left right"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="<?= base_url('sipd/buatkanmethodroutesnya'); ?>" class="nav-link ahref-sipd-bansos">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>bansos</p>
+                                    </a>
+                                </li>
+                            </ul>                            
+                        </li>
                     <?php endif; ?>
 
                     <?php if (in_groups('admin')) : ?>
