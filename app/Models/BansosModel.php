@@ -132,7 +132,10 @@ class BansosModel extends Model
             a.perubahan_perbup_1, 
             a.perubahan_perbup_2, 
             a.papbd, 
-            CONCAT(c.nama_kabupaten, ', ', d.nama_kecamatan, ', ', e.nama_desa, ', ', b.alamat) AS alamat_full",
+            CONCAT(c.nama_kabupaten, ', ', d.nama_kecamatan, ', ', e.nama_desa, ', ', b.alamat) AS alamat_full,
+            b.alamat,
+            d.kode_ref_sipd_kec,
+            e.kode_ref_sipd_desa",
             false
         );
         $builder->join('ms_bansos b', 'a.fk_ms_bansos_id = b.id');

@@ -120,6 +120,10 @@ $routes->post('usulan/bkk/update', 'UsulanBkk::update', ['filter' => 'role:admin
 $routes->get('usulan/bkk/delete/(:num)', 'UsulanBkk::delete/$1', ['filter' => 'role:admin,useropd']);
 $routes->post('usulan/bkk/layak-usulan-json', 'UsulanBkk::layakUsulanJson', ['filter' => 'role:admin,useropd']);
 
+// SIPD-Bansos
+$routes->get('sipd/bansos', 'SipdBansos::index', ['filter' => 'role:admin,useropd']);
+$routes->post('sipd/bansos/export-excel', 'SipdBansos::exportExcel', ['filter' => 'role:admin,useropd']);
+
 //ajax
 $routes->get('master/kecamatan/(:num)', 'MasterBansos::getKecamatan/$1', ['filter' => 'role:admin,useropd']);
 $routes->get('master/desa/(:num)', 'MasterBansos::getDesa/$1', ['filter' => 'role:admin,useropd']);

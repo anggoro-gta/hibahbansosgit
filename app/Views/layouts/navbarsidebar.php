@@ -200,9 +200,9 @@
                             </a>
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
-                                    <a href="<?= base_url('sipd/buatkanmethodroutesnya'); ?>" class="nav-link ahref-sipd-bansos">
+                                    <a href="<?= base_url('sipd/bansos'); ?>" class="nav-link ahref-sipd-bansos">
                                         <i class="far fa-circle nav-icon"></i>
-                                        <p>bansos</p>
+                                        <p>Bansos</p>
                                     </a>
                                 </li>
                             </ul>                            
