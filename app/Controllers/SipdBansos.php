@@ -37,14 +37,13 @@ class SipdBansos extends BaseController
     public function exportExcel()
     {
         try {
-            $pemaketan = $this->request->getPost('pemaketan_sipd');
-            $keterangan = $this->request->getPost('keterangan_sipd');
+            $pemaketan = strip_tags($this->request->getPost('pemaketan_sipd'));
+            $keterangan = strip_tags($this->request->getPost('keterangan_sipd'));
             $jenis_anggaran = $this->request->getPost('jenis_anggaran');
 
             // Ambil data dari database atau array
             $usulan = $this->bansos_model->get_all_usulan(null, $_SESSION['years'], '')->get()->getResultArray();
-            // echo var_dump($usulan);die();
-            
+
             // Buat instance Spreadsheet
             $spreadsheet = new Spreadsheet();
             $sheet = $spreadsheet->getActiveSheet();
@@ -61,29 +60,42 @@ class SipdBansos extends BaseController
 
             // Isi data ke baris setelah header
             $row = 2;
-            foreach ($usulan as $index => $data) {
-            $nilai = 0;
-            if ($jenis_anggaran == 'apbd') {
-                $nilai = (float) $data['apbd'];
-            } else if ($jenis_anggaran == 'perubahan_perbup_1') {
-                $nilai = (float) $data['perubahan_perbup_1'];
-            } else if ($jenis_anggaran == 'perubahan_perbup_2') {
-                $nilai = (float) $data['perubahan_perbup_2'];
-            } else if ($jenis_anggaran == 'papbd') {
-                $nilai = (float) $data['papbd'];
+            foreach ($usulan as $data) {
+                $pemaketan_cleaned = strip_tags($pemaketan);
+                $keterangan_cleaned = strip_tags($keterangan);
+                $nama_cleaned = strip_tags($data['nama']);
+                $nik_cleaned = strip_tags($data['nik']);
+                $kecamatan_cleaned = strip_tags($data['kode_ref_sipd_kec']);
+                $kelurahan_cleaned = strip_tags($data['kode_ref_sipd_desa']);
+                $alamat_cleaned = strip_tags($data['alamat']);
+                $nilai = 0;
+                if ($jenis_anggaran == 'apbd') {
+                    $nilai = (float) $data['apbd'];
+                } else if ($jenis_anggaran == 'perubahan_perbup_1') {
+                    $nilai = (float) $data['perubahan_perbup_1'];
+                } else if ($jenis_anggaran == 'perubahan_perbup_2') {
+                    $nilai = (float) $data['perubahan_perbup_2'];
+                } else if ($jenis_anggaran == 'papbd') {
+                    $nilai = (float) $data['papbd'];
+                }
+                $nilai_cleaned = (float) $nilai;
+
+                // Menulis data ke Excel
+                $sheet->setCellValue('A' . $row, $pemaketan_cleaned);
+                $sheet->setCellValue('B' . $row, $keterangan_cleaned);
+                $sheet->setCellValue('C' . $row, $nama_cleaned);
+                $sheet->setCellValueExplicit('D' . $row, (string)$nik_cleaned, DataType::TYPE_STRING);
+                $sheet->setCellValueExplicit('E' . $row, (string)$kecamatan_cleaned, DataType::TYPE_STRING);
+                $sheet->setCellValueExplicit('F' . $row, (string)$kelurahan_cleaned, DataType::TYPE_STRING);
+                $sheet->setCellValueExplicit('G' . $row, $alamat_cleaned, DataType::TYPE_STRING);
+                $sheet->setCellValueExplicit('H' . $row, $nilai_cleaned, DataType::TYPE_NUMERIC);
+                $row++;
             }
 
-            // Menulis data ke Excel
-            $sheet->setCellValue('A' . $row, $pemaketan);
-            $sheet->setCellValue('B' . $row, $keterangan);
-            $sheet->setCellValue('C' . $row, $data['nama']);
-            $sheet->setCellValueExplicit('D' . $row, (string) $data['nik'], DataType::TYPE_STRING);
-            $sheet->setCellValue('E' . $row, $data['kode_ref_sipd_kec']);
-            $sheet->setCellValue('F' . $row, $data['kode_ref_sipd_desa']);
-            $sheet->setCellValue('G' . $row, $data['alamat']);
-            $sheet->setCellValueExplicit('H' . $row, $nilai, DataType::TYPE_NUMERIC);  // Menulis angka sebagai numeric
-            $row++;
-        }
+            // Atur lebar kolom secara otomatis
+            foreach (range('A', 'H') as $columnID) {
+                $sheet->getColumnDimension($columnID)->setAutoSize(true);
+            }
 
             // Set header untuk download file
             $writer = new Xlsx($spreadsheet);
@@ -100,5 +112,6 @@ class SipdBansos extends BaseController
             echo 'General error: ', $e->getMessage();
         }
     }
+
 
 }
