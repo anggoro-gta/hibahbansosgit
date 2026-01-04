@@ -314,4 +314,56 @@ class HibahModel extends Model
         $query = $builder->get();
         return count($query->getResultArray());
     }
+
+    //VIEW USULAN HIBAH BY ADMIN
+    private function baseQueryviewhibah($kodeOpd, $tahun = null, $search = '')
+    {
+        $db = \Config\Database::connect();
+        $builder = $db->table('tb_usulan_hibah a')
+            ->select("a.id,b.nama_lembaga,b.no_akta_hukum,b.kode_opd,a.apbd,a.perubahan_perbup_1,a.perubahan_perbup_2,a.papbd,f.nama_opd,CONCAT(c.nama_kabupaten, ', ', d.nama_kecamatan, ', ', e.nama_desa, ', ', b.alamat) AS alamat_full")
+            ->join('ms_hibah b', 'a.fk_ms_hibah_id = b.id')
+            ->join('ms_kabupaten c', 'b.fk_kabupaten_id = c.id')
+            ->join('ms_kecamatan d', 'b.fk_kecamatan_id = d.id')
+            ->join('ms_desa e', 'b.fk_desa_id = e.id')
+            ->join('ms_opd f', 'b.kode_opd = f.kode_opd');
+
+        if (!empty($kodeOpd) && $kodeOpd !== 'all') {
+            $builder->where('b.kode_opd', $kodeOpd);
+        }
+
+        if (!empty($tahun)) {
+            $builder->where([
+                'a.tahun' => $tahun
+            ]);
+        }
+
+        if ($search !== '') {
+            $builder->groupStart()
+                ->like('b.nama_lembaga', $search)
+                ->orLike('b.no_akta_hukum', $search)
+                ->orLike('f.nama_opd', $search)
+                ->groupEnd();
+        }
+
+        return $builder;
+    }
+
+    public function count_all_view_hibah($kodeOpd, $tahun)
+    {
+        return $this->baseQueryviewhibah($kodeOpd, $tahun)->countAllResults(false);
+    }
+
+    public function count_filtered_view_hibah($kodeOpd, $tahun, $search)
+    {
+        return $this->baseQueryviewhibah($kodeOpd, $tahun, $search)->countAllResults(false);
+    }
+
+    public function get_page_view_hibah($kodeOpd, $tahun, $search, $orderBy, $orderDir, $limit, $offset)
+    {
+        return $this->baseQueryviewhibah($kodeOpd, $tahun, $search)
+            ->orderBy($orderBy, $orderDir)
+            ->limit($limit, $offset)
+            ->get()->getResultArray();
+    }
+    //END VIEW USULAN HIBAH BY ADMIN
 }

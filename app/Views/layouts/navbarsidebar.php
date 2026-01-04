@@ -220,7 +220,7 @@
                             </a>
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
-                                    <a href="<?= base_url('usulan/hibah'); ?>" class="nav-link ahref-view-usulan-hibah">
+                                    <a href="<?= base_url('view/hibah'); ?>" class="nav-link ahref-view-usulan-hibah">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>Usulan Hibah</p>
                                     </a>
@@ -228,7 +228,7 @@
                             </ul>
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
-                                    <a href="<?= base_url('usulan/bansos'); ?>" class="nav-link ahref-view-usulan-bansos">
+                                    <a href="<?= base_url('view/bansos'); ?>" class="nav-link ahref-view-usulan-bansos">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>Usulan Bansos</p>
                                     </a>
@@ -236,7 +236,7 @@
                             </ul>
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
-                                    <a href="<?= base_url('usulan/bkk'); ?>" class="nav-link ahref-view-usulan-bkk">
+                                    <a href="<?= base_url('view/bkk'); ?>" class="nav-link ahref-view-usulan-bkk">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>Usulan BKK</p>
                                     </a>
