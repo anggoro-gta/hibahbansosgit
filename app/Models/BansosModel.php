@@ -295,4 +295,56 @@ class BansosModel extends Model
         $query = $builder->get();
         return count($query->getResultArray());
     }
+
+    //VIEW USULAN BANSOS BY ADMIN
+    private function baseQueryviewbansos($kodeOpd, $tahun = null, $search = '')
+    {
+        $db = \Config\Database::connect();
+        $builder = $db->table('tb_usulan_bansos a')
+            ->select("a.id,b.nama,b.nik,f.kode_user,a.apbd,a.perubahan_perbup_1,a.perubahan_perbup_2,a.papbd,f.fullname,CONCAT(c.nama_kabupaten, ', ', d.nama_kecamatan, ', ', e.nama_desa, ', ', b.alamat) AS alamat_full")
+            ->join('ms_bansos b', 'a.fk_ms_bansos_id = b.id')
+            ->join('ms_kabupaten c', 'b.fk_kabupaten_id = c.id')
+            ->join('ms_kecamatan d', 'b.fk_kecamatan_id = d.id')
+            ->join('ms_desa e', 'b.fk_desa_id = e.id')
+            ->join('users f', 'a.created_by = f.id');
+
+        if (!empty($kodeOpd) && $kodeOpd !== 'all') {
+            $builder->where('f.kode_user', $kodeOpd);
+        }
+
+        if (!empty($tahun)) {
+            $builder->where([
+                'a.tahun' => $tahun
+            ]);
+        }
+
+        if ($search !== '') {
+            $builder->groupStart()
+                ->like('b.nama', $search)
+                ->orLike('b.nik', $search)
+                ->orLike('f.kode_user', $search)
+                ->groupEnd();
+        }
+
+        return $builder;
+    }
+
+    public function count_all_view_bansos($kodeOpd, $tahun)
+    {
+        return $this->baseQueryviewbansos($kodeOpd, $tahun)->countAllResults(false);
+    }
+
+    public function count_filtered_view_bansos($kodeOpd, $tahun, $search)
+    {
+        return $this->baseQueryviewbansos($kodeOpd, $tahun, $search)->countAllResults(false);
+    }
+
+    public function get_page_view_bansos($kodeOpd, $tahun, $search, $orderBy, $orderDir, $limit, $offset)
+    {
+        return $this->baseQueryviewbansos($kodeOpd, $tahun, $search)
+            ->orderBy($orderBy, $orderDir)
+            ->limit($limit, $offset)
+            ->get()->getResultArray();
+    }
+    //END VIEW USULAN BANSOS BY ADMIN
 }
