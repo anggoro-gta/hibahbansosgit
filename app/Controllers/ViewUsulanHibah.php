@@ -39,7 +39,7 @@ class ViewUsulanHibah extends BaseController
             $tahun = $_SESSION['years'];
 
             // mapping index kolom -> nama kolom di DB
-            $orderCols = ['b.nama_lembaga', 'alamat_full', 'a.apbd', 'a.perubahan_perbup_1', 'a.perubahan_perbup_2', 'a.papbd', 'e.nama_opd'];
+            $orderCols = ['b.nama_lembaga', 'alamat_full', 'a.apbd', 'a.perubahan_perbup_1', 'a.perubahan_perbup_2', 'a.papbd', 'f.fullname'];
             $orderBy = $orderCols[$orderReq['column'] - 1] ?? 'a.id'; // -1 karena kolom nomor urut
             $orderDir = ($orderReq['dir'] ?? 'asc') === 'desc' ? 'DESC' : 'ASC';
 
@@ -57,7 +57,7 @@ class ViewUsulanHibah extends BaseController
                     'perubahan_perbup_1' => $r['perubahan_perbup_1'],
                     'perubahan_perbup_2' => $r['perubahan_perbup_2'],
                     'papbd'              => $r['papbd'],
-                    'opd'                => $r['nama_opd'],
+                    'opd'                => $r['fullname'],
                 ];
             }
 

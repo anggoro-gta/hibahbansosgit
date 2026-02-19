@@ -320,15 +320,15 @@ class HibahModel extends Model
     {
         $db = \Config\Database::connect();
         $builder = $db->table('tb_usulan_hibah a')
-            ->select("a.id,b.nama_lembaga,b.no_akta_hukum,b.kode_opd,a.apbd,a.perubahan_perbup_1,a.perubahan_perbup_2,a.papbd,f.nama_opd,CONCAT(c.nama_kabupaten, ', ', d.nama_kecamatan, ', ', e.nama_desa, ', ', b.alamat) AS alamat_full")
+            ->select("a.id,b.nama_lembaga,b.no_akta_hukum,f.kode_user,a.apbd,a.perubahan_perbup_1,a.perubahan_perbup_2,a.papbd,f.fullname,CONCAT(c.nama_kabupaten, ', ', d.nama_kecamatan, ', ', e.nama_desa, ', ', b.alamat) AS alamat_full")
             ->join('ms_hibah b', 'a.fk_ms_hibah_id = b.id')
             ->join('ms_kabupaten c', 'b.fk_kabupaten_id = c.id')
             ->join('ms_kecamatan d', 'b.fk_kecamatan_id = d.id')
             ->join('ms_desa e', 'b.fk_desa_id = e.id')
-            ->join('ms_opd f', 'b.kode_opd = f.kode_opd');
+            ->join('users f', 'a.created_by = f.id');
 
         if (!empty($kodeOpd) && $kodeOpd !== 'all') {
-            $builder->where('b.kode_opd', $kodeOpd);
+            $builder->where('f.kode_user', $kodeOpd);
         }
 
         if (!empty($tahun)) {
