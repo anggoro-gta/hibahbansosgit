@@ -341,7 +341,7 @@ class HibahModel extends Model
             $builder->groupStart()
                 ->like('b.nama_lembaga', $search)
                 ->orLike('b.no_akta_hukum', $search)
-                ->orLike('f.nama_opd', $search)
+                ->orLike('f.fullname', $search)
                 ->groupEnd();
         }
 
