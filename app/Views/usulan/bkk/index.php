@@ -41,9 +41,11 @@
                                         <th>No</th>
                                         <th>Nama Desa</th>
                                         <th>APBD <?= $_SESSION['years'] ?></th>
-                                        <th>Perubahan PERBUP 1 <?= $_SESSION['years'] ?></th>
-                                        <th>Perubahan PERBUP 2 <?= $_SESSION['years'] ?></th>
+                                        <th>P1 <?= $_SESSION['years'] ?></th>
+                                        <th>P2 <?= $_SESSION['years'] ?></th>
                                         <th>P-APBD <?= $_SESSION['years'] ?></th>
+                                        <th>program bkk</th>
+                                        <th>ket</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -55,9 +57,11 @@
                                         <th>No</th>
                                         <th>Nama Desa</th>
                                         <th>APBD <?= $_SESSION['years'] ?></th>
-                                        <th>Perubahan PERBUP 1 <?= $_SESSION['years'] ?></th>
-                                        <th>Perubahan PERBUP 2 <?= $_SESSION['years'] ?></th>
+                                        <th>P1 <?= $_SESSION['years'] ?></th>
+                                        <th>P2 <?= $_SESSION['years'] ?></th>
                                         <th>P-APBD <?= $_SESSION['years'] ?></th>
+                                        <th>program bkk</th>
+                                        <th>ket</th>
                                         <th>Action</th>
                                     </tr>
                                 </tfoot>
@@ -188,6 +192,18 @@
                         return data;
                     } 
                 },
+                { data: 'nama_program_bkk', className:'text-left', render: (data,type) => {
+                    if (type === 'display') return data || '-';
+                        return data;
+                    } 
+                },
+                { data: 'keterangan', className:'text-left', render: (data,type) => {
+                    if (type === 'display') return data || '-';
+                        return data;
+                    } 
+                },
+
+
                 { data: 'action', orderable:false, searchable:false, className:'text-center' }
             ]
         });

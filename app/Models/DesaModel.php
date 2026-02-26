@@ -117,7 +117,9 @@ class DesaModel extends Model
             a.apbd, 
             a.perubahan_perbup_1, 
             a.perubahan_perbup_2, 
-            a.papbd",
+            a.papbd,
+            a.nama_program_bkk,
+            a.keterangan",
             false
         );
         $builder->join('ms_desa d', 'a.fk_ms_desa_id = d.id');

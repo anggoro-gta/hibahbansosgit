@@ -100,6 +100,14 @@
                                             <label>P-APBD</label>
                                             <input type="text" class="form-control nominal" name="papbd" id="papbd" value="<?= $papbd > 0 ? number_format($papbd, 0, ',', '.') : '' ?>">
                                         </div>
+                                        <div class="form-group col-md-12">
+                                            <label>nama program bkk</label>
+                                            <input type="text" class="form-control" name="nama_program_bkk" id="nama_program_bkk" value="<?= $nama_program_bkk ?? '' ?>">
+                                        </div>
+                                        <div class="form-group col-md-12">
+                                            <label>keterangan</label>
+                                            <input type="text" class="form-control" name="keterangan" id="keterangan" value="<?= $keterangan ?? '' ?>">
+                                        </div>
                                     </div>
                                 <?php endif ?>
                             </div>

@@ -19,7 +19,7 @@ class UsulanBkk extends BaseController
     protected $program_model;
     protected $kegiatan_model;
     protected $sub_kegiatan_model;
-    
+
     protected $dompdf;
     protected $is_opd;
     protected $kode_user;
@@ -40,7 +40,7 @@ class UsulanBkk extends BaseController
             $this->is_opd = true;
         }
         $this->kode_user = null;
-        if($this->is_opd){
+        if ($this->is_opd) {
             $this->kode_user = user()->kode_user;
         }
     }
@@ -50,7 +50,7 @@ class UsulanBkk extends BaseController
         $data = [
             'tittle' => 'Usulan BKK'
         ];
-        
+
         return view('usulan/bkk/index', $data);
     }
 
@@ -58,7 +58,7 @@ class UsulanBkk extends BaseController
     {
         try {
             if (!$this->request->isAJAX()) {
-                return $this->response->setStatusCode(400)->setJSON(['data'=>[]]);
+                return $this->response->setStatusCode(400)->setJSON(['data' => []]);
             }
 
             $draw   = (int) $this->request->getPost('draw');
@@ -70,7 +70,7 @@ class UsulanBkk extends BaseController
             $tahun = $_SESSION['years'];
 
             // mapping index kolom -> nama kolom di DB
-            $orderCols = ['b.nama_kabupaten', 'c.nama_kecamatan', 'd.nama_desa', 'apbd', 'perubahan_perbup_1', 'perubahan_perbup_2', 'papbd'];
+            $orderCols = ['b.nama_kabupaten', 'c.nama_kecamatan', 'd.nama_desa', 'apbd', 'perubahan_perbup_1', 'perubahan_perbup_2', 'papbd', 'nama_program_bkk', 'keterangan'];
             $orderBy = $orderCols[$orderReq['column'] - 1] ?? 'a.id'; // -1 karena kolom nomor urut
             $orderDir = ($orderReq['dir'] ?? 'asc') === 'desc' ? 'DESC' : 'ASC';
 
@@ -80,17 +80,19 @@ class UsulanBkk extends BaseController
 
             $data = [];
             foreach ($rows as $r) {
-                
-                $btn = ' <a href="'.base_url('usulan/bkk/edit/'.$r['id']).'" class="btn btn-sm btn-primary mb-1"><i class="fa fa-edit"></i></a>
-                            <a href="'.base_url('usulan/bkk/delete/'.$r['id']).'" class="btn btn-sm btn-danger mb-1" onclick="return confirmDelete(\''.base_url('usulan/bkk/delete/'.$r['id']).'\')"><i class="fa fa-trash"></i></a>';
+
+                $btn = ' <a href="' . base_url('usulan/bkk/edit/' . $r['id']) . '" class="btn btn-sm btn-primary mb-1"><i class="fa fa-edit"></i></a>
+                            <a href="' . base_url('usulan/bkk/delete/' . $r['id']) . '" class="btn btn-sm btn-danger mb-1" onclick="return confirmDelete(\'' . base_url('usulan/bkk/delete/' . $r['id']) . '\')"><i class="fa fa-trash"></i></a>';
 
                 $data[] = [
                     'nama_desa'          => $r['nama_desa'] . '<br><span class = "text-sm text-info">'
-                                            . $r['nama_kabupaten'].', '.$r['nama_kecamatan'].'</span>',
+                        . $r['nama_kabupaten'] . ', ' . $r['nama_kecamatan'] . '</span>',
                     'apbd'               => $r['apbd'],
                     'perubahan_perbup_1' => $r['perubahan_perbup_1'],
                     'perubahan_perbup_2' => $r['perubahan_perbup_2'],
                     'papbd'              => $r['papbd'],
+                    'nama_program_bkk'   => $r['nama_program_bkk'],
+                    'keterangan'         => $r['keterangan'],
                     'action'             => $btn,
                 ];
             }
@@ -109,10 +111,10 @@ class UsulanBkk extends BaseController
 
     public function create()
     {
-        if(!isset($_SESSION['years'])){
+        if (!isset($_SESSION['years'])) {
             return redirect()->to('/usulan/bkk');
         }
-        
+
         $tahun = $_SESSION['years'];
 
         $data = [
@@ -121,11 +123,12 @@ class UsulanBkk extends BaseController
             'tittle' => 'Tambah Usulan BKK',
             'ref_opd' => $this->desa_model->get_all_opd()
         ];
-        
+
         return view('usulan/bkk/form', $data);
     }
 
-    public function store(){
+    public function store()
+    {
         $userId = user()->id ?? null;
 
         $now = date('Y-m-d H:i:s');
@@ -149,8 +152,8 @@ class UsulanBkk extends BaseController
                 $batchData[] = [
                     'fk_ms_desa_id' => $msBkkId,
                     'tahun'          => $tahun,
-                    'created_by'     => $userId ,
-                    'created_at'     => $now 
+                    'created_by'     => $userId,
+                    'created_at'     => $now
                 ];
             }
 
@@ -164,13 +167,11 @@ class UsulanBkk extends BaseController
 
             session()->setFlashdata('success', 'Berhasil insert data');
             return redirect()->to('/usulan/bkk');
-
         } catch (\Throwable $e) {
             $db->transRollback();
             session()->setFlashdata('error', 'Gagal menyimpan: ' . $e->getMessage());
             return redirect()->to('/usulan/bkk');
         }
-        
     }
 
     public function edit($id)
@@ -189,14 +190,17 @@ class UsulanBkk extends BaseController
             'apbd'               => old('apbd', $row->apbd),
             'perubahan_perbup_1' => old('perubahan_perbup_1', $row->perubahan_perbup_1),
             'perubahan_perbup_2' => old('perubahan_perbup_2', $row->perubahan_perbup_2),
-            'papbd'              => old('papbd', $row->papbd)
+            'papbd'              => old('papbd', $row->papbd),
+            'nama_program_bkk'   => old('nama_program_bkk', $row->nama_program_bkk),
+            'keterangan'         => old('keterangan', $row->keterangan)
         ];
-        
+
 
         return view('usulan/bkk/form', $data);
     }
 
-    public function update(){
+    public function update()
+    {
         $userId = user()->id ?? null;
 
         $db  = \Config\Database::connect();
@@ -209,12 +213,16 @@ class UsulanBkk extends BaseController
             $perubahan_perbup_1 = $this->request->getPost('perubahan_perbup_1');
             $perubahan_perbup_2 = $this->request->getPost('perubahan_perbup_2');
             $papbd = $this->request->getPost('papbd');
+            $nama_program_bkk = $this->request->getPost('nama_program_bkk');
+            $keterangan = $this->request->getPost('keterangan');            
 
             $data = [
                 'apbd'               => !empty($apbd) ? $this->parseNumber($apbd) : null,
                 'perubahan_perbup_1' => !empty($perubahan_perbup_1) ? $this->parseNumber($perubahan_perbup_1) : null,
                 'perubahan_perbup_2' => !empty($perubahan_perbup_2) ? $this->parseNumber($perubahan_perbup_2) : null,
                 'papbd'              => !empty($papbd) ? $this->parseNumber($papbd) : null,
+                'nama_program_bkk'   => !empty($nama_program_bkk) ? $nama_program_bkk : null,
+                'keterangan'         => !empty($keterangan) ? $keterangan : null,
                 'updated_by'         => $userId
             ];
 
@@ -227,13 +235,11 @@ class UsulanBkk extends BaseController
 
             session()->setFlashdata('success', 'Berhasil update data');
             return redirect()->to('/usulan/bkk');
-
         } catch (\Throwable $e) {
             $db->transRollback();
             session()->setFlashdata('error', 'Gagal update: ' . $e->getMessage());
             return redirect()->to('/usulan/bkk');
         }
-        
     }
 
     public function delete($id)
@@ -245,7 +251,7 @@ class UsulanBkk extends BaseController
 
             $row = $this->desa_model->get_usulan_by_id($id);
 
-            if($row){
+            if ($row) {
                 $db->table('tb_usulan_bkk')->where('id', $id)->delete();
             }
 
@@ -256,7 +262,6 @@ class UsulanBkk extends BaseController
 
             session()->setFlashdata('success', 'Berhasil hapus data');
             return redirect()->to('/usulan/bkk');
-
         } catch (\Throwable $e) {
             $db->transRollback();
             session()->setFlashdata('error', 'Gagal hapus: ' . $e->getMessage());
@@ -288,9 +293,9 @@ class UsulanBkk extends BaseController
 
         $builder->select('a.id, a.nama_desa,
                         kab.nama_kabupaten, kec.nama_kecamatan, opd.nama_opd, opd.kode_opd')
-                ->join('ms_kabupaten kab', 'a.fk_id_kabupaten = kab.id', 'left')
-                ->join('ms_kecamatan kec', 'a.fk_id_kecamatan = kec.id', 'left')
-                ->join('ms_opd opd', 'a.kode_opd = opd.kode_opd', 'left');
+            ->join('ms_kabupaten kab', 'a.fk_id_kabupaten = kab.id', 'left')
+            ->join('ms_kecamatan kec', 'a.fk_id_kecamatan = kec.id', 'left')
+            ->join('ms_opd opd', 'a.kode_opd = opd.kode_opd', 'left');
 
         // filter kode_opd dari select
         $kodeOpd = $this->request->getPost('kode_opd');
@@ -311,11 +316,11 @@ class UsulanBkk extends BaseController
         // search global
         if ($search !== '') {
             $builder->groupStart()
-                    ->like('a.nama_desa', $search)
-                    ->orLike('kab.nama_kabupaten', $search)
-                    ->orLike('kec.nama_kecamatan', $search)
-                    ->orLike('opd.nama_opd', $search)
-                    ->groupEnd();
+                ->like('a.nama_desa', $search)
+                ->orLike('kab.nama_kabupaten', $search)
+                ->orLike('kec.nama_kecamatan', $search)
+                ->orLike('opd.nama_opd', $search)
+                ->groupEnd();
         }
 
         // total setelah filter
@@ -334,7 +339,7 @@ class UsulanBkk extends BaseController
             $data[] = [
                 'id'       => $row['id'],
                 'nama_desa'     => $row['nama_desa'] . '<br><span class = "text-sm text-info">'
-                            . $row['nama_kabupaten'].', '.$row['nama_kecamatan'].'</span>',
+                    . $row['nama_kabupaten'] . ', ' . $row['nama_kecamatan'] . '</span>',
                 'nama_opd' => $row['nama_opd']
             ];
         }
