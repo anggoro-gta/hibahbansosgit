@@ -130,6 +130,8 @@ class MasterHibah extends BaseController
             'kegiatan'         => old('kegiatan'),
             'sub_kegiatan'     => old('sub_kegiatan'),
             'is_vertikal'      => old('is_vertikal'),
+            'latitude'         => old('lat'),
+            'longitude'        => old('lng'),
             'ref_kabupaten'    => $this->kab_model->get_all(),
             'ref_program'      => $this->program_model->get_all($this->kode_user),
             'ref_kecamatan'    => [],
@@ -161,6 +163,8 @@ class MasterHibah extends BaseController
                 'fk_sub_kegiatan_id' => $this->request->getPost('sub_kegiatan'),
                 'alamat'             => $this->request->getPost('alamat'),
                 'is_vertikal'        => $this->request->getPost('is_vertikal') ? '1' : '0',
+                'latitude'           => $this->request->getPost('lat'),
+                'longitude'          => $this->request->getPost('lng'),
                 'kode_opd'           => $this->kode_user,
                 'created_at'         => $now,
                 'created_by'         => $userId
@@ -326,6 +330,8 @@ class MasterHibah extends BaseController
             'kegiatan'         => old('kegiatan', $row->fk_kegiatan_id),
             'sub_kegiatan'     => old('sub_kegiatan', $row->fk_sub_kegiatan_id),
             'is_vertikal'      => old('is_vertikal', $row->is_vertikal),
+            'latitude'         => old('lat', $row->latitude),
+            'longitude'        => old('lng', $row->longitude),
             'ref_kabupaten'    => $this->kab_model->get_all(),
             'ref_program'      => $this->program_model->get_all($this->kode_user),
             'ref_kecamatan'    => $this->kec_model->get_all($row->fk_kabupaten_id),
@@ -363,6 +369,8 @@ class MasterHibah extends BaseController
                 'fk_sub_kegiatan_id' => $this->request->getPost('sub_kegiatan'),
                 'alamat'             => $this->request->getPost('alamat'),
                 'is_vertikal'        => $this->request->getPost('is_vertikal') ? '1' : '0',
+                'latitude'           => $this->request->getPost('lat'),
+                'longitude'          => $this->request->getPost('lng'),
                 'updated_at'         => $now,
                 'updated_by'         => $userId
             ];
