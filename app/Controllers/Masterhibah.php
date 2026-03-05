@@ -369,8 +369,6 @@ class MasterHibah extends BaseController
                 'fk_sub_kegiatan_id' => $this->request->getPost('sub_kegiatan'),
                 'alamat'             => $this->request->getPost('alamat'),
                 'is_vertikal'        => $this->request->getPost('is_vertikal') ? '1' : '0',
-                'latitude'           => $this->request->getPost('lat'),
-                'longitude'          => $this->request->getPost('lng'),
                 'updated_at'         => $now,
                 'updated_by'         => $userId
             ];

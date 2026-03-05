@@ -124,6 +124,7 @@ $routes->get('usulan/bkk/edit/(:num)', 'UsulanBkk::edit/$1', ['filter' => 'role:
 $routes->post('usulan/bkk/update', 'UsulanBkk::update', ['filter' => 'role:admin,useropd']);
 $routes->get('usulan/bkk/delete/(:num)', 'UsulanBkk::delete/$1', ['filter' => 'role:admin,useropd']);
 $routes->post('usulan/bkk/layak-usulan-json', 'UsulanBkk::layakUsulanJson', ['filter' => 'role:admin,useropd']);
+$routes->post('usulan/bkk/foto-delete', 'UsulanBkk::deleteFoto', ['filter' => 'role:admin,useropd']);
 
 // SIPD-Bansos
 $routes->get('sipd/bansos', 'SipdBansos::index', ['filter' => 'role:admin,useropd']);

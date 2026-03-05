@@ -176,8 +176,16 @@ class UsulanBkk extends BaseController
 
     public function edit($id)
     {
+        $db = \Config\Database::connect();
         $row = $this->desa_model->get_usulan_by_id($id);
-
+        $foto = [];
+        if (!empty($row)) {
+            $foto = $db->table('dokumen')
+                        ->select('id, file_name, originale_name, url_name')
+                        ->where('table_name', 'tb_usulan_bkk')
+                        ->where('table_id', $id)
+                        ->get()->getResultArray();
+        }
         $data = [
             'url'                => site_url('usulan/bkk/update'),
             'button'             => 'Edit',
@@ -192,9 +200,11 @@ class UsulanBkk extends BaseController
             'perubahan_perbup_2' => old('perubahan_perbup_2', $row->perubahan_perbup_2),
             'papbd'              => old('papbd', $row->papbd),
             'nama_program_bkk'   => old('nama_program_bkk', $row->nama_program_bkk),
-            'keterangan'         => old('keterangan', $row->keterangan)
+            'keterangan'         => old('keterangan', $row->keterangan),
+            'latitude'           => old('latitude', $row->latitude),
+            'longitude'          => old('longitude', $row->longitude),
+            'foto'               => $foto
         ];
-
 
         return view('usulan/bkk/form', $data);
     }
@@ -203,6 +213,7 @@ class UsulanBkk extends BaseController
     {
         $userId = user()->id ?? null;
 
+        $now = date('Y-m-d H:i:s');
         $db  = \Config\Database::connect();
         $db->transBegin();
 
@@ -215,6 +226,8 @@ class UsulanBkk extends BaseController
             $papbd = $this->request->getPost('papbd');
             $nama_program_bkk = $this->request->getPost('nama_program_bkk');
             $keterangan = $this->request->getPost('keterangan');            
+            $latitude = $this->request->getPost('lat');            
+            $longitude = $this->request->getPost('lng');            
 
             $data = [
                 'apbd'               => !empty($apbd) ? $this->parseNumber($apbd) : null,
@@ -223,10 +236,73 @@ class UsulanBkk extends BaseController
                 'papbd'              => !empty($papbd) ? $this->parseNumber($papbd) : null,
                 'nama_program_bkk'   => !empty($nama_program_bkk) ? $nama_program_bkk : null,
                 'keterangan'         => !empty($keterangan) ? $keterangan : null,
+                'latitude'           => !empty($latitude) ? $latitude : null,
+                'longitude'          => !empty($longitude) ? $longitude : null,
                 'updated_by'         => $userId
             ];
 
             $db->table('tb_usulan_bkk')->where('id', $id)->update($data);
+
+            $files = $this->request->getFiles();
+            $fotos = $files['foto'] ?? [];
+
+            // hitung sudah ada di tabel dokumen
+            $already = (int) $db->table('dokumen')
+                ->where('table_name', 'tb_usulan_bkk')
+                ->where('table_id', $id)
+                ->countAllResults();
+
+            $MAX = 3;
+            $quota = max(0, $MAX - $already);
+            if ($quota <= 0) {
+                // tidak terima foto baru jika sudah penuh
+                // (opsional: bisa dihapus dulu di halaman UI)
+                // lanjut tanpa error
+            } else {
+                // pastikan folder ada
+                $dir = FCPATH . 'usulanbkk/';
+                if (!is_dir($dir)) {
+                    @mkdir($dir, 0775, true);
+                }
+
+                $rowsDoc = [];
+                $accepted = 0;
+
+                foreach ($fotos as $file) {
+                    if ($accepted >= $quota) break;
+                    if (!$file || !$file->isValid() || $file->hasMoved()) continue;
+
+                    // validasi mime/ekstensi sederhana
+                    $ext  = strtolower($file->getClientExtension() ?? '');
+                    $mime = strtolower($file->getMimeType() ?? '');
+                    if (!in_array($ext, ['jpg','jpeg','png'])) continue;
+                    if (strpos($mime, 'image/') !== 0) continue;
+
+                    $newName   = $file->getRandomName();
+                    $origName  = $file->getClientName();
+
+                    // simpan file fisik
+                    $file->move($dir, $newName);
+
+                    // path untuk diakses publik
+                    $publicPath = 'usulanbkk/' . $newName;                // tanpa domain
+                    $diskName   = 'public';                            // bebas: penanda disk
+                    $rowsDoc[] = [
+                        'table_name'     => 'tb_usulan_bkk',
+                        'table_id'       => $id,
+                        'file_name'      => $newName,
+                        'originale_name' => $origName,   // pakai nama kolom persis seperti di tabel Anda
+                        'disk_name'      => $diskName,
+                        'url_name'       => $publicPath, // simpan path relatif
+                        'created_at'     => $now,
+                    ];
+                    $accepted++;
+                }
+
+                if (!empty($rowsDoc)) {
+                    $db->table('dokumen')->insertBatch($rowsDoc);
+                }
+            }
 
             if ($db->transStatus() === false) {
                 throw new \RuntimeException('DB transaction failed');
@@ -252,6 +328,28 @@ class UsulanBkk extends BaseController
             $row = $this->desa_model->get_usulan_by_id($id);
 
             if ($row) {
+                $rows = $db->table('dokumen')
+                    ->select('id, url_name')           
+                    ->where('table_name', 'tb_usulan_bkk')
+                    ->where('table_id', $id)
+                    ->get()
+                    ->getResultArray();
+
+                if ($rows) {
+                    foreach ($rows as $r) {
+                        $absPath = FCPATH . $r['url_name'];
+                        if (is_file($absPath)) {
+                            @unlink($absPath);
+                        }
+                    }
+
+                    // Hapus baris dokumen di DB
+                    $db->table('dokumen')
+                    ->where('table_name', 'tb_usulan_bkk')
+                    ->where('table_id', $id)
+                    ->delete();
+                }
+                
                 $db->table('tb_usulan_bkk')->where('id', $id)->delete();
             }
 
@@ -350,5 +448,34 @@ class UsulanBkk extends BaseController
             'recordsFiltered' => $recordsFiltered,
             'data'            => $data,
         ]);
+    }
+
+    public function deleteFoto()
+    {
+        if ($this->request->getMethod(true) !== 'POST' || !$this->request->isAJAX()) {
+            return $this->response->setJSON(['ok' => false, 'msg' => 'Invalid request']);
+        }
+
+        $docId = (int) $this->request->getPost('doc_id');
+        $db    = \Config\Database::connect();
+
+        // ambil baris dokumen
+        $doc = $db->table('dokumen')
+            ->where('id', $docId)
+            ->where('table_name', 'tb_usulan_bkk') // safety: hanya konteks ini
+            ->get()->getRowArray();
+
+        if (!$doc) {
+            return $this->response->setJSON(['ok' => false, 'msg' => 'Dokumen tidak ditemukan', 'csrf' => csrf_hash()]);
+        }
+
+        // hapus file fisik
+        $abs = FCPATH . $doc['url_name']; // contoh: public/usulan/xxx.jpg
+        if (is_file($abs)) { @unlink($abs); }
+
+        // hapus row
+        $db->table('dokumen')->where('id', $docId)->delete();
+
+        return $this->response->setJSON(['ok' => true, 'csrf' => csrf_hash()]);
     }
 }

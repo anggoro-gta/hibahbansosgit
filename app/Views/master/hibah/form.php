@@ -7,11 +7,6 @@
     #preview-grid .thumb img { cursor:pointer; }
     .uppercase { text-transform: uppercase; }
 </style><!-- Leaflet CSS -->
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-
-<!-- Geocoder CSS -->
-<link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css"/>
-
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
     <!-- Content Header (Page header) -->
@@ -194,32 +189,6 @@
                                             <label for="is_vertikal" class="custom-control-label">Instansi Vertikal</label>
                                         </div>
                                     </div>
-                                    <div class="col-md-12">
-                                    <hr>
-                                    </div>
-                                    <div class="row col-md-12">
-                                        <div class="col-md-6">
-                                            <div id="map" style="height:380px;border-radius:12px;"></div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <dl class="row">
-                                                <dt class="col-sm-2">Alamat</dt>
-                                                <dd class="col-sm-10">
-                                                    <span id="span_alamat">: <?= $alamat ?></span>
-                                                </dd>
-                                                <dt class="col-sm-2">Latitude</dt>
-                                                <dd class="col-sm-10">
-                                                    <span id="span_lat">: <?= $latitude ?></span>
-                                                    <input type="hidden" id="lat" name="lat" value="<?= $latitude ?>">
-                                                </dd>
-                                                <dt class="col-sm-2">Longitude</dt>
-                                                <dd class="col-sm-10">
-                                                    <span id="span_long">: <?= $longitude ?></span>
-                                                    <input type="hidden" id="lng" name="lng" value="<?= $longitude ?>">
-                                                </dd>
-                                            </dl>
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
                             <!-- /.card-body -->
@@ -249,87 +218,6 @@
 <?= $this->endSection(); ?>
 
 <?= $this->section('javascriptkhusus'); ?>
-<!-- Leaflet JS -->
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
-<!-- Geocoder JS -->
-<script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
-<script>
-  // default koordinat (ubah sesuai kebutuhan)
-    const defaultLat = -7.8166;   // Kediri
-    const defaultLng = 112.0110;  // Kediri
-
-    const map = L.map('map').setView([defaultLat, defaultLng], 13);
-
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-        attribution: '&copy; OpenStreetMap'
-    }).addTo(map);
-
-    let marker = null;
-
-    function setPoint(lat, lng) {
-        document.getElementById('lat').value = Number(lat).toFixed(15);
-        document.getElementById('lng').value = Number(lng).toFixed(15);
-
-        $('#span_lat').text(': '+lat)
-        $('#span_long').text(': '+lng)
-        
-
-        if (!marker) {
-        marker = L.marker([lat, lng], { draggable: true }).addTo(map);
-        marker.on('dragend', async (e) => {
-            const p = e.target.getLatLng();
-            setPoint(p.lat, p.lng);
-            await reverseGeocode(p.lat, p.lng);
-        });
-        } else {
-        marker.setLatLng([lat, lng]);
-        }
-    }
-
-    // Klik peta => set marker + reverse geocode
-    map.on('click', async (e) => {
-        setPoint(e.latlng.lat, e.latlng.lng);
-        await reverseGeocode(e.latlng.lat, e.latlng.lng);
-    });
-
-    // Search alamat (geocoder control)
-    const geocoder = L.Control.geocoder({
-        defaultMarkGeocode: false
-    })
-    .on('markgeocode', async function(e) {
-        const center = e.geocode.center;
-        map.setView(center, 17);
-        setPoint(center.lat, center.lng);
-
-        // isi alamat dari hasil geocoder
-        $('#span_alamat').text(e.geocode.name || '')
-    })
-    .addTo(map);
-
-    // Reverse geocode (opsional) - isi alamat saat klik/drag
-    async function reverseGeocode(lat, lng) {
-        try {
-        const url = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}`;
-        const res = await fetch(url, { headers: { 'Accept': 'application/json' }});
-        const json = await res.json();
-            $('#span_alamat').text(': '+json.display_name || '')
-        } catch (err) {
-        // kalau gagal reverse geocode, biarkan alamat manual
-        console.warn('Reverse geocode gagal:', err);
-        }
-    }
-
-    // Kalau edit form (sudah ada lat/lng dari DB), set marker awal:
-    // Misal kamu render dari blade:
-    const existingLat = "<?= $latitude ?>";
-    const existingLng = "<?= $longitude ?>";
-    if (existingLat && existingLng) { setPoint(existingLat, existingLng); map.setView([existingLat, existingLng], 16); }
-
-    // default marker awal (optional)
-    setPoint(existingLat, existingLng);
-</script>
 <script>
     const limaster = document.querySelector('.limaster');
     const ahrefmaster = document.querySelector('.ahrefmaster');
