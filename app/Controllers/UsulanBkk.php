@@ -121,7 +121,9 @@ class UsulanBkk extends BaseController
             'url'    => site_url('usulan/bkk/store'),
             'button' => 'Tambah',
             'tittle' => 'Tambah Usulan BKK',
-            'ref_opd' => $this->desa_model->get_all_opd()
+            'ref_opd' => $this->desa_model->get_all_opd(),
+            'latitude' => null,
+            'longitude' => null,
         ];
 
         return view('usulan/bkk/form', $data);
