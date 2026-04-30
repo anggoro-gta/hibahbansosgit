@@ -62,6 +62,10 @@ $routes->match(['get', 'post'], 'view/hibah/datatable', 'ViewUsulanHibah::datata
 $routes->get('view/bansos', 'ViewUsulanBansos::index', ['filter' => 'role:admin']);
 $routes->match(['get', 'post'], 'view/bansos/datatable', 'ViewUsulanBansos::datatable', ['filter' => 'role:admin']);
 
+//View BKK ADMIN
+$routes->get('view/bkk', 'ViewUsulanBkk::index', ['filter' => 'role:admin']);
+$routes->match(['get', 'post'], 'view/bkk/datatable', 'ViewUsulanBkk::datatable', ['filter' => 'role:admin']);
+
 // Master-Hibah
 $routes->get('master/hibah', 'MasterHibah::index', ['filter' => 'role:admin,useropd']);
 $routes->match(['get', 'post'], 'master/hibah/datatable', 'MasterHibah::datatable', ['filter' => 'role:admin,useropd']);
