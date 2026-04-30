@@ -39,7 +39,7 @@ class ViewUsulanBkk extends BaseController
             $tahun = $_SESSION['years'];
 
             // mapping index kolom -> nama kolom di DB
-            $orderCols = ['d.nama_kecamatan','c.nama_kabupaten','b.nama_desa', 'a.apbd', 'a.perubahan_perbup_1', 'a.perubahan_perbup_2', 'a.papbd', 'e.fullname'];
+            $orderCols = ['d.nama_kecamatan', 'c.nama_kabupaten', 'b.nama_desa', 'a.apbd', 'a.perubahan_perbup_1', 'a.perubahan_perbup_2', 'a.papbd', 'e.fullname'];
             $orderBy = $orderCols[$orderReq['column'] - 1] ?? 'a.id'; // -1 karena kolom nomor urut
             $orderDir = ($orderReq['dir'] ?? 'asc') === 'desc' ? 'DESC' : 'ASC';
 
@@ -50,7 +50,8 @@ class ViewUsulanBkk extends BaseController
             $data = [];
             foreach ($rows as $r) {
                 $data[] = [
-                    'nama_desa'       => $r['nama_desa'],                   
+                    'nama_desa'       => $r['nama_desa'] . '<br><span class = "text-sm text-info">'
+                        . $r['nama_kecamatan'] . ', ' . $r['nama_kabupaten'] . '</span>',
                     'apbd'               => $r['apbd'],
                     'perubahan_perbup_1' => $r['perubahan_perbup_1'],
                     'perubahan_perbup_2' => $r['perubahan_perbup_2'],
