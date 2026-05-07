@@ -76,6 +76,7 @@ $routes->post('master/hibah/update', 'MasterHibah::update', ['filter' => 'role:a
 $routes->get('master/hibah/delete/(:num)', 'MasterHibah::delete/$1', ['filter' => 'role:admin,useropd']);
 $routes->post('master/hibah/detail-json', 'MasterHibah::detailJson', ['filter' => 'role:admin,useropd']);
 $routes->post('master/hibah/history-json', 'MasterHibah::historyUsulanJson', ['filter' => 'role:admin,useropd']);
+$routes->post('usulan/hibah/cek-layak-selected-json', 'UsulanHibah::cekLayakSelectedJson', ['filter' => 'role:admin,useropd']);
 
 // Usulan-Hibah
 $routes->get('usulan/hibah', 'UsulanHibah::index', ['filter' => 'role:admin,useropd']);

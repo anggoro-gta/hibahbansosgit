@@ -3,6 +3,15 @@
 <?= $this->section('content'); ?>
 <style>
     .uppercase { text-transform: uppercase; }
+
+    #example1 tbody tr.row-tidak-layak td {
+        background-color: #f8d7da !important;
+    }
+
+    .badge-tidak-layak {
+        margin-top: 4px;
+        display: inline-block;
+    }
 </style>
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
@@ -175,6 +184,12 @@ $(function () {
     // tempat nyimpen id yang sudah dipilih, lintas halaman
     const selectedIds = new Set();
 
+    // tempat menyimpan id lembaga yang tidak memenuhi syarat
+    const invalidIds = new Set();
+
+    // tempat menyimpan alasan tidak memenuhi syarat
+    const invalidReasons = {};
+
     const table = $('#example1').DataTable({
         'oLanguage':
         {
@@ -230,15 +245,40 @@ $(function () {
             { orderable: false, targets: 0 }
         ],
         order: [[1, 'asc']],
+        rowCallback: function (row, data) {
+            const id = String(data.id);
+
+            $(row).removeClass('row-tidak-layak');
+            $(row).find('.badge-tidak-layak').remove();
+
+            if (invalidIds.has(id)) {
+                $(row).addClass('row-tidak-layak');
+
+                $('td:eq(3)', row).append(`
+                    <br>
+                    <span class="badge badge-danger badge-tidak-layak">
+                        <i class="fa fa-exclamation-triangle"></i>
+                        Tidak memenuhi syarat
+                    </span>
+                `);
+            }
+        },
         // ini penting: setiap tabel digambar ulang, kita sync checkbox
         drawCallback: function () {
             syncCheckboxes();
-        }
+        },
     });
 
     // ketika kode_opd diganti ⇒ reload data dari server
     $('#kode_opd').on('change', function () {
         selectedIds.clear();      // biasanya lebih aman di-clear saat ganti OPD
+        invalidIds.clear();
+
+        Object.keys(invalidReasons).forEach(function (key) {
+            delete invalidReasons[key];
+        });
+
+        
         $('#customCheckboxAll').prop('checked', false);
         table.ajax.reload();
     });
@@ -309,19 +349,119 @@ $(function () {
     });
 
     $('#form-tambah').on('submit', function (e) {
+        e.preventDefault();
+
+        const form = this;
+
         if (selectedIds.size === 0) {
             Swal.fire({
                 title: 'Peringatan',
                 text: 'Pilih minimal 1 data dulu.',
-                icon: 'info', // Menampilkan icon info
-                confirmButtonText: 'OK' // Tombol konfirmasi
+                icon: 'info',
+                confirmButtonText: 'OK'
             });
-            e.preventDefault();
             return;
         }
 
-        // masukkan ke hidden input sebagai JSON atau csv
         $('#selected_ids').val(JSON.stringify(Array.from(selectedIds)));
+
+        $.ajax({
+            url: "<?= site_url('usulan/hibah/cek-layak-selected-json'); ?>",
+            type: "POST",
+            dataType: "json",
+            data: {
+                selected_ids: JSON.stringify(Array.from(selectedIds))
+            },
+            beforeSend: function () {
+                $('#form-tambah button[type="submit"]')
+                    .prop('disabled', true)
+                    .html('<i class="fa fa-spinner fa-spin"></i> Mengecek...');
+            },
+            success: function (res) {
+                invalidIds.clear();
+
+                if (res.status === true) {
+                    form.submit();
+                    return;
+                }
+
+                let html = `
+                    <div class="text-left">
+                        <p>Data berikut tidak memenuhi syarat dan belum bisa diproses:</p>
+                        <div style="max-height: 350px; overflow-y: auto;">
+                            <table class="table table-sm table-bordered text-md">
+                                <thead>
+                                    <tr>
+                                        <th>No</th>
+                                        <th>Lembaga</th>
+                                        <th>No. Akta</th>
+                                        <th>OPD</th>
+                                        <th>Alasan</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                `;
+
+                $.each(res.invalid, function (i, item) {
+                    invalidIds.add(String(item.id));
+                    invalidReasons[String(item.id)] = item.alasan;
+
+                    html += `
+                        <tr>
+                            <td>${i + 1}</td>
+                            <td>${item.nama_lembaga}</td>
+                            <td>${item.no_akta ?? '-'}</td>
+                            <td>${item.nama_opd ?? '-'}</td>
+                            <td><span class="text-danger">${item.alasan}</span></td>
+                        </tr>
+                    `;
+                });
+
+                html += `
+                                </tbody>
+                            </table>
+                        </div>
+                        <small class="text-muted">
+                            Tutup modal ini, lalu uncheck data yang ditandai merah pada tabel.
+                        </small>
+                    </div>
+                `;
+
+                table.draw(false);
+
+                Swal.fire({
+                    title: 'Ada Data Tidak Memenuhi Syarat',
+                    html: html,
+                    icon: 'warning',
+                    width: '900px',
+                    confirmButtonText: 'Tutup',
+                    showDenyButton: true,
+                    denyButtonText: 'Uncheck semua yang tidak layak'
+                }).then((result) => {
+                    if (result.isDenied) {
+                        invalidIds.forEach(function (id) {
+                            selectedIds.delete(id);
+                        });
+
+                        table.draw(false);
+                        syncCheckboxes();
+                    }
+                });
+            },
+            error: function () {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Gagal melakukan pengecekan kelayakan data.',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+            },
+            complete: function () {
+                $('#form-tambah button[type="submit"]')
+                    .prop('disabled', false)
+                    .html('Submit');
+            }
+        });
     });
 });
 </script>

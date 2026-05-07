@@ -144,8 +144,21 @@ class UsulanHibah extends BaseController
                 return redirect()->back()->with('error', 'Tidak ada data yang dipilih');
             }
 
+            $ids = array_values(array_unique(array_filter(array_map('intval', $ids))));
+
             // contoh insert ke tb_usulan_hibah
             $tahun = $_SESSION['years'];
+
+            $invalid = $this->getInvalidUsulanHibah($ids, (int) $tahun);
+
+            if (!empty($invalid)) {
+                $namaTidakLayak = array_column($invalid, 'nama_lembaga');
+
+                return redirect()->back()->with(
+                    'error',
+                    'Ada data yang tidak memenuhi syarat: ' . implode(', ', $namaTidakLayak)
+                );
+            }
 
             $batchData = [];
             foreach ($ids as $msHibahId) {
@@ -295,20 +308,19 @@ class UsulanHibah extends BaseController
                 ->join('ms_desa des', 'a.fk_desa_id = des.id', 'left')
                 ->join('ms_opd opd', 'a.kode_opd = opd.kode_opd', 'left');
 
-        $builder->where('a.tgl_berdiri IS NOT NULL', null, false);
+        // $builder->where('a.tgl_berdiri IS NOT NULL', null, false);
 
-        // $next_tahun = $tahun+1;
-        $prev_tahun = $tahun-1;
+        // $prev_tahun = $tahun-1;
 
-        $builder->where("
-            NOT EXISTS (
-                SELECT 1
-                FROM tb_usulan_hibah u
-                WHERE u.fk_ms_hibah_id = a.id
-                AND u.tahun IN ($tahun, $prev_tahun)
-                AND (a.is_vertikal <> 1 OR u.tahun = $tahun)
-            )
-        ", null, false);
+        // $builder->where("
+        //     NOT EXISTS (
+        //         SELECT 1
+        //         FROM tb_usulan_hibah u
+        //         WHERE u.fk_ms_hibah_id = a.id
+        //         AND u.tahun IN ($tahun, $prev_tahun)
+        //         AND (a.is_vertikal <> 1 OR u.tahun = $tahun)
+        //     )
+        // ", null, false);
 
         // filter kode_opd dari select
         $kodeOpd = $this->request->getPost('kode_opd');
@@ -352,15 +364,29 @@ class UsulanHibah extends BaseController
 
         $data = [];
         foreach ($rows as $row) {
+            $tglBerdiri = !empty($row['tgl_berdiri'])
+                ? date('d-m-Y', strtotime($row['tgl_berdiri']))
+                : '<span class="badge badge-warning">Belum ada</span>';
+
             $data[] = [
                 'id'          => $row['id'],
-                'tgl_berdiri' => date('d-m-Y', strtotime($row['tgl_berdiri'])),
+                'tgl_berdiri' => $tglBerdiri,
                 'lembaga'     => $row['nama_lembaga'] . '<br><span class="text-sm text-info">'
                             . $row['nama_kabupaten'].', '.$row['nama_kecamatan'].', '
                             . $row['nama_desa'].', '.$row['alamat'].'</span>',
                 'no_akta'     => $row['no_akta_hukum'],
                 'nama_opd'    => $row['nama_opd']
             ];
+            
+            // $data[] = [
+            //     'id'          => $row['id'],
+            //     'tgl_berdiri' => date('d-m-Y', strtotime($row['tgl_berdiri'])),
+            //     'lembaga'     => $row['nama_lembaga'] . '<br><span class="text-sm text-info">'
+            //                 . $row['nama_kabupaten'].', '.$row['nama_kecamatan'].', '
+            //                 . $row['nama_desa'].', '.$row['alamat'].'</span>',
+            //     'no_akta'     => $row['no_akta_hukum'],
+            //     'nama_opd'    => $row['nama_opd']
+            // ];
         }
 
         return $this->response->setJSON([
@@ -368,6 +394,145 @@ class UsulanHibah extends BaseController
             'recordsTotal'    => $recordsTotal,
             'recordsFiltered' => $recordsFiltered,
             'data'            => $data,
+        ]);
+    }
+
+    private function getInvalidUsulanHibah(array $ids, int $tahun): array
+    {
+        $ids = array_values(array_unique(array_filter(array_map('intval', $ids))));
+
+        if (empty($ids)) {
+            return [];
+        }
+
+        $prevTahun = $tahun - 1;
+        $db = \Config\Database::connect();
+
+        $rows = $db->table('ms_hibah a')
+            ->select('
+                a.id,
+                a.tgl_berdiri,
+                a.nama_lembaga,
+                a.no_akta_hukum,
+                a.alamat,
+                a.is_vertikal,
+                kab.nama_kabupaten,
+                kec.nama_kecamatan,
+                des.nama_desa,
+                opd.nama_opd
+            ')
+            ->join('ms_kabupaten kab', 'a.fk_kabupaten_id = kab.id', 'left')
+            ->join('ms_kecamatan kec', 'a.fk_kecamatan_id = kec.id', 'left')
+            ->join('ms_desa des', 'a.fk_desa_id = des.id', 'left')
+            ->join('ms_opd opd', 'a.kode_opd = opd.kode_opd', 'left')
+            ->whereIn('a.id', $ids)
+            ->get()
+            ->getResultArray();
+
+        $riwayat = $db->table('tb_usulan_hibah u')
+            ->select('u.fk_ms_hibah_id, u.tahun')
+            ->whereIn('u.fk_ms_hibah_id', $ids)
+            ->whereIn('u.tahun', [$tahun, $prevTahun])
+            ->get()
+            ->getResultArray();
+
+        $riwayatById = [];
+        foreach ($riwayat as $r) {
+            $riwayatById[(int) $r['fk_ms_hibah_id']][] = (int) $r['tahun'];
+        }
+
+        $foundIds = [];
+        $invalid = [];
+
+        foreach ($rows as $row) {
+            $id = (int) $row['id'];
+            $foundIds[] = $id;
+
+            $alasan = [];
+
+            if (empty($row['tgl_berdiri'])) {
+                $alasan[] = 'Tanggal berdiri belum diisi';
+            }
+
+            $isVertikal = (int) ($row['is_vertikal'] ?? 0) === 1;
+            $tahunRiwayat = $riwayatById[$id] ?? [];
+
+            foreach ($tahunRiwayat as $th) {
+                if ($isVertikal) {
+                    if ($th === $tahun) {
+                        $alasan[] = 'Sudah menjadi usulan hibah tahun ' . $tahun;
+                    }
+                } else {
+                    if ($th === $tahun) {
+                        $alasan[] = 'Sudah menjadi usulan hibah tahun ' . $tahun;
+                    }
+
+                    if ($th === $prevTahun) {
+                        $alasan[] = 'Sudah menjadi usulan hibah tahun sebelumnya (' . $prevTahun . ')';
+                    }
+                }
+            }
+
+            if (!empty($alasan)) {
+                $invalid[] = [
+                    'id'            => $id,
+                    'nama_lembaga'  => $row['nama_lembaga'],
+                    'no_akta'       => $row['no_akta_hukum'],
+                    'nama_opd'      => $row['nama_opd'],
+                    'alasan'        => implode(', ', array_unique($alasan)),
+                ];
+            }
+        }
+
+        $notFoundIds = array_diff($ids, $foundIds);
+
+        foreach ($notFoundIds as $id) {
+            $invalid[] = [
+                'id'            => $id,
+                'nama_lembaga'  => 'ID ' . $id,
+                'no_akta'       => '-',
+                'nama_opd'      => '-',
+                'alasan'        => 'Data tidak ditemukan di master hibah',
+            ];
+        }
+
+        return $invalid;
+    }
+
+    public function cekLayakSelectedJson()
+    {
+        if (!$this->request->isAJAX()) {
+            return $this->response->setStatusCode(400)->setJSON([
+                'status' => false,
+                'message' => 'Invalid request'
+            ]);
+        }
+
+        $json = $this->request->getPost('selected_ids');
+        $ids = json_decode($json, true);
+
+        if (!is_array($ids) || empty($ids)) {
+            return $this->response->setJSON([
+                'status' => false,
+                'message' => 'Tidak ada data yang dipilih',
+                'invalid' => [],
+                'invalid_ids' => []
+            ]);
+        }
+
+        $tahun = (int) $_SESSION['years'];
+
+        $invalid = $this->getInvalidUsulanHibah($ids, $tahun);
+
+        return $this->response->setJSON([
+            'status'        => empty($invalid),
+            'message'       => empty($invalid)
+                                ? 'Semua data memenuhi syarat'
+                                : 'Ada data yang tidak memenuhi syarat',
+            'invalid_count' => count($invalid),
+            'invalid_ids'   => array_map('strval', array_column($invalid, 'id')),
+            'invalid'       => $invalid,
+            'csrf'          => function_exists('csrf_hash') ? csrf_hash() : null,
         ]);
     }
 
