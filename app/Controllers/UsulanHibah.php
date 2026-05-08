@@ -430,15 +430,27 @@ class UsulanHibah extends BaseController
             ->getResultArray();
 
         $riwayat = $db->table('tb_usulan_hibah u')
-            ->select('u.fk_ms_hibah_id, u.tahun')
+            ->select('
+                u.fk_ms_hibah_id,
+                u.tahun,
+                u.created_by,
+                users.fullname as nama_created_by
+            ')
+            ->join('users', 'u.created_by = users.id', 'left')
             ->whereIn('u.fk_ms_hibah_id', $ids)
             ->whereIn('u.tahun', [$tahun, $prevTahun])
             ->get()
             ->getResultArray();
 
         $riwayatById = [];
+
         foreach ($riwayat as $r) {
-            $riwayatById[(int) $r['fk_ms_hibah_id']][] = (int) $r['tahun'];
+            $idRiwayat = (int) $r['fk_ms_hibah_id'];
+
+            $riwayatById[$idRiwayat][] = [
+                'tahun'      => (int) $r['tahun'],
+                'created_by' => $r['nama_created_by'] ?? '-',
+            ];
         }
 
         $foundIds = [];
@@ -457,29 +469,31 @@ class UsulanHibah extends BaseController
             $isVertikal = (int) ($row['is_vertikal'] ?? 0) === 1;
             $tahunRiwayat = $riwayatById[$id] ?? [];
 
-            foreach ($tahunRiwayat as $th) {
+            foreach ($tahunRiwayat as $rw) {
+                $th = (int) $rw['tahun'];
+                $createdBy = $rw['created_by'] ?? '-';
+
                 if ($isVertikal) {
                     if ($th === $tahun) {
-                        $alasan[] = 'Sudah menjadi usulan hibah tahun ' . $tahun;
+                        $alasan[] = 'Sudah menjadi usulan hibah tahun ' . $tahun . ' diinput oleh ' . $createdBy;
                     }
                 } else {
                     if ($th === $tahun) {
-                        $alasan[] = 'Sudah menjadi usulan hibah tahun ' . $tahun;
+                        $alasan[] = 'Sudah menjadi usulan hibah tahun ' . $tahun . ' diinput oleh ' . $createdBy;
                     }
 
                     if ($th === $prevTahun) {
-                        $alasan[] = 'Sudah menjadi usulan hibah tahun sebelumnya (' . $prevTahun . ')';
+                        $alasan[] = 'Sudah menjadi usulan hibah tahun sebelumnya (' . $prevTahun . ') diinput oleh ' . $createdBy;
                     }
                 }
             }
 
             if (!empty($alasan)) {
                 $invalid[] = [
-                    'id'            => $id,
-                    'nama_lembaga'  => $row['nama_lembaga'],
-                    'no_akta'       => $row['no_akta_hukum'],
-                    'nama_opd'      => $row['nama_opd'],
-                    'alasan'        => implode(', ', array_unique($alasan)),
+                    'id'           => $id,
+                    'nama_lembaga' => $row['nama_lembaga'],
+                    'no_akta'      => $row['no_akta_hukum'],
+                    'alasan'       => implode(', ', array_unique($alasan)),
                 ];
             }
         }
@@ -488,11 +502,10 @@ class UsulanHibah extends BaseController
 
         foreach ($notFoundIds as $id) {
             $invalid[] = [
-                'id'            => $id,
-                'nama_lembaga'  => 'ID ' . $id,
-                'no_akta'       => '-',
-                'nama_opd'      => '-',
-                'alasan'        => 'Data tidak ditemukan di master hibah',
+                'id'           => $id,
+                'nama_lembaga' => 'ID ' . $id,
+                'no_akta'      => '-',
+                'alasan'       => 'Data tidak ditemukan di master hibah',
             ];
         }
 

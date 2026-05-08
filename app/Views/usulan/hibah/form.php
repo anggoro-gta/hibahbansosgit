@@ -392,11 +392,10 @@ $(function () {
                             <table class="table table-sm table-bordered text-md">
                                 <thead>
                                     <tr>
-                                        <th>No</th>
-                                        <th>Lembaga</th>
-                                        <th>No. Akta</th>
-                                        <th>OPD</th>
-                                        <th>Alasan</th>
+                                        <th class="text-center">No</th>
+                                        <th class="text-center">Lembaga</th>
+                                        <th class="text-center">No. Akta</th>
+                                        <th class="text-center">Alasan</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -411,7 +410,6 @@ $(function () {
                             <td>${i + 1}</td>
                             <td>${item.nama_lembaga}</td>
                             <td>${item.no_akta ?? '-'}</td>
-                            <td>${item.nama_opd ?? '-'}</td>
                             <td><span class="text-danger">${item.alasan}</span></td>
                         </tr>
                     `;
